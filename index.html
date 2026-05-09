@@ -15,6 +15,7 @@
 <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
 <script src="grant_details.js"></script>
+<script src="grant_preferences.js"></script>
 <style>
 :root{
   --bg:#FFFFFF;--card:#FFFFFF;--card-hover:#F7F7F5;
@@ -72,6 +73,9 @@ tbody tr.row-m{background:var(--row-m)}
 tbody tr.row-e{background:var(--row-e)}
 tbody tr.row-me{background:var(--row-me)}
 tbody tr.row-urgent td:first-child{background:var(--row-urgent);font-weight:700;color:var(--accent-warm)}
+tbody tr.row-sub td{font-size:11.5px;opacity:0.85}
+tbody tr.row-sub td:nth-child(2)::before{content:"サブ ";font-size:9.5px;color:var(--accent-warm);font-weight:700;letter-spacing:0.05em;background:var(--accent-muted);padding:1px 4px;border-radius:2px;margin-right:4px}
+.subsection-divider{font-size:11px;color:var(--text-muted);font-weight:500;letter-spacing:0.1em;background:var(--surface);padding:4px 8px;border-bottom:1px dashed var(--border);text-transform:uppercase}
 tbody tr:hover{background:var(--card-hover)}
 tbody tr.row-m:hover,tbody tr.row-e:hover,tbody tr.row-me:hover{filter:brightness(0.97)}
 .deadline{font-family:"SF Mono","Fira Code",monospace;font-size:11.5px;white-space:nowrap}
@@ -395,6 +399,7 @@ tbody tr.row-m:hover,tbody tr.row-e:hover,tbody tr.row-me:hover{filter:brightnes
       <button class="active" onclick="switchTab(event,'tab-overview')">概要</button>
       <button onclick="switchTab(event,'tab-post')">提出後スケジュール</button>
       <button onclick="switchTab(event,'tab-docs')">提出書類</button>
+      <button onclick="switchTab(event,'tab-pref')">📊 選好性ガイド</button>
       <button onclick="switchTab(event,'tab-link')">関連リンク</button>
     </div>
     <div class="tab-content active" id="tab-overview">
@@ -412,6 +417,9 @@ tbody tr.row-m:hover,tbody tr.row-e:hover,tbody tr.row-me:hover{filter:brightnes
     <div class="tab-content" id="tab-docs">
       <div class="detail-h">提出書類チェックリスト</div>
       <ul class="detail-list" id="detailDocs"></ul>
+    </div>
+    <div class="tab-content" id="tab-pref">
+      <div id="prefBody"></div>
     </div>
     <div class="tab-content" id="tab-link">
       <div class="detail-h">公式情報</div>
@@ -639,6 +647,49 @@ let state = loadState();
 if(!state.rows || state.rows.length===0){state={rows:JSON.parse(JSON.stringify(DEFAULT_ROWS)),memos:{},drafts:{}};}
 
 // ============================================
+// サブ案件（後追加・中央省庁巡回37件）
+// ============================================
+const SUB_KEYS=new Set([
+  "ものづくり補助金 23次（経産省）",
+  "デジタル化・AI導入補助金 2026 セキュリティ枠",
+  "JST ASPIRE 2026 国際共同研究",
+  "事業承継・M&A補助金",
+  "JST CREST 戦略的創造研究推進事業",
+  "新事業進出・ものづくり補助金 第4回",
+  "JST SICORP EIG CONCERT-Japan AIロボティクス",
+  "観光庁 ICTサービス利活用促進事業",
+  "JSPS 国際共同研究加速基金",
+  "JSPS 二国間交流事業",
+  "内閣府 BRIDGE（研究開発とSociety5.0橋渡し）",
+  "内閣府 SIP第3期（戦略的イノベーション創造）",
+  "NEDO ディープテック・スタートアップ支援(DTSU)",
+  "NEDO 研究開発型スタートアップ支援(NEP)",
+  "NEDO グリーンイノベーション基金",
+  "中小企業成長加速化補助金",
+  "INPIT 外国出願補助金",
+  "JETRO 中堅・中小企業輸出支援エコシステム",
+  "JETRO アジアDX等新規事業創造",
+  "環境省 地域脱炭素推進交付金",
+  "環境省 環境研究総合推進費",
+  "環境省 生物多様性保全推進",
+  "厚労省 介護テクノロジー導入支援",
+  "厚労省 人材開発支援助成金 人への投資促進",
+  "国交省 スマートシティ実装化支援事業",
+  "総務省 過疎地域持続的発展支援交付金",
+  "総務省 ICTスタートアップリーグ",
+  "総務省 ローカル10,000プロジェクト",
+  "内閣府 新しい地方経済・生活環境創生交付金(第2世代)",
+  "観光庁 オーバーツーリズム対策面的整備",
+  "こども家庭庁 子育て支援補助金",
+  "外務省 外交・安全保障調査研究事業費補助金",
+  "復興庁・福島県 地域復興実用化開発",
+  "JST GteX 革新的GX技術創出",
+  "JST A-STEP 産学共同(秋募集)",
+  "産総研 公募課題（共同研究）",
+  "人間文化研究機構 グローバル地域研究推進"
+]);
+
+// ============================================
 // レンダリング
 // ============================================
 const SECTIONS=[
@@ -661,30 +712,42 @@ function renderSchedules(){
   SECTIONS.forEach(sec=>{
     const filtered=state.rows.map((r,i)=>({r,i})).filter(o=>sec.filter(o.r));
     if(filtered.length===0)return;
+    const mainItems=filtered.filter(o=>!SUB_KEYS.has(o.r[1]));
+    const subItems=filtered.filter(o=>SUB_KEYS.has(o.r[1]));
     const sectionEl=document.createElement('section');
     sectionEl.id=sec.id;
-    let html='<h2><span class="ch-num">'+sec.num+'</span>'+sec.title+'</h2>';
+    let html='<h2><span class="ch-num">'+sec.num+'</span>'+sec.title+'<span style="font-size:11px;color:var(--text-muted);margin-left:auto;font-weight:400">主要 '+mainItems.length+' / サブ '+subItems.length+'</span></h2>';
     html+='<p class="lead">'+sec.intro+'</p>';
     html+='<table><thead><tr><th>締切</th><th>助成金名</th><th>上限額</th><th>主体</th><th>テーマ</th><th>強み</th><th>アクション</th><th>備考</th><th>ドラフト</th><th>操作</th></tr></thead><tbody>';
-    filtered.forEach(o=>{
+    function renderRow(o,isSub){
       const r=o.r,idx=o.i;
-      const cls=[rowClass(r[3]),urgentClass(r[0])].filter(Boolean).join(' ');
+      const subCls=isSub?' row-sub':'';
+      const cls=[rowClass(r[3]),urgentClass(r[0])].filter(Boolean).join(' ')+subCls;
       const memo=state.memos[idx]?' row-edited':'';
       const draft=r[8]||'';
       const draftLink=draft?'<a class="draft-link" href="javascript:void(0)" onclick="openViewer(\''+draft+'\')" title="'+escapeHtml(draft)+'">📄 表示</a>':'<span style="color:var(--text-muted);font-size:11px">—</span>';
-      html+='<tr class="'+cls+memo+'" data-idx="'+idx+'">';
-      html+='<td class="deadline">'+escapeHtml(r[0])+'</td>';
-      html+='<td>'+escapeHtml(r[1])+'</td>';
-      html+='<td class="amount">'+escapeHtml(r[2])+'</td>';
-      html+='<td class="subj">'+escapeHtml(r[3])+'</td>';
-      html+='<td>'+escapeHtml(r[4])+'</td>';
-      html+='<td>'+escapeHtml(r[5])+'</td>';
-      html+='<td>'+escapeHtml(r[6])+'</td>';
-      html+='<td>'+impTag(r[7])+'</td>';
-      html+='<td>'+draftLink+'</td>';
-      html+='<td class="action-cell"><button class="btn btn-sm btn-detail" onclick="openDetail('+idx+')">詳細</button><button class="btn btn-sm" onclick="openEdit('+idx+')">編集</button></td>';
-      html+='</tr>';
-    });
+      let h='<tr class="'+cls+memo+'" data-idx="'+idx+'">';
+      h+='<td class="deadline">'+escapeHtml(r[0])+'</td>';
+      h+='<td>'+escapeHtml(r[1])+'</td>';
+      h+='<td class="amount">'+escapeHtml(r[2])+'</td>';
+      h+='<td class="subj">'+escapeHtml(r[3])+'</td>';
+      h+='<td>'+escapeHtml(r[4])+'</td>';
+      h+='<td>'+escapeHtml(r[5])+'</td>';
+      h+='<td>'+escapeHtml(r[6])+'</td>';
+      h+='<td>'+impTag(r[7])+'</td>';
+      h+='<td>'+draftLink+'</td>';
+      h+='<td class="action-cell"><button class="btn btn-sm btn-detail" onclick="openDetail('+idx+')">詳細</button><button class="btn btn-sm" onclick="openEdit('+idx+')">編集</button></td>';
+      h+='</tr>';
+      return h;
+    }
+    if(mainItems.length>0){
+      html+='<tr><td colspan="10" class="subsection-divider">▼ 主要案件（基本リスト）</td></tr>';
+      mainItems.forEach(o=>{html+=renderRow(o,false);});
+    }
+    if(subItems.length>0){
+      html+='<tr><td colspan="10" class="subsection-divider">▼ サブ案件（中央省庁・補完調査分）</td></tr>';
+      subItems.forEach(o=>{html+=renderRow(o,true);});
+    }
     html+='</tbody></table>';
     sectionEl.innerHTML=html;
     container.appendChild(sectionEl);
@@ -772,6 +835,40 @@ function openDetail(idx){
   const draft=r[8];
   document.getElementById('detailDraftLink').innerHTML=draft?
     '<a href="javascript:void(0)" onclick="closeDetail();openViewer(\''+draft+'\')">📄 '+escapeHtml(draft)+' を開く</a>':'（関連ドラフト未紐付け）';
+  // 選好性ガイド
+  const pref=window.GRANT_PREFERENCES&&window.GRANT_PREFERENCES[r[1]];
+  const prefBody=document.getElementById('prefBody');
+  if(pref){
+    const tag=(arr,c)=>arr.map(s=>'<span class="tag" style="background:'+c+';color:#FFFFFF;margin:2px">'+escapeHtml(s)+'</span>').join('');
+    prefBody.innerHTML=
+      '<div class="detail-h">採択実績</div>'+
+      '<div class="detail-meta"><strong>採択率</strong>'+escapeHtml(pref.r)+'<br><strong>採択者層</strong>'+escapeHtml(pref.pr)+'</div>'+
+      '<div class="detail-h">公表されている選考基準</div>'+
+      '<ul class="detail-list">'+pref.c.map(s=>'<li>'+escapeHtml(s)+'</li>').join('')+'</ul>'+
+      '<div class="detail-h">頻出キーワード（採択タイトル）</div>'+
+      '<div style="margin:6px 0">'+tag(pref.k,'#CC1400')+'</div>'+
+      '<div class="detail-h">採択タイトル例</div>'+
+      '<ul class="detail-list">'+pref.ex.map(s=>'<li style="font-size:11px;color:var(--text-secondary)">"'+escapeHtml(s)+'"</li>').join('')+'</ul>'+
+      '<div class="detail-h">書類の構造傾向</div>'+
+      '<ul class="detail-list">'+pref.st.map(s=>'<li>'+escapeHtml(s)+'</li>').join('')+'</ul>'+
+      '<div class="detail-h" style="color:#0A8043">✓ 好まれる要素</div>'+
+      '<ul class="detail-list">'+pref.lk.map(s=>'<li style="border-left:3px solid #0A8043;padding-left:8px">'+escapeHtml(s)+'</li>').join('')+'</ul>'+
+      '<div class="detail-h" style="color:#CC1400">✗ 避けるべき要素</div>'+
+      '<ul class="detail-list">'+pref.av.map(s=>'<li style="border-left:3px solid #CC1400;padding-left:8px">'+escapeHtml(s)+'</li>').join('')+'</ul>'+
+      '<div class="detail-h">ミラツクとの適合度</div>'+
+      '<div class="detail-body"><p>'+escapeHtml(pref.fit)+'</p></div>'+
+      '<div class="detail-h">編集ストラテジー</div>'+
+      '<div class="detail-body" style="background:var(--accent-muted);padding:10px 14px;border-radius:2px"><p>'+escapeHtml(pref.strat)+'</p></div>';
+  }else{
+    prefBody.innerHTML='<div style="padding:30px;text-align:center;color:var(--text-muted);font-size:12.5px">'+
+      '🔍 このプログラムの選好性データは公開情報未収集です。<br><br>'+
+      '一般的な書類作成の方針:<br>'+
+      '・公募要領の評価項目を順序通りに反映する<br>'+
+      '・先行事例（過去採択者の発表・書籍）を引用する<br>'+
+      '・社会的意義と実装可能性を両立させる<br>'+
+      '・財団・機関の理念やビジョンと整合させる'+
+      '</div>';
+  }
   // メモ
   document.getElementById('detailMemo').value=state.memos[idx]||'';
   document.getElementById('memoStatus').textContent=state.memos[idx]?'保存済':'—';
