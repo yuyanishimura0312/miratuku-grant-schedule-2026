@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ミラツク／esse-sense 補助金スケジュール 2026</title>
+<link rel="icon" href="https://esse-sense.com/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://unpkg.com/pizzip@3.1.6/dist/pizzip.js"></script>
+<script src="https://unpkg.com/docxtemplater@3.50.0/build/docxtemplater.js"></script>
+<script src="https://unpkg.com/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+<style>
+:root{
+  --bg:#FFFFFF;--card:#FFFFFF;--card-hover:#F7F7F5;
+  --accent:#121212;--accent-soft:#555555;
+  --accent-warm:#CC1400;--accent-warm-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.06);
+  --text:#121212;--text-secondary:#555555;--text-muted:#6B6B6B;
+  --border:#D9D9D9;--border-light:#EEEEEE;
+  --highlight:#CC1400;--surface:#F7F7F5;
+  --row-m:#FFF8E7;--row-e:#E7F0FF;--row-me:#EFE7FF;--row-urgent:#FFE0E0;
+  --font:"Noto Sans JP","Hiragino Sans",-apple-system,sans-serif;
+  --font-serif:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;
+}
+[data-theme="dark"]{
+  --bg:#121212;--card:#1A1A1A;--card-hover:#222222;
+  --accent:#E0E0E0;--accent-warm:#FF4030;--accent-warm-soft:#E03020;
+  --accent-muted:rgba(255,64,48,0.10);
+  --text:#E0E0E0;--text-secondary:#AAAAAA;--text-muted:#8A8A8A;
+  --border:#333333;--border-light:#2A2A2A;
+  --highlight:#FF4030;--surface:#1A1A1A;
+  --row-m:#2A2614;--row-e:#15203A;--row-me:#241A38;--row-urgent:#3A1818;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.7;letter-spacing:0.02em;font-feature-settings:"palt"}
+.top-bar{position:sticky;top:0;z-index:100;background:var(--bg);border-top:3px solid var(--accent);border-bottom:1px solid var(--border-light);padding:10px 20px;display:flex;justify-content:space-between;align-items:center;height:54px;gap:12px;flex-wrap:wrap}
+.brand{font-weight:700;font-size:13px;color:var(--accent-warm);letter-spacing:0.05em}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{cursor:pointer;background:var(--card);border:1px solid var(--border);color:var(--text);padding:6px 12px;font-family:var(--font);font-size:12px;border-radius:2px;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+.btn:hover{background:var(--surface);border-color:var(--accent-warm);color:var(--accent-warm)}
+.btn-primary{background:var(--accent-warm);color:#FFFFFF;border-color:var(--accent-warm)}
+.btn-primary:hover{background:var(--accent-warm-soft);color:#FFFFFF}
+.btn-sm{padding:3px 8px;font-size:11px}
+.layout{display:grid;grid-template-columns:230px 1fr;max-width:1640px;margin:0 auto}
+.toc-sidebar{position:sticky;top:64px;align-self:start;height:calc(100vh - 64px);overflow-y:auto;padding:20px 14px;border-right:1px solid var(--border-light);font-size:12.5px}
+.toc-sidebar h2{font-size:11px;letter-spacing:0.1em;color:var(--text-muted);margin:0 0 10px;font-weight:500}
+.toc-sidebar ol{list-style:none;padding:0;margin:0;counter-reset:toc}
+.toc-sidebar li{counter-increment:toc;margin-bottom:4px}
+.toc-sidebar li::before{content:counter(toc,decimal-leading-zero);font-family:"SF Mono",monospace;font-size:10px;color:var(--text-muted);margin-right:6px}
+.toc-sidebar a{color:var(--text);text-decoration:none}
+.toc-sidebar a:hover{color:var(--accent-warm)}
+main{padding:24px 28px 80px;max-width:1380px}
+h1{font-family:var(--font-serif);font-size:26px;font-weight:700;margin:0 0 6px;color:var(--text)}
+.subtitle{color:var(--text-secondary);font-size:13px;margin-bottom:24px}
+.subtitle a{color:var(--accent-warm);text-decoration:none}
+.subtitle a:hover{text-decoration:underline}
+section{margin-bottom:56px;padding-bottom:24px;border-bottom:1px solid var(--border-light)}
+section:last-of-type{border-bottom:none}
+h2{font-family:var(--font-serif);font-size:20px;font-weight:700;margin:0 0 6px;display:flex;align-items:baseline;gap:10px}
+h2 .ch-num{font-family:"SF Mono","Fira Code",monospace;font-size:12px;color:var(--accent-warm);font-weight:500;letter-spacing:0.1em}
+.lead{font-family:var(--font-serif);color:var(--text-secondary);font-size:14px;margin-bottom:16px;line-height:1.85}
+table{width:100%;border-collapse:collapse;font-size:12.5px;background:var(--card);margin-bottom:12px;table-layout:auto}
+thead th{background:var(--accent-warm);color:#FFFFFF;padding:8px 6px;text-align:left;font-weight:500;font-size:11.5px;letter-spacing:0.05em;border:1px solid var(--accent-warm-soft);white-space:nowrap;position:sticky;top:0}
+tbody td{padding:8px 6px;border:1px solid var(--border-light);vertical-align:top;line-height:1.5}
+tbody tr.row-m{background:var(--row-m)}
+tbody tr.row-e{background:var(--row-e)}
+tbody tr.row-me{background:var(--row-me)}
+tbody tr.row-urgent td:first-child{background:var(--row-urgent);font-weight:700;color:var(--accent-warm)}
+tbody tr:hover{background:var(--card-hover)}
+tbody tr.row-m:hover,tbody tr.row-e:hover,tbody tr.row-me:hover{filter:brightness(0.97)}
+.deadline{font-family:"SF Mono","Fira Code",monospace;font-size:11.5px;white-space:nowrap}
+.amount{white-space:nowrap;font-feature-settings:"tnum"}
+.subj{white-space:nowrap;font-size:11px;font-weight:500}
+.draft-link{color:var(--accent-warm);text-decoration:none;font-size:11px;display:inline-flex;align-items:center;gap:2px}
+.draft-link:hover{text-decoration:underline}
+.action-cell{display:flex;gap:4px;flex-wrap:wrap}
+.tag{display:inline-block;padding:1px 6px;border-radius:2px;font-size:10px;background:var(--accent-muted);color:var(--accent-warm);margin-right:4px;white-space:nowrap}
+.tag.imp{background:var(--accent-warm);color:#FFFFFF}
+.legend{display:grid;grid-template-columns:repeat(2,1fr);gap:6px 14px;font-size:12px}
+.legend dt{font-weight:700;color:var(--accent-warm)}
+.legend dd{margin:0 0 2px;color:var(--text-secondary)}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;justify-content:center;align-items:flex-start;padding:60px 20px;overflow-y:auto}
+.modal-bg.active{display:flex}
+.modal{background:var(--bg);border:1px solid var(--border);max-width:720px;width:100%;border-radius:4px;padding:24px;position:relative}
+.modal h3{margin:0 0 16px;font-size:18px;color:var(--accent-warm)}
+.modal-close{position:absolute;top:12px;right:14px;cursor:pointer;font-size:20px;background:none;border:none;color:var(--text)}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;font-weight:700;margin-bottom:4px;color:var(--text-secondary);letter-spacing:0.05em}
+.field input,.field textarea,.field select{width:100%;font-family:var(--font);font-size:13px;padding:6px 8px;border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:2px}
+.field textarea{min-height:80px;resize:vertical}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+.upload-card{border:1px solid var(--border);background:var(--card);padding:18px;border-radius:4px;margin-bottom:16px}
+.upload-card h3{margin:0 0 8px;color:var(--accent-warm);font-size:15px}
+.upload-card p{margin:0 0 10px;color:var(--text-secondary);font-size:12.5px}
+.placeholder-list{font-family:"SF Mono",monospace;font-size:11px;background:var(--surface);padding:8px;border-radius:2px;margin:8px 0;color:var(--accent-warm)}
+.preset-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-top:8px}
+.preset-btn{background:var(--surface);border:1px solid var(--border);padding:8px 10px;text-align:left;cursor:pointer;font-size:11px;font-family:var(--font);color:var(--text);border-radius:2px}
+.preset-btn:hover{border-color:var(--accent-warm);background:var(--card-hover)}
+.preset-btn strong{display:block;font-size:12px;color:var(--accent-warm);margin-bottom:2px}
+.flash{position:fixed;bottom:20px;right:20px;background:var(--accent-warm);color:#FFFFFF;padding:10px 18px;border-radius:2px;font-size:12px;z-index:2000;opacity:0;transition:opacity 0.3s}
+.flash.show{opacity:1}
+.search-box{background:var(--card);border:1px solid var(--border);padding:6px 10px;font-size:12px;color:var(--text);border-radius:2px;font-family:var(--font);min-width:160px}
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center;font-size:12px}
+.filter-row label{color:var(--text-secondary);font-size:11px;margin-right:4px}
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:18px}
+.stats-card{border:1px solid var(--border);padding:18px;background:var(--card)}
+.stats-card h3{margin:0 0 10px;font-size:14px;color:var(--accent-warm);font-weight:700;border-bottom:1px solid var(--accent-warm);padding-bottom:6px}
+.stats-card .total{font-size:13px;font-weight:700;margin-top:10px;padding-top:10px;border-top:2px solid var(--accent);color:var(--accent)}
+.theme-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:14px}
+.theme-card{border:1px solid var(--border);padding:14px 16px;background:var(--card)}
+.theme-card h4{margin:0 0 4px;font-size:13px;color:var(--accent-warm)}
+.theme-card p{margin:0;font-size:11.5px;color:var(--text-secondary);line-height:1.7}
+.row-edited{box-shadow:inset 4px 0 0 var(--accent-warm)}
+@media (max-width:1000px){
+  .layout{grid-template-columns:1fr}
+  .toc-sidebar{position:static;height:auto;border-right:none;border-bottom:1px solid var(--border-light);max-height:180px}
+  main{padding:18px 12px}
+  table{font-size:11px}
+  thead th,tbody td{padding:5px 4px}
+  .stats-grid{grid-template-columns:1fr}
+}
+@media print{
+  .toc-sidebar,.btn,.toolbar,.action-cell,.modal-bg,.upload-card{display:none !important}
+  .layout{grid-template-columns:1fr}
+  main{padding:0}
+  body{font-size:10pt}
+}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="brand">MIRATUKU × ESSE-SENSE | GRANT SCHEDULE 2026</div>
+  <div class="toolbar">
+    <input type="search" id="searchBox" class="search-box" placeholder="検索（名称・主体・テーマ）">
+    <button class="btn" onclick="addRow()">＋ 新規追加</button>
+    <button class="btn" onclick="downloadJSON()">JSON</button>
+    <button class="btn" onclick="downloadCSV()">CSV</button>
+    <button class="btn" onclick="downloadDraftsZip()">ドラフト一括ZIP</button>
+    <button class="btn" onclick="resetEdits()">編集リセット</button>
+    <button class="btn" onclick="toggleTheme()">テーマ</button>
+  </div>
+</div>
+
+<div class="layout">
+<aside class="toc-sidebar">
+<h2>CONTENTS</h2>
+<ol>
+  <li><a href="#overview">概要・凡例</a></li>
+  <li><a href="#upload">雛形アップロード</a></li>
+  <li><a href="#may">5月の締切</a></li>
+  <li><a href="#june">6月の締切</a></li>
+  <li><a href="#july">7月の締切</a></li>
+  <li><a href="#august">8月の締切</a></li>
+  <li><a href="#september">9月の締切</a></li>
+  <li><a href="#perpetual">通年・随時応募</a></li>
+  <li><a href="#monthly">月次アクション</a></li>
+  <li><a href="#stats">採択期待値</a></li>
+  <li><a href="#themes">7つのテーマ</a></li>
+  <li><a href="#drafts">提出書類ドラフト一覧</a></li>
+</ol>
+</aside>
+
+<main>
+<h1>ミラツク／esse-sense<br>補助金・助成金 提出スケジュール</h1>
+<p class="subtitle">2026年5月〜9月｜作成日 2026-05-09｜<a href="https://yuyanishimura0312.github.io/miratuku-news-v2/databases.html" target="_blank">Grant DB 最新版</a><br>機能：行クリックで編集／提出書類ドラフトリンク／雛形アップロードして自動書込／編集はブラウザに保存</p>
+
+<section id="overview">
+<h2><span class="ch-num">01</span>概要と凡例</h2>
+<p class="lead">本ページは、特定非営利活動法人ミラツク（M）と株式会社esse-sense（E）が2026年5月〜9月に応募可能な補助金・助成金を時系列で整理したものです。各行の「編集」ボタンから内容を更新でき、編集内容はブラウザに保存されます。「ドラフト」リンクから関連する提出書類案を閲覧できます。雛形アップロード機能では、Word・テキスト・Markdownの雛形ファイルにプレースホルダー（{{法人名}}など）を仕込めば、選択した助成金の情報を自動的に流し込んで書類を生成できます。</p>
+
+<details style="margin-bottom:14px">
+<summary style="cursor:pointer;color:var(--accent-warm);font-weight:500">主体・強み・テーマ凡例を表示</summary>
+<div style="padding:14px 0">
+<h4 style="font-size:13px;color:var(--accent-warm);margin:8px 0 6px">主体</h4>
+<dl class="legend">
+<dt>M</dt><dd>ミラツク（NPO）単独</dd>
+<dt>E</dt><dd>esse-sense（営利法人）単独</dd>
+<dt>M+E</dt><dd>ミラツク × esse-sense 共同応募</dd>
+<dt>M(連携大学)</dt><dd>ミラツクが連携大学PIを通じて参画</dd>
+</dl>
+<h4 style="font-size:13px;color:var(--accent-warm);margin:14px 0 6px">強み</h4>
+<dl class="legend">
+<dt>①</dt><dd>学際的知見データベース構築・活用（26 DB）</dd>
+<dt>②</dt><dd>セクター間協働・コラボレーション</dd>
+<dt>③</dt><dd>研究者の知の社会接続</dd>
+<dt>④</dt><dd>データ活用</dd>
+<dt>⑤</dt><dd>開発・実装</dd>
+<dt>⑥</dt><dd>大規模解析・テキスト解析</dd>
+<dt>⑦</dt><dd>海外招聘・シンポジウム開催</dd>
+</dl>
+<h4 style="font-size:13px;color:var(--accent-warm);margin:14px 0 6px">テーマ</h4>
+<dl class="legend">
+<dt>A</dt><dd>異分野翻訳の実証研究</dd>
+<dt>B</dt><dd>異分野協働コミュニティの社会実装</dd>
+<dt>C</dt><dd>革新的サービス開発</dd>
+<dt>D</dt><dd>国際フォーラム・シンポジウム開催</dd>
+<dt>E</dt><dd>文化メディア・出版</dd>
+<dt>F</dt><dd>先進情報・データサイエンス研究</dd>
+<dt>G</dt><dd>DX・IT導入・省力化</dd>
+</dl>
+</div>
+</details>
+</section>
+
+<section id="upload">
+<h2><span class="ch-num">02</span>雛形アップロード＆自動書込</h2>
+<p class="lead">申請書の雛形ファイル（.docx／.txt／.md）をアップロードすると、プレースホルダー（{{法人名}}や{法人名}など）を検出し、選択した助成金に対応する値を自動で書き込みます。完成した書類はそのままダウンロードできます。</p>
+
+<div class="upload-card">
+  <h3>1. 助成金を選択</h3>
+  <p>書き込み先の情報を選びます（ドロップダウンから選択した助成金の情報が雛形に流し込まれます）</p>
+  <div class="field">
+    <select id="grantSelector"></select>
+  </div>
+
+  <h3>2. プレースホルダー仕様</h3>
+  <p>雛形ファイル内に以下のいずれかの形式でプレースホルダーを仕込んでください</p>
+  <div class="placeholder-list">
+{{法人名}} {{代表者}} {{設立年}} {{所在地}} {{営業収益}} {{専従スタッフ数}}
+{{助成金名}} {{締切}} {{上限額}} {{主体}} {{テーマ}} {{該当強み}} {{備考}}
+{{研究テーマ}} {{事業概要}} {{助成希望額}} {{研究期間}} {{採択期待値}}
+※ {法人名} のような単一波括弧形式も同時にサポート（docxはdocxtemplaterで{法人名}形式が標準）
+  </div>
+
+  <h3>3. 雛形をアップロード</h3>
+  <p>.docx／.txt／.md／任意のテキスト形式に対応</p>
+  <input type="file" id="templateFile" accept=".docx,.txt,.md,.markdown,.json,.html" style="margin:8px 0">
+  <div class="modal-actions" style="justify-content:flex-start">
+    <button class="btn btn-primary" onclick="processTemplate()">プレースホルダーを書き込んでダウンロード</button>
+  </div>
+  <div id="uploadStatus" style="margin-top:10px;font-size:12px;color:var(--text-secondary)"></div>
+</div>
+
+<div class="upload-card">
+  <h3>4. プリセット雛形（提出書類ドラフトを直接ダウンロード）</h3>
+  <p>既に作成済みの13件の提出書類ドラフトをそのままダウンロード（.md／.txt／.docx形式）</p>
+  <div class="preset-grid" id="presetGrid"></div>
+</div>
+</section>
+
+<!-- 月別セクションは JS で挿入 -->
+<div id="schedulesContainer"></div>
+
+<section id="monthly">
+<h2><span class="ch-num">09</span>月次アクション計画</h2>
+<p class="lead">各月の週次重点アクションです。連携大学PIの確保（5月中旬まで）が国系大型助成への応募の前提となります。</p>
+<table>
+<thead><tr><th>月</th><th>週</th><th>重点アクション</th><th>対象助成金</th><th>主体</th><th>作業内容</th></tr></thead>
+<tbody>
+<tr class="row-m"><td>5月</td><td class="deadline">5/9-5/11</td><td>緊急提出</td><td>松下幸之助 研究助成（80万）／京都府文化力チャレンジ（20万）</td><td class="subj">M</td><td>申請書最終整形＋提出</td></tr>
+<tr class="row-m"><td>5月</td><td class="deadline">5/12-5/15</td><td>連携大学コンタクト＋次案件着手</td><td>JST創発／NEDO数理／JST さきがけ</td><td class="subj">M(連携大学)</td><td>PI候補5-10名へコンタクト、ドラフト着手</td></tr>
+<tr class="row-me"><td>5月</td><td class="deadline">5/16-5/22</td><td>中盤締切対応</td><td>ロッテ財団／産学公の森／松下出版／京都DX</td><td class="subj">M+E</td><td>三者連携形成、出版助成提出</td></tr>
+<tr class="row-me"><td>5月</td><td class="deadline">5/23-5/30</td><td>5月末ラッシュ</td><td>JST さきがけ・ACT-X／内藤国際／住友電工／トヨタ国際／沖縄DX</td><td class="subj">M+E</td><td>国系応募と民間財団同時並行</td></tr>
+<tr class="row-m"><td>6月</td><td class="deadline">6/1-6/3</td><td>RISTEX・トヨタ財団同日締切</td><td>JST CREST／JST RISTEX×2／トヨタ国内／GBizID取得</td><td class="subj">M(連携大学)</td><td>事業計画書最終提出（最重要日）</td></tr>
+<tr class="row-me"><td>6月</td><td class="deadline">6/4-6/10</td><td>野村・トヨタ研究・京都Arts</td><td>野村みらい／トヨタ研究／Arts Aid KYOTO／中国電力</td><td class="subj">M+E</td><td>Arts Aid申請＋シンポ系並行</td></tr>
+<tr class="row-me"><td>6月</td><td class="deadline">6/11-6/18</td><td>DNP・JSPS科研費・COI-NEXT</td><td>DNP研究／JSPS特別推進／COI-NEXT</td><td class="subj">M+E(コンソーシアム)</td><td>コンソーシアム合意形成、最大規模申請</td></tr>
+<tr class="row-me"><td>6月</td><td class="deadline">6/19-6/30</td><td>立石・清水・JFE・住友</td><td>立石財団×2／清水基金／JFEアジア／住友基礎・環境</td><td class="subj">M+E</td><td>国際会議系・学術助成集中提出</td></tr>
+<tr class="row-m"><td>7月</td><td class="deadline">7/1-7/15</td><td>鹿島学術振興財団</td><td>鹿島特定テーマ研究助成</td><td class="subj">M(連携大学)</td><td>連携大学共同応募提出</td></tr>
+<tr class="row-me"><td>7月</td><td class="deadline">7/16-7/31</td><td>稲盛・島津・セコム</td><td>稲盛はぐくむ／日本食品化学／セコム／島津データサイエンス</td><td class="subj">M / E</td><td>esse-sense単独応募の核（島津）</td></tr>
+<tr class="row-me"><td>8月</td><td class="deadline">8/1-8/15</td><td>稲盛・テルモ</td><td>稲盛たかめる／テルモ国際</td><td class="subj">M+E</td><td>国際交流系応募</td></tr>
+<tr class="row-me"><td>8月</td><td class="deadline">8/16-8/31</td><td>ものづくり19次本格準備</td><td>ものづくり19次／加藤バイオ</td><td class="subj">M / E</td><td>事業計画書ドラフト精緻化</td></tr>
+<tr class="row-me"><td>9月</td><td class="deadline">9/1-9/15</td><td>9月初旬ラッシュ</td><td>住友アジア／興和国際／電気通信普及財団／放送文化基金</td><td class="subj">M+E</td><td>通年系秋公募の集中対応</td></tr>
+<tr class="row-m"><td>9月</td><td class="deadline">9/16-9/27</td><td>立石(S)</td><td>立石(S)研究助成</td><td class="subj">M</td><td>提出</td></tr>
+<tr class="row-me"><td>9月</td><td class="deadline">9/28-9/30</td><td>ものづくり19次最終</td><td>ものづくり19次／加藤バイオ研究</td><td class="subj">M / E</td><td>経産省最大規模応募提出</td></tr>
+</tbody>
+</table>
+</section>
+
+<section id="stats">
+<h2><span class="ch-num">10</span>採択期待値の試算</h2>
+<p class="lead">5-9月期に応募予定の助成金について、過去の採択率データを基に期待採択額を試算しました。中位想定で両法人合計約1.2億〜2.7億円規模の採択期待が見込まれます。</p>
+<div class="stats-grid">
+<div class="stats-card">
+<h3>ミラツク</h3>
+<table style="font-size:12px">
+<tr><td>全国規模 民間財団助成</td><td class="amount">約4,000-5,000万円</td></tr>
+<tr><td>京都府特有助成（6-9件）</td><td class="amount">約500-1,500万円</td></tr>
+<tr><td>沖縄県特有助成（連携経由）</td><td class="amount">約300-700万円</td></tr>
+<tr><td>国・NEDO・総務省系（連携大学経由中心）</td><td class="amount">約3,000-10,000万円</td></tr>
+</table>
+<div class="total">合計（中位想定 33-42件）<br><span style="font-size:18px;color:var(--accent-warm)">約8,000〜17,000万円</span></div>
+</div>
+<div class="stats-card">
+<h3>esse-sense</h3>
+<table style="font-size:12px">
+<tr><td>全国規模 民間財団助成</td><td class="amount">約2,000-3,000万円</td></tr>
+<tr><td>京都府特有助成（3-5件）</td><td class="amount">約500-800万円</td></tr>
+<tr><td>沖縄県特有助成（連携経由）</td><td class="amount">約500-1,500万円</td></tr>
+<tr><td>国・NEDO・総務省系（M+E共同含む）</td><td class="amount">約1,000-5,000万円</td></tr>
+</table>
+<div class="total">合計（中位想定 17-27件）<br><span style="font-size:18px;color:var(--accent-warm)">約4,000〜10,000万円</span></div>
+</div>
+</div>
+<div class="stats-card" style="margin-top:18px;text-align:center">
+<h3>両法人 合計</h3>
+<div style="font-size:13px">合計（中位想定 50-69件応募）</div>
+<div style="font-size:24px;font-weight:700;color:var(--accent-warm);margin-top:6px">約1.2〜2.7億円</div>
+</div>
+</section>
+
+<section id="themes">
+<h2><span class="ch-num">11</span>応募の7テーマ</h2>
+<p class="lead">両法人の強みを組み合わせ、応募ポートフォリオを次の七つのテーマに整理しています。</p>
+<div class="theme-grid">
+<div class="theme-card"><h4>A: 異分野翻訳の実証研究</h4><p>26知識DB（30,288概念）を基盤に、AI協働時代における異分野翻訳メカニズムを実証的に解明する研究。研究助成系（民間財団・JSPS）が主たる応募先。</p></div>
+<div class="theme-card"><h4>B: 異分野協働コミュニティの社会実装</h4><p>350名のクロスセクター・コミュニティと20社の企業協働を基盤に、異分野協働の社会実装を推進。JST RISTEX、トヨタ財団、野村基金等。</p></div>
+<div class="theme-card"><h4>C: 革新的サービス開発</h4><p>知識基盤×AIサービス。NPO法人としての応募が希少な経産省ものづくり補助金（4,000万円）が中核。esse-senseはIT導入補助金等も併用。</p></div>
+<div class="theme-card"><h4>D: 国際フォーラム・シンポジウム開催</h4><p>esse-sense Future Forum、比叡山未来会議、京都未来フォーラム（仮）の3展開。京都市MICE開催支援助成金（最大1,000万円）が中核。</p></div>
+<div class="theme-card"><h4>E: 文化メディア・出版</h4><p>連載300話の書籍化、ミラツクジャーナルの体系化、26DBのオープン公開。松下出版助成・企業メセナ協議会助成認定等。</p></div>
+<div class="theme-card"><h4>F: 先進情報・データサイエンス研究</h4><p>esse-sense主体での応募の核。島津科学技術振興財団研究開発助成（先進情報・データサイエンス分野）が最重要。</p></div>
+<div class="theme-card"><h4>G: DX・IT導入・省力化</h4><p>esse-senseの編集・分析業務、CRM、検索インフラのDX。IT導入補助金、京都市中小企業DX、総務省DX推進パッケージ等。</p></div>
+</div>
+</section>
+
+<section id="drafts">
+<h2><span class="ch-num">12</span>提出書類ドラフト一覧</h2>
+<p class="lead">以下の13ファイルが既に作成済みです。クリックすると新しいタブで開きます。</p>
+<table>
+<thead><tr><th>#</th><th>ファイル名</th><th>内容</th><th>操作</th></tr></thead>
+<tbody id="draftsList"></tbody>
+</table>
+</section>
+
+</main>
+</div>
+
+<!-- 編集モーダル -->
+<div class="modal-bg" id="editModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeEdit()">×</button>
+    <h3 id="editTitle">行を編集</h3>
+    <div class="field"><label>締切</label><input id="ed_0"></div>
+    <div class="field"><label>助成金名</label><input id="ed_1"></div>
+    <div class="field"><label>上限額</label><input id="ed_2"></div>
+    <div class="field"><label>主体</label><input id="ed_3"></div>
+    <div class="field"><label>テーマ</label><input id="ed_4"></div>
+    <div class="field"><label>該当強み</label><input id="ed_5"></div>
+    <div class="field"><label>アクション</label><input id="ed_6"></div>
+    <div class="field"><label>備考</label><input id="ed_7"></div>
+    <div class="field"><label>関連ドラフトファイル名（drafts/配下）</label><input id="ed_draft" placeholder="例: 01_松下幸之助記念志財団_研究助成.md"></div>
+    <div class="field"><label>メモ（自由記述）</label><textarea id="ed_memo"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeEdit()">キャンセル</button>
+      <button class="btn" onclick="deleteRow()">削除</button>
+      <button class="btn btn-primary" onclick="saveEdit()">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="flash" id="flash"></div>
+
+<script>
+// ============================================
+// データ定義
+// ============================================
+const ORG_DEFAULTS = {
+  '法人名': '特定非営利活動法人ミラツク',
+  '代表者': '西村勇哉',
+  '設立年': '2010年',
+  '所在地': '京都府・東京都',
+  '営業収益': '87,405,221円（2024年度・第14期）',
+  '専従スタッフ数': '25名',
+  '研究テーマ': 'AI協働時代における異分野翻訳メカニズムの実証研究',
+  '事業概要': '26の学際的知識データベース（学術知識30,288概念ほか）を基盤に、研究者・NPO・企業・行政の異分野協働を支援する事業',
+  '助成希望額': '（個別記入）',
+  '研究期間': '2026年6月〜2027年3月（10ヶ月）',
+  '採択期待値': '中位想定で両法人合計約1.2〜2.7億円'
+};
+
+const ORG_DEFAULTS_E = {
+  '法人名': '株式会社esse-sense',
+  '代表者': '（記入）',
+  '設立年': '（記入）',
+  '所在地': '（記入）',
+  '営業収益': '（記入）',
+  '専従スタッフ数': '（記入）'
+};
+
+const DEFAULT_ROWS = [
+  ["2026-05-11","松下幸之助記念志財団 研究助成（人文社会科学）","80万円","M","A 異分野翻訳","①③","5/10完成→5/11提出","緊急","01_松下幸之助記念志財団_研究助成.md"],
+  ["2026-05-11","京都府 文化力チャレンジ補助金","20万円","M","E 文化メディア","③","軽量応募","京都特有",""],
+  ["2026-05-14","JST 創発的研究支援事業","約3,000万円(3年)","M(連携大学)","A 学際研究","①③","連携大学PI確保","国系","12_国・NEDO・総務省系助成金.md"],
+  ["2026-05-14","京都エコノミック・ガーデニング支援","段階設定","E","C 中小企業生産性","④⑤","esse-sense応募判定","京都特有","11_京都府特有助成金.md"],
+  ["2026-05-15","サステナブルツーリズム推進事業（沖縄）","500万円","M(県内パートナー)","B 地域社会実装","②④","県内パートナー連携","沖縄特有","10_沖縄県特有助成金.md"],
+  ["2026-05-20","NEDO 数理科学分野×産学連携の調査","2,000万円","M+E(産学連携)","A 学際研究","①④⑥","産学連携体制","国系","12_国・NEDO・総務省系助成金.md"],
+  ["2026-05-22","ロッテ財団 実装型共同研究助成","—","M+E","B 社会実装","②⑤","M+E共同応募","",""],
+  ["2026-05-25","京都産学公の森推進事業","段階設定","M+E(連携大学)","A 産学公連携","①②③","三者連携","京都特有","11_京都府特有助成金.md"],
+  ["2026-05-26","JST さきがけ／ACT-X 2026年度","5,000万/600万","M(連携大学若手)","A 学際研究","①③","若手研究者連携","国系","12_国・NEDO・総務省系助成金.md"],
+  ["2026-05-27","松下幸之助記念志財団 出版助成","200万円","M","E 文化メディア","③","連載300話書籍化","",""],
+  ["2026-05-29","内藤記念国際会議開催助成金","—","M+E(連携大学)","D 国際会議","⑦","esse-sense Forum","",""],
+  ["2026-05-29","住友電工グループ社会貢献基金 学術研究助成","—","M","A 学際研究","①③","提出","",""],
+  ["2026-05-29","京都市デジタル化推進プロジェクト","100万円","E","G DX","④⑤","esse-sense応募","京都特有","11_京都府特有助成金.md"],
+  ["2026-05-30","トヨタ財団 国際助成プログラム","1,000万円","M+E","B+D 国際協働","②⑦","本格応募","重要",""],
+  ["2026-05-30","DX推進補助事業（沖縄DX促進）","1,000万円","M+E(県内パートナー)","C データ活用","①④⑤","県内連携","沖縄特有","10_沖縄県特有助成金.md"],
+  ["2026-06-02","JST CREST「エクスポソーム」","3億円(5年)","M(連携大学PI)","A 大型学術","①③","連携大学PI","国系","12_国・NEDO・総務省系助成金.md"],
+  ["2026-06-03","JST RISTEX「ケアが根づく社会システム」","2,300万円","M(連携大学)","B 社会実装","②⑤","RISTEX応募","国系・最重要","12_国・NEDO・総務省系助成金.md"],
+  ["2026-06-03","JST RISTEX「SDGs達成に向けた共創的研究開発」","1,900万円","M(連携大学)","B 社会実装","②③","RISTEX応募","国系・最重要","12_国・NEDO・総務省系助成金.md"],
+  ["2026-06-03","トヨタ財団 国内助成プログラム（自治型社会）","1,500万円","M","B コミュニティ","②③","350名コミュニティ","重要",""],
+  ["2026-06-05","野村グループ基金 みらい助成プログラム","600万円","M","B 社会実装","②③","ドラフト精緻化","重要","02_野村グループ基金_みらい助成.md"],
+  ["2026-06-05","トヨタ財団 研究助成「未来の社会システム」","800万円","M","A+B","②③④","本格応募","重要",""],
+  ["2026-06-05","京都市 Arts Aid KYOTO","段階設定","M","E 文化メディア","③","京都市文化","京都特有","11_京都府特有助成金.md"],
+  ["2026-06-05","コミュニティ活動促進事業（沖縄）","100万円程度","M(県内パートナー)","B 地域","②","沖縄県内連携","沖縄特有","10_沖縄県特有助成金.md"],
+  ["2026-06-10","中国電力技術研究財団 国際会議等開催助成","—","M+E","D シンポジウム","⑦","Future Forum","",""],
+  ["2026-06-15","DNP文化振興財団 グラフィック文化研究助成","100-300万円","M+E","F DB構築★","①④","Editorial DB活用","京都特有・重要","11_京都府特有助成金.md"],
+  ["2026-06-16","JSPS科研費 特別推進・基盤研究(S)","最大3億円","M(連携大学PI)","A 大型学術","①③④","連携大学PI","国系・最重要","05_JSPS_人文社会研究.md"],
+  ["2026-06-18","共創の場形成支援プログラム（COI-NEXT）「未来共創分野」","3,700万円/年×2年","M+E(コンソーシアム)","A+B 大型協働","①②③","コンソーシアム形成","国系・最重要","12_国・NEDO・総務省系助成金.md"],
+  ["2026-06-19","立石科学技術振興財団 国際交流助成","—","M+E","D 国際交流","⑦","Future Forum","",""],
+  ["2026-06-19","立石科学技術振興財団 国際会議開催助成","—","M+E","D 国際会議","⑦","Future Forum","",""],
+  ["2026-06-20","清水基金 文化芸術活動特別助成事業","30-200万円","M(NPO)","E 文化×福祉","②③","京都市内文化","京都特有","11_京都府特有助成金.md"],
+  ["2026-06-22","JFE21世紀財団 アジア歴史研究助成","150万円","M","A 学術","①③","知識DB活用","",""],
+  ["2026-06-26","京都市芸術文化協会 伝統芸能文化復元","70万円","M","E 伝統アーカイブ","①③","アーカイブ研究","京都特有","11_京都府特有助成金.md"],
+  ["2026-06-30","住友財団 基礎科学研究助成","1,000万円","M","A 学術","①③","本格応募","重要",""],
+  ["2026-06-30","住友財団 環境研究助成","—","M","A 学術","①","提出","",""],
+  ["2026-07-01","鹿島学術振興財団 特定テーマ研究助成","2,000万円","M(連携大学)","A 学術","①③④","連携大学経由","重要",""],
+  ["2026-07-22","稲盛研究助成「はぐくむ」","—","M(個人連携)","A 学術","①","個人推薦","",""],
+  ["2026-07-25","日本食品化学研究振興財団 シンポジウム開催助成","—","M+E","D シンポジウム","⑦","Future Forum","",""],
+  ["2026-07-31","セコム科学技術振興財団 学術集会助成","—","M+E","D 学術集会","⑦","シンポジウム経費","",""],
+  ["2026-07-31","島津科学技術振興財団 研究開発助成（先進情報・データサイエンス）","—","E","F データサイエンス","①④⑥","esse-sense主体★","重要","07_esse-sense_補助金候補.md"],
+  ["2026-08-05","稲盛研究助成「たかめる」","—","M(個人連携)","A 学術","①","個人推薦","",""],
+  ["2026-08-07","テルモ生命科学振興財団 国際交流助成","—","M+E","D 国際交流","⑦","海外招聘","",""],
+  ["2026-08-31","加藤記念バイオサイエンス振興財団 国際交流助成","—","M+E","D 国際交流","⑦","海外招聘","",""],
+  ["2026-09-01","住友財団 アジア諸国における日本関連研究助成","—","M+E","A+D 国際協働研究","①③⑦","国際研究","",""],
+  ["2026-09-01","興和生命科学振興財団 国際交流助成・研究会等援助","—","M+E","D シンポジウム","⑦","Future Forum","",""],
+  ["2026-09-01〜11/30","電気通信普及財団 研究調査助成","100-300万円","M","A 情報通信×社会","①③","9/1受付開始","国系","12_国・NEDO・総務省系助成金.md"],
+  ["2026-09-01〜09/30","放送文化基金 放送文化関連研究開発助成","300-600万円","M","A メディア研究","③⑥","9月公募","国系","12_国・NEDO・総務省系助成金.md"],
+  ["2026-09-18","立石科学技術振興財団 研究助成(S)","—","M","A 大型学術","①④","提出","",""],
+  ["2026-09-28","ものづくり補助金 19次（経産省）","4,000万円","M / E","C 革新サービス","①④⑤","GBizID必要","国系・最重要","03_ものづくり補助金_19次.md"],
+  ["2026-09-30","加藤記念バイオサイエンス振興財団 研究助成","—","M(条件確認)","A 学術","①","適合確認","",""],
+  ["通年","京都市 MICE開催支援助成金（大規模国際）","1,000万円","M+E","D 国際フォーラム","⑦","京都未来フォーラム","京都特有・最重要","11_京都府特有助成金.md"],
+  ["通年","関西エネルギー財団 海外研究者招聘助成","渡航費・滞在費実額","M+E","D 海外招聘","⑦","Future Forum","京都特有","11_京都府特有助成金.md"],
+  ["通年","関西エネルギー財団 研究発表会等開催助成","100-300万円","M+E","D シンポジウム","⑦","シンポジウム","京都特有","11_京都府特有助成金.md"],
+  ["通年","京都市国際交流協会 国際交流事業支援","段階設定","M+E","D 国際","⑦","国際協力","京都特有","11_京都府特有助成金.md"],
+  ["通年","京都市中小企業DX支援補助金","300万円","E","G DX","④⑤","esse-sense","京都特有","11_京都府特有助成金.md"],
+  ["通年","京都市 新事業進出補助金","300万円","E","C 新事業","③⑤","esse-sense","京都特有","11_京都府特有助成金.md"],
+  ["通年","コンベンション開催支援事業（沖縄）","1,000万円","M+E","D 国際フォーラム","⑦","Future Forum沖縄開催","沖縄特有","10_沖縄県特有助成金.md"],
+  ["通年","事業承継補助金（沖縄県産業振興公社）","数百万円","E(県内)","C","⑤","県内連携","沖縄特有","10_沖縄県特有助成金.md"],
+  ["通年","総務省 地域社会DX推進パッケージ事業","計画策定500万・推進体制1,000万円〜","M+E(自治体)","F+G DX","①④⑤","自治体連携","国系・通年","12_国・NEDO・総務省系助成金.md"],
+  ["通年","ムーンショット型研究開発事業","年1-5億円","M+E(コンソーシアム)","A+B 大型","①②③","大型コンソーシアム","国系・最大","12_国・NEDO・総務省系助成金.md"],
+  ["通年","内閣府 規制サンドボックス制度","実証費用の一部","M+E","C 規制対応","②⑤","実証企業伴う","国系","12_国・NEDO・総務省系助成金.md"],
+  ["通年","経産省 地域経済循環創造事業（ローカル10,000）","事業規模による","M+E(自治体)","B 地域","②④","自治体提案","国系","12_国・NEDO・総務省系助成金.md"],
+  ["通年","農林水産省 スマート農業（データ・AI領域）","500-5,000万円","M+E(農業法人)","F データ・AI","①④","農業法人連携","国系","12_国・NEDO・総務省系助成金.md"],
+  ["通年","文化庁 文化芸術振興費補助金","500-3,000万円","M","E 文化アーカイブ","①③","アーカイブ","国系","12_国・NEDO・総務省系助成金.md"],
+  ["通年","NHK放送技術研究所 共同研究プログラム","数百万-数千万円","M","A メディア研究","③⑥","NHK連携","国系","12_国・NEDO・総務省系助成金.md"],
+  ["通年","企業メセナ協議会 助成認定","3,000万円","M","E 文化","②③","認定取得","","04_企業メセナ協議会_助成認定.md"],
+  ["通年","お金をまわそう基金","1,164万円","M","B コミュニティ","②③","コミュニティ拡張","","06_お金をまわそう基金.md"],
+  ["通年","JSPS 課題設定先導事業（連携大学経由）","—","M(連携大学)","A 人文社会","①③","連携準備","","05_JSPS_人文社会研究.md"],
+  ["通年","JSPS データインフラ強化事業（連携大学経由）","—","M(連携大学)","A データインフラ","①④","26DB活用","","05_JSPS_人文社会研究.md"],
+  ["通年","IT導入補助金 2026","1,500万円","E","G DX","④⑤","esse-sense","","07_esse-sense_補助金候補.md"],
+  ["通年","中小企業省力化投資補助金","1,000万円","E","G 省力化","⑤","esse-sense","","07_esse-sense_補助金候補.md"]
+];
+
+const DRAFT_FILES = [
+  ["00","00_summary.md","全体サマリ・基礎情報"],
+  ["01","01_松下幸之助記念志財団_研究助成.md","松下幸之助 研究助成（5/11締切）"],
+  ["02","02_野村グループ基金_みらい助成.md","野村みらい助成（6/5締切）"],
+  ["03","03_ものづくり補助金_19次.md","ものづくり補助金 19次（9/28締切）"],
+  ["04","04_企業メセナ協議会_助成認定.md","企業メセナ協議会 助成認定"],
+  ["05","05_JSPS_人文社会研究.md","JSPS 人文社会研究"],
+  ["06","06_お金をまわそう基金.md","お金をまわそう基金"],
+  ["07","07_esse-sense_補助金候補.md","esse-sense向け補助金候補"],
+  ["08","08_統合実行計画.md","統合実行計画"],
+  ["09","09_提出スケジュール_5月-9月.md","提出スケジュール（統合版）"],
+  ["09a","09a_提出スケジュール_ミラツク.md","ミラツク専用スケジュール"],
+  ["09b","09b_提出スケジュール_esse-sense.md","esse-sense専用スケジュール"],
+  ["10","10_沖縄県特有助成金.md","沖縄県特有助成金"],
+  ["11","11_京都府特有助成金.md","京都府特有助成金"],
+  ["12","12_国・NEDO・総務省系助成金.md","国・NEDO・総務省系助成金"]
+];
+
+// ============================================
+// localStorage state
+// ============================================
+const STORAGE_KEY = 'miratuku-grant-schedule-v1';
+function loadState(){
+  try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{rows:JSON.parse(JSON.stringify(DEFAULT_ROWS)),memos:{},drafts:{}};}
+  catch(e){return {rows:JSON.parse(JSON.stringify(DEFAULT_ROWS)),memos:{},drafts:{}};}
+}
+function saveState(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
+let state = loadState();
+// データ整合性: 行が古い場合は再初期化
+if(!state.rows || state.rows.length===0){state={rows:JSON.parse(JSON.stringify(DEFAULT_ROWS)),memos:{},drafts:{}};}
+
+// ============================================
+// レンダリング
+// ============================================
+const SECTIONS=[
+  {id:"may",title:"5月の締切",num:"03",intro:"5/11の松下幸之助記念志財団研究助成が最緊急。同日に京都府文化力チャレンジ補助金も提出可能です。5/30のトヨタ財団国際助成（1,000万円）が月末の最重要案件です。",filter:r=>r[0].startsWith("2026-05")},
+  {id:"june",title:"6月の締切",num:"04",intro:"6月は最重要月。JST CREST 3億円（6/2）、JST RISTEX×2件（6/3）、トヨタ財団国内助成1,500万円（6/3）、DNP文化振興財団（6/15・データベース構築明示）、JSPS科研費 最大3億円（6/16）、COI-NEXT 3,700万円/年（6/18）と大型案件が集中します。",filter:r=>r[0].startsWith("2026-06")},
+  {id:"july",title:"7月の締切",num:"05",intro:"7/1の鹿島学術振興財団特定テーマ研究助成（2,000万円・連携大学経由）が最重要。7/31はesse-sense主体応募の核となる島津科学技術振興財団研究開発助成（先進情報・データサイエンス分野）。",filter:r=>r[0].startsWith("2026-07")},
+  {id:"august",title:"8月の締切",num:"06",intro:"国際交流系助成（テルモ・加藤バイオ等）の応募月。並行して9/28のものづくり補助金19次の事業計画書を本格的に作成する期間です。",filter:r=>r[0].startsWith("2026-08")},
+  {id:"september",title:"9月の締切",num:"07",intro:"9/28のものづくり補助金19次（4,000万円）が最大規模。9/1〜の電気通信普及財団・放送文化基金は単独応募可能。",filter:r=>r[0].startsWith("2026-09")},
+  {id:"perpetual",title:"通年・随時応募",num:"08",intro:"通年応募可能な案件群。京都市MICE開催支援（1,000万円）、ムーンショット型研究開発事業（年1-5億円）、総務省地域社会DX推進パッケージ事業など、戦略的に重要な大型案件が含まれます。",filter:r=>r[0]==="通年"}
+];
+
+function rowClass(s){if(s.includes("M+E"))return"row-me";if(s.startsWith("M"))return"row-m";if(s.startsWith("E"))return"row-e";return"";}
+function urgentClass(d){if(d==="2026-05-11"||d==="2026-05-12")return"row-urgent";return"";}
+function impTag(b){if(!b)return"";const c=(b.includes("最重要")||b.includes("最大"))?"tag imp":"tag";return'<span class="'+c+'">'+escapeHtml(b)+'</span>';}
+function escapeHtml(s){return String(s||"").replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+
+function renderSchedules(){
+  const container=document.getElementById('schedulesContainer');
+  container.innerHTML='';
+  SECTIONS.forEach(sec=>{
+    const filtered=state.rows.map((r,i)=>({r,i})).filter(o=>sec.filter(o.r));
+    if(filtered.length===0)return;
+    const sectionEl=document.createElement('section');
+    sectionEl.id=sec.id;
+    let html='<h2><span class="ch-num">'+sec.num+'</span>'+sec.title+'</h2>';
+    html+='<p class="lead">'+sec.intro+'</p>';
+    html+='<table><thead><tr><th>締切</th><th>助成金名</th><th>上限額</th><th>主体</th><th>テーマ</th><th>強み</th><th>アクション</th><th>備考</th><th>ドラフト</th><th>操作</th></tr></thead><tbody>';
+    filtered.forEach(o=>{
+      const r=o.r,idx=o.i;
+      const cls=[rowClass(r[3]),urgentClass(r[0])].filter(Boolean).join(' ');
+      const memo=state.memos[idx]?' row-edited':'';
+      const draft=r[8]||'';
+      const draftLink=draft?'<a class="draft-link" href="drafts/'+encodeURIComponent(draft)+'" target="_blank" title="'+escapeHtml(draft)+'">📄 開く</a>':'<span style="color:var(--text-muted);font-size:11px">—</span>';
+      html+='<tr class="'+cls+memo+'" data-idx="'+idx+'">';
+      html+='<td class="deadline">'+escapeHtml(r[0])+'</td>';
+      html+='<td>'+escapeHtml(r[1])+'</td>';
+      html+='<td class="amount">'+escapeHtml(r[2])+'</td>';
+      html+='<td class="subj">'+escapeHtml(r[3])+'</td>';
+      html+='<td>'+escapeHtml(r[4])+'</td>';
+      html+='<td>'+escapeHtml(r[5])+'</td>';
+      html+='<td>'+escapeHtml(r[6])+'</td>';
+      html+='<td>'+impTag(r[7])+'</td>';
+      html+='<td>'+draftLink+'</td>';
+      html+='<td class="action-cell"><button class="btn btn-sm" onclick="openEdit('+idx+')">編集</button></td>';
+      html+='</tr>';
+    });
+    html+='</tbody></table>';
+    sectionEl.innerHTML=html;
+    container.appendChild(sectionEl);
+  });
+  applyFilter();
+}
+
+function renderDrafts(){
+  const tbody=document.getElementById('draftsList');
+  tbody.innerHTML='';
+  DRAFT_FILES.forEach(d=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML='<td class="deadline">'+d[0]+'</td>'+
+      '<td><a class="draft-link" href="drafts/'+encodeURIComponent(d[1])+'" target="_blank">'+escapeHtml(d[1])+'</a></td>'+
+      '<td>'+escapeHtml(d[2])+'</td>'+
+      '<td class="action-cell"><a class="btn btn-sm" href="drafts/'+encodeURIComponent(d[1])+'" download>DL</a><button class="btn btn-sm" onclick="loadDraftAsTemplate(\''+d[1]+'\')">雛形に読込</button></td>';
+    tbody.appendChild(tr);
+  });
+}
+
+function renderGrantSelector(){
+  const sel=document.getElementById('grantSelector');
+  sel.innerHTML='';
+  state.rows.forEach((r,i)=>{
+    const opt=document.createElement('option');
+    opt.value=i;
+    opt.textContent='['+r[0]+'] '+r[1]+' / '+r[2];
+    sel.appendChild(opt);
+  });
+}
+
+function renderPresets(){
+  const grid=document.getElementById('presetGrid');
+  grid.innerHTML='';
+  DRAFT_FILES.forEach(d=>{
+    const btn=document.createElement('button');
+    btn.className='preset-btn';
+    btn.innerHTML='<strong>'+escapeHtml(d[2])+'</strong><span style="color:var(--text-muted)">'+escapeHtml(d[1])+'</span>';
+    btn.onclick=()=>{window.open('drafts/'+encodeURIComponent(d[1]),'_blank');};
+    grid.appendChild(btn);
+  });
+}
+
+// ============================================
+// 編集機能
+// ============================================
+let editingIdx=-1;
+function openEdit(idx){
+  editingIdx=idx;
+  const r=state.rows[idx];
+  for(let c=0;c<8;c++){document.getElementById('ed_'+c).value=r[c]||'';}
+  document.getElementById('ed_draft').value=r[8]||'';
+  document.getElementById('ed_memo').value=state.memos[idx]||'';
+  document.getElementById('editTitle').textContent='編集: '+(r[1]||'(新規)');
+  document.getElementById('editModal').classList.add('active');
+}
+function closeEdit(){document.getElementById('editModal').classList.remove('active');editingIdx=-1;}
+function saveEdit(){
+  if(editingIdx<0)return;
+  const r=state.rows[editingIdx];
+  for(let c=0;c<8;c++){r[c]=document.getElementById('ed_'+c).value;}
+  r[8]=document.getElementById('ed_draft').value;
+  const memo=document.getElementById('ed_memo').value;
+  if(memo){state.memos[editingIdx]=memo;}else{delete state.memos[editingIdx];}
+  saveState();
+  renderSchedules();
+  renderGrantSelector();
+  closeEdit();
+  flash('保存しました');
+}
+function deleteRow(){
+  if(editingIdx<0)return;
+  if(!confirm('この行を削除しますか？'))return;
+  state.rows.splice(editingIdx,1);
+  delete state.memos[editingIdx];
+  // memo の index 詰め直し
+  const newMemos={};
+  Object.keys(state.memos).forEach(k=>{
+    const ki=parseInt(k);
+    if(ki>editingIdx)newMemos[ki-1]=state.memos[k];
+    else newMemos[ki]=state.memos[k];
+  });
+  state.memos=newMemos;
+  saveState();
+  renderSchedules();
+  renderGrantSelector();
+  closeEdit();
+  flash('削除しました');
+}
+function addRow(){
+  state.rows.push(["2026-05-09","新規助成金","—","M","A 学際研究","①","アクション記入","",""]);
+  saveState();
+  renderSchedules();
+  renderGrantSelector();
+  openEdit(state.rows.length-1);
+}
+function resetEdits(){
+  if(!confirm('編集内容を全てリセットして初期データに戻します。よろしいですか？'))return;
+  state={rows:JSON.parse(JSON.stringify(DEFAULT_ROWS)),memos:{},drafts:{}};
+  saveState();
+  renderSchedules();
+  renderGrantSelector();
+  flash('編集をリセットしました');
+}
+
+// ============================================
+// ダウンロード機能
+// ============================================
+function downloadJSON(){
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json;charset=utf-8'});
+  saveAs(blob,'grant_schedule_2026.json');
+  flash('JSONをダウンロード');
+}
+function downloadCSV(){
+  const header=["締切","助成金名","上限額","主体","テーマ","該当強み","アクション","備考","関連ドラフト","メモ"];
+  const lines=[header.join(",")];
+  state.rows.forEach((r,i)=>{
+    const memo=state.memos[i]||'';
+    const cells=[...r,memo].map(c=>'"'+String(c||'').replace(/"/g,'""')+'"');
+    lines.push(cells.join(","));
+  });
+  const bom='﻿';
+  const blob=new Blob([bom+lines.join("\n")],{type:'text/csv;charset=utf-8'});
+  saveAs(blob,'grant_schedule_2026.csv');
+  flash('CSVをダウンロード');
+}
+async function downloadDraftsZip(){
+  flash('ZIP生成中…');
+  const zip=new JSZip();
+  const folder=zip.folder('drafts');
+  for(const d of DRAFT_FILES){
+    try{
+      const res=await fetch('drafts/'+encodeURIComponent(d[1]));
+      if(res.ok){
+        const text=await res.text();
+        folder.file(d[1],text);
+      }
+    }catch(e){console.warn('Skip:',d[1],e);}
+  }
+  // 編集状態 + メモも含める
+  zip.file('schedule_state.json',JSON.stringify(state,null,2));
+  // CSVも含める
+  const header=["締切","助成金名","上限額","主体","テーマ","該当強み","アクション","備考","関連ドラフト","メモ"];
+  const lines=[header.join(",")];
+  state.rows.forEach((r,i)=>{
+    const memo=state.memos[i]||'';
+    const cells=[...r,memo].map(c=>'"'+String(c||'').replace(/"/g,'""')+'"');
+    lines.push(cells.join(","));
+  });
+  zip.file('schedule.csv','﻿'+lines.join("\n"));
+  const blob=await zip.generateAsync({type:'blob'});
+  saveAs(blob,'grant_drafts_'+new Date().toISOString().slice(0,10)+'.zip');
+  flash('ZIPダウンロード完了');
+}
+
+// ============================================
+// 雛形アップロード処理
+// ============================================
+function getReplacements(grantIdx){
+  const r=state.rows[grantIdx]||state.rows[0];
+  // 主体に応じて法人デフォルト切替
+  const isE=String(r[3]).startsWith('E');
+  const orgBase=isE?ORG_DEFAULTS_E:ORG_DEFAULTS;
+  return {
+    ...orgBase,
+    '助成金名':r[1],
+    '締切':r[0],
+    '上限額':r[2],
+    '主体':r[3],
+    'テーマ':r[4],
+    '該当強み':r[5],
+    'アクション':r[6],
+    '備考':r[7],
+    'メモ':state.memos[grantIdx]||''
+  };
+}
+
+function replacePlaceholdersInText(text,reps){
+  // {{key}} と {key} 両方をサポート
+  for(const k in reps){
+    const val=String(reps[k]||'');
+    text=text.split('{{'+k+'}}').join(val);
+    text=text.split('{'+k+'}').join(val);
+  }
+  return text;
+}
+
+async function processTemplate(){
+  const fileInput=document.getElementById('templateFile');
+  const status=document.getElementById('uploadStatus');
+  if(!fileInput.files||fileInput.files.length===0){
+    status.textContent='⚠ ファイルを選択してください';
+    return;
+  }
+  const file=fileInput.files[0];
+  const grantIdx=parseInt(document.getElementById('grantSelector').value)||0;
+  const reps=getReplacements(grantIdx);
+  const ext=file.name.split('.').pop().toLowerCase();
+  const baseName=file.name.replace(/\.[^.]+$/,'');
+  status.textContent='処理中…';
+  try{
+    if(ext==='docx'){
+      // docxtemplater で {key} 形式を置換
+      const arrayBuf=await file.arrayBuffer();
+      const zip=new PizZip(arrayBuf);
+      const doc=new docxtemplater(zip,{paragraphLoop:true,linebreaks:true,delimiters:{start:'{',end:'}'}});
+      try{
+        doc.render(reps);
+      }catch(e){
+        // {{key}} 形式の場合はテキスト置換でフォールバック
+        console.warn('docxtemplater render failed, trying text-based replacement',e);
+        const newZip=new PizZip(arrayBuf);
+        const docXml=newZip.file('word/document.xml').asText();
+        const replaced=replacePlaceholdersInText(docXml,reps);
+        newZip.file('word/document.xml',replaced);
+        const out2=newZip.generate({type:'blob',mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+        saveAs(out2,baseName+'_自動書込_'+reps['助成金名'].slice(0,20)+'.docx');
+        status.textContent='✓ 完了（テキスト置換）：'+baseName+'_自動書込.docx';
+        return;
+      }
+      const out=doc.getZip().generate({type:'blob',mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+      saveAs(out,baseName+'_自動書込_'+reps['助成金名'].slice(0,20)+'.docx');
+      status.textContent='✓ 完了：'+baseName+'_自動書込.docx をダウンロードしました';
+    }else{
+      // テキスト系
+      const text=await file.text();
+      const replaced=replacePlaceholdersInText(text,reps);
+      const blob=new Blob([replaced],{type:'text/plain;charset=utf-8'});
+      saveAs(blob,baseName+'_自動書込_'+reps['助成金名'].slice(0,20)+'.'+ext);
+      status.textContent='✓ 完了：'+baseName+'_自動書込.'+ext+' をダウンロードしました';
+    }
+    flash('雛形書込完了');
+  }catch(err){
+    console.error(err);
+    status.textContent='✗ エラー：'+err.message;
+  }
+}
+
+async function loadDraftAsTemplate(filename){
+  try{
+    const res=await fetch('drafts/'+encodeURIComponent(filename));
+    if(!res.ok)throw new Error('Cannot load '+filename);
+    const text=await res.text();
+    const grantIdx=parseInt(document.getElementById('grantSelector').value)||0;
+    const reps=getReplacements(grantIdx);
+    const replaced=replacePlaceholdersInText(text,reps);
+    const blob=new Blob([replaced],{type:'text/markdown;charset=utf-8'});
+    saveAs(blob,filename.replace('.md','_カスタマイズ.md'));
+    flash('カスタマイズ版をダウンロード');
+  }catch(e){
+    alert('読み込みエラー: '+e.message);
+  }
+}
+
+// ============================================
+// 検索フィルタ
+// ============================================
+function applyFilter(){
+  const q=document.getElementById('searchBox').value.trim().toLowerCase();
+  document.querySelectorAll('#schedulesContainer tbody tr').forEach(tr=>{
+    const txt=tr.textContent.toLowerCase();
+    tr.style.display=(!q||txt.includes(q))?'':'none';
+  });
+}
+document.getElementById('searchBox').addEventListener('input',applyFilter);
+
+// ============================================
+// テーマ切替
+// ============================================
+function toggleTheme(){
+  const html=document.documentElement;
+  const cur=html.getAttribute('data-theme');
+  const next=cur==='dark'?'':'dark';
+  if(next){html.setAttribute('data-theme',next);}else{html.removeAttribute('data-theme');}
+  localStorage.setItem('theme',next);
+}
+const savedTheme=localStorage.getItem('theme');
+if(savedTheme==='dark'){document.documentElement.setAttribute('data-theme','dark');}
+
+// ============================================
+// フラッシュメッセージ
+// ============================================
+function flash(msg){
+  const el=document.getElementById('flash');
+  el.textContent=msg;
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),1800);
+}
+
+// ============================================
+// 初期レンダ
+// ============================================
+renderSchedules();
+renderDrafts();
+renderGrantSelector();
+renderPresets();
+</script>
+</body>
+</html>
