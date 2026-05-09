@@ -12,6 +12,9 @@
 <script src="https://unpkg.com/pizzip@3.1.6/dist/pizzip.js"></script>
 <script src="https://unpkg.com/docxtemplater@3.50.0/build/docxtemplater.js"></script>
 <script src="https://unpkg.com/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<script src="grant_details.js"></script>
 <style>
 :root{
   --bg:#FFFFFF;--card:#FFFFFF;--card-hover:#F7F7F5;
@@ -114,6 +117,60 @@ tbody tr.row-m:hover,tbody tr.row-e:hover,tbody tr.row-me:hover{filter:brightnes
 .theme-card h4{margin:0 0 4px;font-size:13px;color:var(--accent-warm)}
 .theme-card p{margin:0;font-size:11.5px;color:var(--text-secondary);line-height:1.7}
 .row-edited{box-shadow:inset 4px 0 0 var(--accent-warm)}
+
+/* 詳細モーダル */
+.detail-modal .modal{max-width:880px}
+.tab-bar{display:flex;gap:0;border-bottom:2px solid var(--border);margin:14px 0 18px}
+.tab-bar button{background:none;border:none;padding:8px 16px;cursor:pointer;font-family:var(--font);font-size:13px;color:var(--text-secondary);border-bottom:2px solid transparent;margin-bottom:-2px}
+.tab-bar button.active{color:var(--accent-warm);border-bottom-color:var(--accent-warm);font-weight:700}
+.tab-bar button:hover{color:var(--accent-warm)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.detail-h{font-family:var(--font-serif);font-size:14px;color:var(--accent-warm);margin:14px 0 6px;font-weight:700;border-left:3px solid var(--accent-warm);padding-left:8px}
+.detail-body{font-family:var(--font-serif);font-size:13.5px;line-height:1.85;color:var(--text);text-align:justify}
+.detail-body p{margin:0 0 12px}
+.detail-list{list-style:none;padding:0;margin:0}
+.detail-list li{padding:6px 0;border-bottom:1px solid var(--border-light);font-size:12.5px;display:flex;gap:8px}
+.detail-list li::before{content:"□";color:var(--accent-warm);font-weight:700}
+.detail-list li.checked::before{content:"☑";color:var(--accent-warm)}
+.timeline{position:relative;padding-left:24px;margin:8px 0}
+.timeline::before{content:"";position:absolute;left:6px;top:0;bottom:0;width:2px;background:var(--border)}
+.timeline-item{position:relative;padding-bottom:14px;font-size:12.5px}
+.timeline-item::before{content:"";position:absolute;left:-22px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--accent-warm);border:2px solid var(--bg)}
+.timeline-item.past::before{background:var(--text-muted)}
+.timeline-date{font-family:"SF Mono",monospace;font-size:11px;color:var(--accent-warm);font-weight:700;margin-bottom:2px}
+.timeline-phase{font-weight:500;color:var(--text)}
+.timeline-note{font-size:11px;color:var(--text-muted);margin-top:2px}
+.detail-meta{background:var(--surface);padding:10px 14px;border-left:3px solid var(--accent-warm);margin:8px 0;font-size:12px;color:var(--text-secondary)}
+.detail-meta strong{color:var(--accent-warm);margin-right:6px}
+.action-cell .btn-detail{background:var(--accent-warm);color:#FFFFFF;border-color:var(--accent-warm)}
+.action-cell .btn-detail:hover{background:var(--accent-warm-soft);color:#FFFFFF}
+
+/* Markdownビューア */
+.viewer-modal .modal{max-width:880px;padding:0}
+.viewer-header{padding:18px 24px;border-bottom:1px solid var(--border-light);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.viewer-header h3{margin:0;font-size:16px;color:var(--accent-warm)}
+.viewer-tools{display:flex;gap:6px}
+.viewer-body{padding:32px 40px;max-height:75vh;overflow-y:auto;font-family:var(--font-serif);font-size:14px;line-height:1.95;color:var(--text);text-align:justify}
+.viewer-body h1{font-size:24px;margin:0 0 16px;color:var(--text);border-bottom:2px solid var(--accent-warm);padding-bottom:8px}
+.viewer-body h2{font-size:19px;margin:28px 0 12px;color:var(--accent-warm);font-weight:700;padding-left:10px;border-left:4px solid var(--accent-warm)}
+.viewer-body h3{font-size:16px;margin:20px 0 8px;color:var(--text);font-weight:700}
+.viewer-body h4{font-size:14px;margin:14px 0 6px;color:var(--accent);font-weight:700}
+.viewer-body p{margin:0 0 14px;text-indent:1em}
+.viewer-body p:first-of-type,.viewer-body h1+p,.viewer-body h2+p,.viewer-body h3+p,.viewer-body h4+p{text-indent:0}
+.viewer-body ul,.viewer-body ol{margin:8px 0 14px;padding-left:24px}
+.viewer-body li{margin-bottom:4px}
+.viewer-body table{margin:14px 0;font-size:12.5px;border-collapse:collapse}
+.viewer-body table th{background:var(--accent-muted);color:var(--accent-warm);padding:6px 10px;text-align:left;border:1px solid var(--border)}
+.viewer-body table td{padding:6px 10px;border:1px solid var(--border-light)}
+.viewer-body code{background:var(--surface);padding:1px 6px;border-radius:2px;font-family:"SF Mono",monospace;font-size:12px;color:var(--accent-warm)}
+.viewer-body pre{background:var(--surface);padding:12px;border-radius:2px;overflow-x:auto;font-size:12px}
+.viewer-body blockquote{border-left:3px solid var(--accent-warm);padding-left:14px;color:var(--text-secondary);margin:14px 0;font-style:italic}
+.viewer-body a{color:var(--accent-warm);text-decoration:none}
+.viewer-body a:hover{text-decoration:underline}
+.viewer-body hr{border:0;border-top:1px solid var(--border-light);margin:24px 0}
+.viewer-body strong{color:var(--accent);font-weight:700}
+
 @media (max-width:1000px){
   .layout{grid-template-columns:1fr}
   .toc-sidebar{position:static;height:auto;border-right:none;border-bottom:1px solid var(--border-light);max-height:180px}
@@ -166,7 +223,7 @@ tbody tr.row-m:hover,tbody tr.row-e:hover,tbody tr.row-me:hover{filter:brightnes
 
 <main>
 <h1>ミラツク／esse-sense<br>補助金・助成金 提出スケジュール</h1>
-<p class="subtitle">2026年5月〜9月｜作成日 2026-05-09｜<a href="https://yuyanishimura0312.github.io/miratuku-news-v2/databases.html" target="_blank">Grant DB 最新版</a><br>機能：行クリックで編集／提出書類ドラフトリンク／雛形アップロードして自動書込／編集はブラウザに保存</p>
+<p class="subtitle">2026年5月〜9月｜作成日 2026-05-09｜<a href="https://yuyanishimura0312.github.io/miratuku-news-v2/databases.html" target="_blank">Grant DB 最新版</a><br>機能：行の<strong style="color:var(--accent-warm)">詳細</strong>ボタンで概要・採択後スケジュール・提出書類チェックリスト／<strong style="color:var(--accent-warm)">📄 表示</strong>でドラフトをスタイル付きで閲覧・印刷・HTMLダウンロード／<strong style="color:var(--accent-warm)">編集</strong>で内容更新（ブラウザ保存）／雛形アップロード自動書込</p>
 
 <section id="overview">
 <h2><span class="ch-num">01</span>概要と凡例</h2>
@@ -326,6 +383,63 @@ tbody tr.row-m:hover,tbody tr.row-e:hover,tbody tr.row-me:hover{filter:brightnes
 </section>
 
 </main>
+</div>
+
+<!-- 助成金詳細モーダル -->
+<div class="modal-bg detail-modal" id="detailModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeDetail()">×</button>
+    <h3 id="detailTitle">助成金詳細</h3>
+    <div class="detail-meta" id="detailMeta"></div>
+    <div class="tab-bar">
+      <button class="active" onclick="switchTab(event,'tab-overview')">概要</button>
+      <button onclick="switchTab(event,'tab-post')">提出後スケジュール</button>
+      <button onclick="switchTab(event,'tab-docs')">提出書類</button>
+      <button onclick="switchTab(event,'tab-link')">関連リンク</button>
+    </div>
+    <div class="tab-content active" id="tab-overview">
+      <div class="detail-h">概要</div>
+      <div class="detail-body" id="detailOverview"></div>
+      <div class="detail-h">応募要件</div>
+      <div class="detail-body" id="detailEligibility"></div>
+      <div class="detail-h">評価ポイント</div>
+      <div class="detail-body" id="detailEvaluation"></div>
+    </div>
+    <div class="tab-content" id="tab-post">
+      <div class="detail-h">提出後の想定タイムライン</div>
+      <div class="timeline" id="detailTimeline"></div>
+    </div>
+    <div class="tab-content" id="tab-docs">
+      <div class="detail-h">提出書類チェックリスト</div>
+      <ul class="detail-list" id="detailDocs"></ul>
+    </div>
+    <div class="tab-content" id="tab-link">
+      <div class="detail-h">公式情報</div>
+      <p id="detailUrl" style="font-size:12.5px"></p>
+      <div class="detail-h">関連ドラフト</div>
+      <div id="detailDraftLink" style="font-size:12.5px"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeDetail()">閉じる</button>
+      <button class="btn btn-primary" onclick="openEditFromDetail()">編集</button>
+    </div>
+  </div>
+</div>
+
+<!-- ドラフトビューア（Markdown レンダリング） -->
+<div class="modal-bg viewer-modal" id="viewerModal">
+  <div class="modal">
+    <div class="viewer-header">
+      <h3 id="viewerTitle">ドラフト</h3>
+      <div class="viewer-tools">
+        <button class="btn btn-sm" onclick="printViewer()">🖨 印刷</button>
+        <button class="btn btn-sm" onclick="downloadViewerMd()">📄 .md</button>
+        <button class="btn btn-sm" onclick="downloadViewerHtml()">📄 .html</button>
+        <button class="btn btn-sm" onclick="closeViewer()">× 閉じる</button>
+      </div>
+    </div>
+    <div class="viewer-body" id="viewerBody"></div>
+  </div>
 </div>
 
 <!-- 編集モーダル -->
@@ -517,7 +631,7 @@ function renderSchedules(){
       const cls=[rowClass(r[3]),urgentClass(r[0])].filter(Boolean).join(' ');
       const memo=state.memos[idx]?' row-edited':'';
       const draft=r[8]||'';
-      const draftLink=draft?'<a class="draft-link" href="drafts/'+encodeURIComponent(draft)+'" target="_blank" title="'+escapeHtml(draft)+'">📄 開く</a>':'<span style="color:var(--text-muted);font-size:11px">—</span>';
+      const draftLink=draft?'<a class="draft-link" href="javascript:void(0)" onclick="openViewer(\''+draft+'\')" title="'+escapeHtml(draft)+'">📄 表示</a>':'<span style="color:var(--text-muted);font-size:11px">—</span>';
       html+='<tr class="'+cls+memo+'" data-idx="'+idx+'">';
       html+='<td class="deadline">'+escapeHtml(r[0])+'</td>';
       html+='<td>'+escapeHtml(r[1])+'</td>';
@@ -528,7 +642,7 @@ function renderSchedules(){
       html+='<td>'+escapeHtml(r[6])+'</td>';
       html+='<td>'+impTag(r[7])+'</td>';
       html+='<td>'+draftLink+'</td>';
-      html+='<td class="action-cell"><button class="btn btn-sm" onclick="openEdit('+idx+')">編集</button></td>';
+      html+='<td class="action-cell"><button class="btn btn-sm btn-detail" onclick="openDetail('+idx+')">詳細</button><button class="btn btn-sm" onclick="openEdit('+idx+')">編集</button></td>';
       html+='</tr>';
     });
     html+='</tbody></table>';
@@ -544,9 +658,9 @@ function renderDrafts(){
   DRAFT_FILES.forEach(d=>{
     const tr=document.createElement('tr');
     tr.innerHTML='<td class="deadline">'+d[0]+'</td>'+
-      '<td><a class="draft-link" href="drafts/'+encodeURIComponent(d[1])+'" target="_blank">'+escapeHtml(d[1])+'</a></td>'+
+      '<td><a class="draft-link" href="javascript:void(0)" onclick="openViewer(\''+d[1]+'\')">'+escapeHtml(d[1])+'</a></td>'+
       '<td>'+escapeHtml(d[2])+'</td>'+
-      '<td class="action-cell"><a class="btn btn-sm" href="drafts/'+encodeURIComponent(d[1])+'" download>DL</a><button class="btn btn-sm" onclick="loadDraftAsTemplate(\''+d[1]+'\')">雛形に読込</button></td>';
+      '<td class="action-cell"><button class="btn btn-sm btn-detail" onclick="openViewer(\''+d[1]+'\')">表示</button><a class="btn btn-sm" href="drafts/'+encodeURIComponent(d[1])+'" download>DL</a><button class="btn btn-sm" onclick="loadDraftAsTemplate(\''+d[1]+'\')">雛形に読込</button></td>';
     tbody.appendChild(tr);
   });
 }
@@ -572,6 +686,123 @@ function renderPresets(){
     btn.onclick=()=>{window.open('drafts/'+encodeURIComponent(d[1]),'_blank');};
     grid.appendChild(btn);
   });
+}
+
+// ============================================
+// 詳細モーダル
+// ============================================
+let detailIdx=-1;
+function openDetail(idx){
+  detailIdx=idx;
+  const r=state.rows[idx];
+  const detail=window.GRANT_DETAILS[r[1]]||window.getGenericDetail(r);
+  document.getElementById('detailTitle').textContent=r[1];
+  document.getElementById('detailMeta').innerHTML=
+    '<strong>締切</strong>'+escapeHtml(r[0])+
+    ' &nbsp;<strong>上限</strong>'+escapeHtml(r[2])+
+    ' &nbsp;<strong>主体</strong>'+escapeHtml(r[3])+
+    ' &nbsp;<strong>テーマ</strong>'+escapeHtml(r[4])+
+    ' &nbsp;<strong>強み</strong>'+escapeHtml(r[5]);
+  document.getElementById('detailOverview').innerHTML='<p>'+escapeHtml(detail.o)+'</p>';
+  document.getElementById('detailEligibility').innerHTML='<p>'+escapeHtml(detail.e)+'</p>';
+  document.getElementById('detailEvaluation').innerHTML='<p>'+escapeHtml(detail.v)+'</p>';
+  // タイムライン
+  const tl=document.getElementById('detailTimeline');
+  const today=new Date();
+  tl.innerHTML=detail.p.map(item=>{
+    const m=item.d.match(/(\d{4})-(\d{2})-(\d{2})/);
+    let cls='';
+    if(m){const dd=new Date(parseInt(m[1]),parseInt(m[2])-1,parseInt(m[3]));if(dd<today)cls=' past';}
+    return '<div class="timeline-item'+cls+'">'+
+      '<div class="timeline-date">'+escapeHtml(item.d)+'</div>'+
+      '<div class="timeline-phase">'+escapeHtml(item.p)+'</div>'+
+      (item.n?'<div class="timeline-note">'+escapeHtml(item.n)+'</div>':'')+
+      '</div>';
+  }).join('');
+  // 提出書類
+  const docs=document.getElementById('detailDocs');
+  const checked=state.drafts['docs_'+idx]||{};
+  docs.innerHTML=detail.d.map((doc,i)=>{
+    const chk=checked[i]?'checked':'';
+    return '<li class="'+(checked[i]?'checked':'')+'" onclick="toggleDoc('+idx+','+i+')" style="cursor:pointer">'+escapeHtml(doc)+'</li>';
+  }).join('');
+  // リンク
+  document.getElementById('detailUrl').innerHTML=detail.u?
+    '<a href="'+escapeHtml(detail.u)+'" target="_blank">'+escapeHtml(detail.u)+'</a>':'（公式URL未設定）';
+  const draft=r[8];
+  document.getElementById('detailDraftLink').innerHTML=draft?
+    '<a href="javascript:void(0)" onclick="closeDetail();openViewer(\''+draft+'\')">📄 '+escapeHtml(draft)+' を開く</a>':'（関連ドラフト未紐付け）';
+  // タブ初期化
+  document.querySelectorAll('#detailModal .tab-bar button').forEach((b,i)=>{b.classList.toggle('active',i===0);});
+  document.querySelectorAll('#detailModal .tab-content').forEach((t,i)=>{t.classList.toggle('active',i===0);});
+  document.getElementById('detailModal').classList.add('active');
+}
+function closeDetail(){document.getElementById('detailModal').classList.remove('active');}
+function switchTab(ev,tabId){
+  document.querySelectorAll('#detailModal .tab-bar button').forEach(b=>b.classList.remove('active'));
+  ev.target.classList.add('active');
+  document.querySelectorAll('#detailModal .tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+}
+function toggleDoc(idx,i){
+  const k='docs_'+idx;
+  const checked=state.drafts[k]||{};
+  checked[i]=!checked[i];
+  state.drafts[k]=checked;
+  saveState();
+  if(detailIdx===idx)openDetail(idx);
+}
+function openEditFromDetail(){
+  const i=detailIdx;
+  closeDetail();
+  if(i>=0)openEdit(i);
+}
+
+// ============================================
+// Markdownビューア
+// ============================================
+let currentViewer={title:'',md:'',html:''};
+async function openViewer(filename){
+  currentViewer.title=filename;
+  document.getElementById('viewerTitle').textContent=filename;
+  document.getElementById('viewerBody').innerHTML='<p style="color:var(--text-muted)">読み込み中…</p>';
+  document.getElementById('viewerModal').classList.add('active');
+  try{
+    const res=await fetch('drafts/'+encodeURIComponent(filename));
+    if(!res.ok)throw new Error('ファイルが見つかりません: '+filename);
+    const md=await res.text();
+    currentViewer.md=md;
+    const html=DOMPurify.sanitize(marked.parse(md));
+    currentViewer.html=html;
+    document.getElementById('viewerBody').innerHTML=html;
+    document.getElementById('viewerBody').scrollTop=0;
+  }catch(e){
+    document.getElementById('viewerBody').innerHTML='<p style="color:var(--accent-warm)">エラー: '+escapeHtml(e.message)+'</p>';
+  }
+}
+function closeViewer(){document.getElementById('viewerModal').classList.remove('active');}
+function downloadViewerMd(){
+  if(!currentViewer.md)return;
+  const blob=new Blob([currentViewer.md],{type:'text/markdown;charset=utf-8'});
+  saveAs(blob,currentViewer.title);
+}
+function downloadViewerHtml(){
+  if(!currentViewer.html)return;
+  const wrap='<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><title>'+escapeHtml(currentViewer.title)+'</title>'+
+    '<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">'+
+    '<style>body{font-family:"Noto Serif JP",serif;max-width:760px;margin:40px auto;padding:0 20px;line-height:1.95;color:#121212;text-align:justify}h1{border-bottom:2px solid #CC1400;padding-bottom:8px}h2{color:#CC1400;border-left:4px solid #CC1400;padding-left:10px}h3{font-weight:700}p{text-indent:1em}h1+p,h2+p,h3+p{text-indent:0}table{border-collapse:collapse;font-size:12.5px}th{background:rgba(204,20,0,0.06);color:#CC1400;padding:6px 10px;border:1px solid #D9D9D9}td{padding:6px 10px;border:1px solid #EEE}a{color:#CC1400}</style>'+
+    '</head><body>'+currentViewer.html+'</body></html>';
+  const blob=new Blob([wrap],{type:'text/html;charset=utf-8'});
+  saveAs(blob,currentViewer.title.replace('.md','.html'));
+}
+function printViewer(){
+  const w=window.open('','_blank');
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+escapeHtml(currentViewer.title)+'</title>'+
+    '<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">'+
+    '<style>body{font-family:"Noto Serif JP",serif;max-width:760px;margin:40px auto;padding:0 20px;line-height:1.95;color:#121212;text-align:justify}h1{border-bottom:2px solid #CC1400;padding-bottom:8px}h2{color:#CC1400;border-left:4px solid #CC1400;padding-left:10px}h3{font-weight:700}p{text-indent:1em}h1+p,h2+p,h3+p{text-indent:0}table{border-collapse:collapse}th{background:rgba(204,20,0,0.06);color:#CC1400;padding:6px 10px;border:1px solid #D9D9D9}td{padding:6px 10px;border:1px solid #EEE}@media print{body{margin:0}}</style>'+
+    '</head><body>'+currentViewer.html+'</body></html>');
+  w.document.close();
+  setTimeout(()=>w.print(),500);
 }
 
 // ============================================
