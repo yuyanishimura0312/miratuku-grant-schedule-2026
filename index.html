@@ -418,10 +418,13 @@ tbody tr.row-m:hover,tbody tr.row-e:hover,tbody tr.row-me:hover{filter:brightnes
       <p id="detailUrl" style="font-size:12.5px"></p>
       <div class="detail-h">関連ドラフト</div>
       <div id="detailDraftLink" style="font-size:12.5px"></div>
+      <div class="detail-h">メモ（自由記述・自動保存）</div>
+      <textarea id="detailMemo" oninput="saveDetailMemo()" placeholder="この助成金についてのメモ・進捗・連絡先などを自由に記入。ブラウザに自動保存されます。" style="width:100%;min-height:120px;font-family:var(--font);font-size:13px;padding:8px;border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:2px;resize:vertical"></textarea>
+      <div id="memoStatus" style="font-size:10px;color:var(--text-muted);margin-top:4px;text-align:right">—</div>
     </div>
     <div class="modal-actions">
       <button class="btn" onclick="closeDetail()">閉じる</button>
-      <button class="btn btn-primary" onclick="openEditFromDetail()">編集</button>
+      <button class="btn btn-primary" onclick="openEditFromDetail()">行全体を編集</button>
     </div>
   </div>
 </div>
@@ -732,10 +735,28 @@ function openDetail(idx){
   const draft=r[8];
   document.getElementById('detailDraftLink').innerHTML=draft?
     '<a href="javascript:void(0)" onclick="closeDetail();openViewer(\''+draft+'\')">📄 '+escapeHtml(draft)+' を開く</a>':'（関連ドラフト未紐付け）';
+  // メモ
+  document.getElementById('detailMemo').value=state.memos[idx]||'';
+  document.getElementById('memoStatus').textContent=state.memos[idx]?'保存済':'—';
   // タブ初期化
   document.querySelectorAll('#detailModal .tab-bar button').forEach((b,i)=>{b.classList.toggle('active',i===0);});
   document.querySelectorAll('#detailModal .tab-content').forEach((t,i)=>{t.classList.toggle('active',i===0);});
   document.getElementById('detailModal').classList.add('active');
+}
+
+// メモ自動保存（debounce付き）
+let memoSaveTimer=null;
+function saveDetailMemo(){
+  if(detailIdx<0)return;
+  document.getElementById('memoStatus').textContent='入力中…';
+  clearTimeout(memoSaveTimer);
+  memoSaveTimer=setTimeout(()=>{
+    const memo=document.getElementById('detailMemo').value;
+    if(memo){state.memos[detailIdx]=memo;}else{delete state.memos[detailIdx];}
+    saveState();
+    renderSchedules();
+    document.getElementById('memoStatus').textContent='✓ 保存しました '+new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  },500);
 }
 function closeDetail(){document.getElementById('detailModal').classList.remove('active');}
 function switchTab(ev,tabId){
@@ -943,7 +964,7 @@ function getReplacements(grantIdx){
     '評価ポイント':detail.v||'',
     '公式URL':detail.u||'',
     '提出書類':detail.d?detail.d.join('、'):'',
-    '今日':new Date().toISOString().slice(0,10)
+    '今日':new Date().toLocaleDateString('sv-SE')  // JST準拠 YYYY-MM-DD
   };
 }
 
