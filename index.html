@@ -284,7 +284,7 @@ tbody tr.row-m:hover,tbody tr.row-e:hover,tbody tr.row-me:hover{filter:brightnes
   </div>
 
   <h3>3. 雛形をアップロード</h3>
-  <p>.docx／.txt／.md／任意のテキスト形式に対応</p>
+  <p>.docx／.txt／.md／任意のテキスト形式に対応。<a href="templates/sample_template.md" download style="color:var(--accent-warm)">📥 サンプルmdをDL</a> ・ <a href="templates/sample_template.txt" download style="color:var(--accent-warm)">📥 サンプルtxtをDL</a> でテストできます</p>
   <input type="file" id="templateFile" accept=".docx,.txt,.md,.markdown,.json,.html" style="margin:8px 0">
   <div class="modal-actions" style="justify-content:flex-start">
     <button class="btn btn-primary" onclick="processTemplate()">プレースホルダーを書き込んでダウンロード</button>
@@ -922,9 +922,11 @@ async function downloadDraftsZip(){
 // ============================================
 function getReplacements(grantIdx){
   const r=state.rows[grantIdx]||state.rows[0];
-  // 主体に応じて法人デフォルト切替
+  // 主体に応じて法人デフォルト切替（M defaultsを基底にしてE分は上書き）
   const isE=String(r[3]).startsWith('E');
-  const orgBase=isE?ORG_DEFAULTS_E:ORG_DEFAULTS;
+  const orgBase=isE?{...ORG_DEFAULTS,...ORG_DEFAULTS_E}:ORG_DEFAULTS;
+  // 詳細データから概要・応募要件等も埋め込み可能に
+  const detail=window.GRANT_DETAILS&&window.GRANT_DETAILS[r[1]]||{};
   return {
     ...orgBase,
     '助成金名':r[1],
@@ -935,8 +937,18 @@ function getReplacements(grantIdx){
     '該当強み':r[5],
     'アクション':r[6],
     '備考':r[7],
-    'メモ':state.memos[grantIdx]||''
+    'メモ':state.memos[grantIdx]||'',
+    '概要':detail.o||'',
+    '応募要件':detail.e||'',
+    '評価ポイント':detail.v||'',
+    '公式URL':detail.u||'',
+    '提出書類':detail.d?detail.d.join('、'):'',
+    '今日':new Date().toISOString().slice(0,10)
   };
+}
+
+function sanitizeFilename(s){
+  return String(s||'').replace(/[\/\\:*?"<>|]/g,'_').slice(0,40);
 }
 
 function replacePlaceholdersInText(text,reps){
@@ -957,47 +969,81 @@ async function processTemplate(){
     return;
   }
   const file=fileInput.files[0];
+  if(file.size>20*1024*1024){
+    status.textContent='✗ ファイルサイズが大きすぎます（20MB以下にしてください）';
+    return;
+  }
   const grantIdx=parseInt(document.getElementById('grantSelector').value)||0;
   const reps=getReplacements(grantIdx);
   const ext=file.name.split('.').pop().toLowerCase();
   const baseName=file.name.replace(/\.[^.]+$/,'');
-  status.textContent='処理中…';
+  const safeGrant=sanitizeFilename(reps['助成金名']);
+  const outName=baseName+'_自動書込_'+safeGrant+'.'+ext;
+  status.innerHTML='処理中…';
   try{
+    let replacedCount=0;
     if(ext==='docx'){
-      // docxtemplater で {key} 形式を置換
+      // docx：1) docxtemplaterで{key}形式 → 2) 失敗時はXMLテキスト置換でフォールバック
       const arrayBuf=await file.arrayBuffer();
       const zip=new PizZip(arrayBuf);
-      const doc=new docxtemplater(zip,{paragraphLoop:true,linebreaks:true,delimiters:{start:'{',end:'}'}});
+      let docxSuccess=false;
       try{
+        const doc=new docxtemplater(zip,{paragraphLoop:true,linebreaks:true,delimiters:{start:'{',end:'}'}});
         doc.render(reps);
+        const out=doc.getZip().generate({type:'blob',mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+        saveAs(out,outName);
+        docxSuccess=true;
+        status.innerHTML='✓ 完了（docxtemplater）：<strong>'+escapeHtml(outName)+'</strong> をダウンロードしました<br><small>{key}形式のプレースホルダーを置換しました。</small>';
       }catch(e){
-        // {{key}} 形式の場合はテキスト置換でフォールバック
-        console.warn('docxtemplater render failed, trying text-based replacement',e);
+        console.warn('docxtemplater render failed, falling back to XML replacement',e);
+        // fallback：raw XMLにテキスト置換（{{key}}形式が確実に当たる）
         const newZip=new PizZip(arrayBuf);
-        const docXml=newZip.file('word/document.xml').asText();
-        const replaced=replacePlaceholdersInText(docXml,reps);
-        newZip.file('word/document.xml',replaced);
+        const xmlFiles=['word/document.xml','word/header1.xml','word/header2.xml','word/header3.xml','word/footer1.xml','word/footer2.xml','word/footer3.xml'];
+        xmlFiles.forEach(p=>{
+          const f=newZip.file(p);
+          if(f){
+            const docXml=f.asText();
+            const {text:replaced,count}=replacePlaceholdersInText2(docXml,reps);
+            replacedCount+=count;
+            newZip.file(p,replaced);
+          }
+        });
         const out2=newZip.generate({type:'blob',mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
-        saveAs(out2,baseName+'_自動書込_'+reps['助成金名'].slice(0,20)+'.docx');
-        status.textContent='✓ 完了（テキスト置換）：'+baseName+'_自動書込.docx';
-        return;
+        saveAs(out2,outName);
+        const warning=replacedCount===0?'<br><small style="color:var(--accent-warm)">⚠ プレースホルダーが見つかりませんでした。Wordがテキストを分割している可能性があります。{{法人名}}を1回で入力し直すか、テキスト形式（.txt/.md）でお試しください。</small>':'<br><small>'+replacedCount+'箇所を置換しました（XMLテキスト置換モード）</small>';
+        status.innerHTML='✓ 完了：<strong>'+escapeHtml(outName)+'</strong> をダウンロードしました'+warning;
       }
-      const out=doc.getZip().generate({type:'blob',mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
-      saveAs(out,baseName+'_自動書込_'+reps['助成金名'].slice(0,20)+'.docx');
-      status.textContent='✓ 完了：'+baseName+'_自動書込.docx をダウンロードしました';
     }else{
-      // テキスト系
+      // テキスト系（.txt/.md/.html/.json）
       const text=await file.text();
-      const replaced=replacePlaceholdersInText(text,reps);
-      const blob=new Blob([replaced],{type:'text/plain;charset=utf-8'});
-      saveAs(blob,baseName+'_自動書込_'+reps['助成金名'].slice(0,20)+'.'+ext);
-      status.textContent='✓ 完了：'+baseName+'_自動書込.'+ext+' をダウンロードしました';
+      const {text:replaced,count}=replacePlaceholdersInText2(text,reps);
+      replacedCount=count;
+      const mime=(ext==='html'?'text/html':(ext==='md'||ext==='markdown')?'text/markdown':(ext==='json')?'application/json':'text/plain')+';charset=utf-8';
+      const blob=new Blob([replaced],{type:mime});
+      saveAs(blob,outName);
+      const warning=replacedCount===0?'<br><small style="color:var(--accent-warm)">⚠ プレースホルダーが見つかりませんでした。{{法人名}}や{法人名}が雛形に含まれているか確認してください。</small>':'<br><small>'+replacedCount+'箇所を置換しました</small>';
+      status.innerHTML='✓ 完了：<strong>'+escapeHtml(outName)+'</strong> をダウンロードしました'+warning;
     }
-    flash('雛形書込完了');
+    flash('雛形書込完了 ('+replacedCount+'箇所置換)');
   }catch(err){
     console.error(err);
-    status.textContent='✗ エラー：'+err.message;
+    status.innerHTML='<span style="color:var(--accent-warm)">✗ エラー：'+escapeHtml(err.message||String(err))+'</span>';
   }
+}
+
+// 置換数も返す版
+function replacePlaceholdersInText2(text,reps){
+  let count=0;
+  for(const k in reps){
+    const val=String(reps[k]||'');
+    const p1='{{'+k+'}}',p2='{'+k+'}';
+    const c1=(text.split(p1).length-1);
+    const c2=(text.split(p2).length-1);
+    text=text.split(p1).join(val);
+    text=text.split(p2).join(val);
+    count+=c1+c2;
+  }
+  return {text,count};
 }
 
 async function loadDraftAsTemplate(filename){
@@ -1007,10 +1053,10 @@ async function loadDraftAsTemplate(filename){
     const text=await res.text();
     const grantIdx=parseInt(document.getElementById('grantSelector').value)||0;
     const reps=getReplacements(grantIdx);
-    const replaced=replacePlaceholdersInText(text,reps);
+    const {text:replaced,count}=replacePlaceholdersInText2(text,reps);
     const blob=new Blob([replaced],{type:'text/markdown;charset=utf-8'});
     saveAs(blob,filename.replace('.md','_カスタマイズ.md'));
-    flash('カスタマイズ版をダウンロード');
+    flash('カスタマイズ版をダウンロード ('+count+'箇所置換)');
   }catch(e){
     alert('読み込みエラー: '+e.message);
   }
