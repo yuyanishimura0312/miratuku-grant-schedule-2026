@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>JSPS 研究協力研究員制度（短期招聘）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>JSPS 研究協力研究員制度（短期招聘） 申請書ドラフト（ミラツク向け）</h1>
+<p><strong>締切</strong>: 通年 | <strong>上限</strong>: 数百万円</p>
+<h2>1. 申請者情報（300字・数値組込）</h2>
+<p>特定非営利活動法人ミラツクは、2010年設立、第14期を迎える京都府・東京都拠点の非営利法人である。専従25名体制で、2024年度営業収益87.4百万円の運営基盤を有し、企業協働20社、コミュニティ参加者350名との実践を通じて研究知と社会課題を接続してきた。学術知識30,288概念を含む26のSQLite知識データベースを保有し、「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載を蓄積している。学際DB、セクター協働、知の社会接続、データ活用、実装、大規模解析、海外招聘を強みとする。</p>
+<h2>2. 助成金概要・応募要件（200字・地の文）</h2>
+<p>JSPSの短期招聘制度は、日本の大学等に所属するホスト研究者が海外研究者を14日から60日招聘し、共同研究、討議、講演、意見交換を行う制度である。申請主体はミラツク単独ではなく、科研費応募資格を持つ連携大学の常勤研究者とし、ミラツクは研究協力機関として知識基盤、企業・市民接続、成果実装を担う。公募回と学内締切に合わせ、候補形成を進める。</p>
+<h2>3. 申請テーマ案（A推奨/B代替・各150字）</h2>
+<p><strong>A推奨</strong>: 学際知識データベースを用いた社会課題研究の国際共同設計。海外の社会イノベーション研究者を短期招聘し、ミラツクの26DB、30,288概念、300話の実践知を用いて、研究知を地域・企業・市民の実装へ接続する方法論を共同開発する。</p>
+<p><strong>B代替</strong>: 研究成果の社会接続と越境協働に関する国際招聘プログラム。海外研究者と連携大学、企業、NPO、コミュニティが対話し、学際研究を政策、事業、生活実践へ翻訳するプロセスを比較検討する。</p>
+<h2>4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字）</h2>
+<h3>背景目的</h3>
+<p>気候変動、ケア、地域産業、教育、ウェルビーイングなどの社会課題は、単一分野の研究成果だけでは解決が難しく、学術知を横断的に整理し、企業、行政、NPO、市民の実践へ接続する仕組みが求められている。一方、研究知が論文や専門領域内に留まり、社会側の問いや実装条件と十分に結びつかない課題もある。ミラツクは、学術知識30,288概念を含む26のSQLite知識DB、20社協働、350名コミュニティ、300話の連載を通じ、知の社会接続を継続してきた。本計画では、連携大学のホスト研究者が海外研究者を短期招聘し、国際共同研究の設計と社会実装モデルを形成する。</p>
+<h3>方法</h3>
+<p>連携大学のホスト研究者を申請主体とし、ミラツクは研究協力機関として事前設計、対話運営、データ整理、成果展開を担う。招聘前にオンライン会合を行い、招聘研究者の専門領域とミラツクの知識DBを照合し、概念マップ、先行研究、国内実装課題を整理する。招聘期間中は、大学での研究討議、公開講演、企業・行政・NPOを交えた実装ワークショップ、ミラツク拠点での知識編集セッションを実施する。討議内容は、学術概念、社会課題、実装主体、評価指標の関係として構造化し、次年度以降の共同研究、国際共著、追加助成申請に展開する。</p>
+<h3>成果</h3>
+<p>成果として、海外研究者との研究討議3回、公開講演1回、実装ワークショップ1回、成果整理会1回を実施し、延べ80名程度の参加を見込む。招聘後は、国際共同研究テーマ案、概念マップ、連携候補者リスト、次年度助成申請方針を作成する。ミラツクの既存DBと300話の連載資産に成果を接続し、研究知を社会実装へ移す再現可能な方法論として発信する。</p>
+<h2>5. スケジュールと予算（年次別）</h2>
+<p>2026年度は、4月から6月に連携大学のホスト研究者、招聘候補者、対象テーマを確定し、7月から8月に研究計画、招聘理由、学内手続きを整える。採択後は招聘2ヶ月前までに事前オンライン会合と概念マップ作成を進め、招聘期間中に大学討議、公開講演、ワークショップ、知識編集セッションを実施する。招聘後1ヶ月以内に成果整理会を行い、共同研究計画と次年度申請先を確定する。予算は、国際往復航空券、日当・滞在費、海外旅行保険、研究支援経費を中心に構成し、対象外経費はミラツクまたは協力機関の自己負担とする。</p>
+<h2>6. 提出物チェックリスト</h2>
+<ul>
+<li><input type="checkbox" disabled> JSPS最新募集要項、申請様式、公募回、学内締切の確認</li>
+<li><input type="checkbox" disabled> 連携大学ホスト研究者の応募資格と所属機関手続きの確認</li>
+<li><input type="checkbox" disabled> 招聘研究者の略歴、業績、所属、博士取得年、招聘理由</li>
+<li><input type="checkbox" disabled> 研究計画、招聘期間、討議・講演日程</li>
+<li><input type="checkbox" disabled> ミラツクの法人概要、2024年度営業収益87.4百万円、専従25名等の実績資料</li>
+<li><input type="checkbox" disabled> 26DB、30,288概念、300話連載、20社協働、350名コミュニティの説明資料</li>
+<li><input type="checkbox" disabled> 予算内訳、航空券見積、滞在計画、研究支援経費の根拠</li>
+<li><input type="checkbox" disabled> 成果公開、個人情報、研究データ取扱いに関する合意</li>
+</ul>
+<h2>7. 推奨アクション（3-5点）</h2>
+<ol>
+<li>まず連携大学のホスト研究者を確定し、ミラツクは協力機関として役割を明文化する。</li>
+<li>招聘者は海外招聘実績よりも、学際研究と社会実装の双方に業績を持つ研究者を優先する。</li>
+<li>申請本文では、国際交流ではなく「日本側研究の国際化」と「知の社会接続方法論」の形成を中心に据える。</li>
+<li>26DB、30,288概念、300話連載を、招聘後の成果を蓄積・再利用する研究基盤として示す。</li>
+<li>JSPS公募回と大学内締切に差が出るため、候補者内諾、英文業績資料、学内承認を先行して準備する。</li>
+</ol>
+<p>保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_M_JSPS 研究協力研究員制度（短期招聘）.md</p>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>中小機構 ソーシャルビジネス支援資金（融資）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>中小機構 ソーシャルビジネス支援資金（融資） 申請書ドラフト（ミラツク向け）</h1>
+<p><strong>締切</strong>: 通年 | <strong>上限</strong>: 7,200万円(融資)</p>
+<h2>1. 申請者情報（300字・数値組込）</h2>
+<p>特定非営利活動法人ミラツクは、2010年設立、第14期を迎える京都府・東京都拠点の非営利法人である。専従25名体制で、2024年度営業収益は87.4M円。企業協働20社、コミュニティ参加者350名を基盤に、社会課題、企業活動、研究知、地域実践を接続する事業を展開している。知識基盤として26のSQLite知識データベースを運用し、学術知識30,288概念を含む大規模な概念群を蓄積している。また「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載を通じ、社会変化の兆しと実践事例を継続的に編集・発信してきた。</p>
+<h2>2. 助成金概要・応募要件（200字・地の文）</h2>
+<p>本資金は、地域・社会課題の解決と事業としての持続性を両立するソーシャルビジネスに対し、運転資金・設備資金を供給する融資制度である。返済を伴うため、公益性だけでなく、収益計画、資金使途、返済原資、実施体制の妥当性が重視される。ミラツクは、企業協働20社と実装支援の実績を持ち、今回の申請ではM+E体制により、知識DBを活用した社会課題解決型事業の拡張資金として位置づける。</p>
+<h2>3. 申請テーマ案（A推奨/B代替・各150字）</h2>
+<p><strong>A推奨: 企業・地域協働を生むソーシャルビジネス実装基盤の拡張</strong> 26のSQLite知識DB、30,288概念、300話の連載知を活用し、企業・自治体・NPOが社会課題を事業化するための調査、対話、実証、実装支援をパッケージ化する。</p>
+<p><strong>B代替: 社会課題探索と事業共創を支える知識データサービス</strong> 企業協働20社と350名コミュニティを入口に、学際DBを用いた課題探索、共創ワークショップ、事業仮説作成、実証伴走を提供し、継続収益化する。</p>
+<h2>4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字）</h2>
+<p><strong>背景目的</strong> 社会課題は、少子高齢化、地域産業、ケア、教育、環境、働き方など複数領域にまたがり、単一の企業や行政部門だけでは解決しにくくなっている。一方で、企業には社会的価値を伴う新規事業やサステナビリティ施策への需要があり、地域・NPOには現場知と課題感が蓄積されている。両者の間には、課題を翻訳し、事業仮説へ変換し、実証まで伴走する中間支援機能が不足している。ミラツクは、学際DB、企業協働、コミュニティ運営、知の社会接続、実装支援を一体で担ってきた。本融資により、既存の協働実績を個別案件に留めず、再現可能なソーシャルビジネス支援サービスとして拡張する。</p>
+<p><strong>方法</strong> 第1に、26のSQLite知識DBと300話の連載を再整理し、企業が関心を持つ社会課題、対象受益者、関連技術、実装事例、協働候補を検索・提案できる形に整備する。第2に、企業協働20社と350名コミュニティを活用し、課題探索セッション、専門家ヒアリング、共創ワークショップ、事業仮説作成を標準メニュー化する。第3に、M+E体制により、ミラツクが企画・対話設計・実装伴走を担い、E側がデータ整理、分析、資料化、効果測定を補完する。第4に、初年度は重点領域を3-5件に絞り、顧客候補との有償実証を行い、2年目以降に年間契約、調査受託、実装伴走、DB活用支援へ展開する。</p>
+<p><strong>成果</strong> 成果として、社会課題起点の事業共創メニュー、知識DB活用レポート、企業向け提案資料、実証案件、効果測定指標を整備する。初年度は有償実証5件、企業面談20件、共創プログラム2件を目標とし、2年目以降は継続契約と実装伴走収入を返済原資に組み込む。公益性と収益性を両立することで、NPOによる持続的な社会実装モデルを示す。</p>
+<h2>5. スケジュールと予算（年次別）</h2>
+<p><strong>1年目</strong>: 融資実行後、DB再整理、営業資料作成、課題探索メニュー設計、重点領域3-5件の選定、有償実証5件の獲得を進める。資金使途は人件費、DB整備費、分析・資料作成費、営業・広報費、ワークショップ運営費を中心とする。</p>
+<p><strong>2年目</strong>: 実証結果を踏まえ、年間契約モデル、調査受託、実装伴走、DB活用支援を拡張する。資金使途は事業開発人件費、顧客管理、効果測定、外部専門家謝金、成果発信に充てる。</p>
+<p><strong>3年目</strong>: 継続契約比率を高め、返済原資を安定化させる。企業協働20社の既存接点から新規顧客を広げ、自治体・大学・NPOとの協働案件にも展開する。</p>
+<h2>6. 提出物チェックリスト</h2>
+<ul>
+<li>法人概要、定款、役員名簿、登記事項証明書、直近決算書、2024年度営業収益87.4M円の根拠資料</li>
+<li>事業計画書、資金使途明細、月次資金繰り表、返済計画、既存借入・固定費の整理資料</li>
+<li>企業協働20社、コミュニティ参加者350名、主要案件、実装支援実績の一覧</li>
+<li>26のSQLite知識DB、30,288概念、連載300話の活用説明資料</li>
+<li>M+Eの役割分担、見積書、営業パイプライン、初年度有償実証候補リスト</li>
+</ul>
+<h2>7. 推奨アクション（3-5点）</h2>
+<ul>
+<li>融資審査では「社会的意義」だけでなく、返済原資となる契約見込みを具体化する。</li>
+<li>企業協働20社から、初年度の面談候補、見積提出候補、有償実証候補を分類する。</li>
+<li>26DBと300話連載を、調査資産ではなく売上につながるサービス基盤として説明する。</li>
+<li>使途は設備投資よりも、DB整備、人件費、営業資料、実証運営など事業拡張資金に整理する。</li>
+<li>M+E体制の役割、費用、成果物、責任分界を申請前に文書化する。</li>
+</ul>
+<p>保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_M_中小機構 ソーシャルビジネス支援資金（融資）.md</p>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

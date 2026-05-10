@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>文科省 大学DX推進事業</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>文科省 大学DX推進事業 申請書ドラフト（esse-sense向け）</h1>
+<p><strong>締切</strong>: 通年 | <strong>上限</strong>: 数千万-1億円(複数年)</p>
+<h2>1. 申請者情報（300字・数値組込）</h2>
+<p>esse-senseは、研究者の知を社会に届けることを主目的とする株式会社であり、学術知の編集、発信、データ化、産学連携支援を一体で行うメディア事業者である。これまでに記事DB154件、general_articles34件を蓄積し、専門領域を横断する学際DBを形成してきた。営利法人であるため単独の教育研究機関ではないが、大学を実施主体とする連携事業において、AIを活用した研究成果可視化、大学DX、大学発SU支援、国際発信の実装パートナーとして強みを発揮できる。</p>
+<h2>2. 助成金概要・応募要件（200字・地の文）</h2>
+<p>本事業は、大学が教育研究、産学連携、研究成果発信、組織運営の高度化を進めるためのDX基盤整備を支援する制度である。申請主体は大学または大学中心の連携体を想定し、esse-senseは共同実施機関、外部委託先、産学連携パートナーとして参画する形が適切である。評価上は、研究力強化、社会実装、人材育成、データ利活用の継続性を示すことが重要である。</p>
+<h2>3. 申請テーマ案（A推奨/B代替・各150字）</h2>
+<p><strong>案A（推奨）</strong>: 大学研究力を社会実装へ接続する「研究知DXプラットフォーム」構築。研究成果、研究者情報、産学連携シーズ、大学発SU情報を構造化し、esse-senseの記事DB154件と編集知見を活用して、AI検索、マッチング、国際発信までを一体化する。</p>
+<p><strong>案B（代替）</strong>: 大学広報・産学連携部門のDXを目的に、研究者取材、記事制作、成果発信、企業候補抽出を支援するAI編集ワークフローを整備する。general_articles34件を含む既存コンテンツを教師データ化し、研究成果の社会向け翻訳能力を高める。</p>
+<h2>4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字）</h2>
+<h3>背景・目的</h3>
+<p>大学には多様な研究成果、研究者ネットワーク、大学発スタートアップの萌芽が存在する一方、それらは研究室、広報部門、産学連携部門、URA組織に分散し、社会や企業が横断的に発見しにくい。特に学際領域では、研究テーマの価値を既存分類だけで説明しきれず、共同研究や事業化の機会が埋もれやすい。本事業では、大学を主体とし、esse-senseの記事DB154件、general_articles34件、編集力、AI・データ活用ノウハウを組み合わせ、研究成果を構造化し、検索、推薦、発信、連携形成までを支える大学DX基盤を整備する。目的は、大学の研究力を可視化し、産学連携と大学発SU支援を継続的に生み出す運用モデルを確立することである。</p>
+<h3>方法</h3>
+<p>初年度は、連携大学の研究者情報、研究シーズ、公開論文、プレスリリース、産学連携実績を収集し、esse-senseの既存記事DBと照合しながら、研究テーマ、社会課題、応用分野、連携可能業種をタグ化する。あわせて、AIによる要約、類似研究検索、企業向け説明文生成のプロトタイプを開発する。2年目は、産学連携部門、URA、広報部門が使う管理画面を整備し、重点研究領域ごとに発信コンテンツと企業マッチング候補を生成する。esse-sense Future Forumとも連動し、国内外に向けた発信検証を行う。3年目は、利用ログ、面談化率、共同研究候補数を分析し、大学内で継続運用できる業務プロセスとデータ更新体制を標準化する。</p>
+<h3>成果</h3>
+<p>成果として、大学研究シーズの構造化DB、AI検索・推薦機能、発信用テンプレート、産学連携候補リスト、国際発信用コンテンツ群を整備する。定量面では、研究者情報100件以上、重点研究シーズ50件以上、企業候補200件以上の登録を目標とし、共同研究面談、大学発SU支援、国際フォーラム登壇機会の創出につなげる。定性面では、研究広報と産学連携をデータ駆動型業務へ転換する。</p>
+<h2>5. スケジュールと予算（年次別）</h2>
+<p>1年目は要件定義、データ設計、研究者・研究シーズ収集、AI要約・タグ付け試作を行い、予算は2,000万-3,000万円を想定する。主な費目は人件費、データ整備費、AI開発費、取材編集費である。2年目は管理画面、検索・推薦機能、産学連携ワークフロー、国際発信を実装し、予算は3,000万-4,000万円を見込む。3年目は複数学部への展開、効果測定、運用標準化を行い、予算は2,000万-3,000万円とする。総額は7,000万-1億円規模で設計し、大学側の基盤整備費とesse-sense側の支援費を区分する。</p>
+<h2>6. 提出物チェックリスト</h2>
+<ul>
+<li><input type="checkbox" disabled> 大学を代表申請者とする実施体制図</li>
+<li><input type="checkbox" disabled> esse-senseの役割分担表</li>
+<li><input type="checkbox" disabled> 事業計画書、年次計画、KPI一覧</li>
+<li><input type="checkbox" disabled> 研究シーズDB・AI機能仕様書</li>
+<li><input type="checkbox" disabled> 予算積算書、見積書</li>
+<li><input type="checkbox" disabled> データ管理、個人情報、著作権方針</li>
+<li><input type="checkbox" disabled> 継続運用体制と事業終了後の展開計画</li>
+</ul>
+<h2>7. 推奨アクション（3-5点）</h2>
+<ul>
+<li>代表申請者となる大学を1校に絞り、産学連携部門、URA、広報部門の合意形成を始める。</li>
+<li>既存DB154件とgeneral_articles34件を、研究領域、大学、社会課題、企業連携可能性で棚卸しする。</li>
+<li>「研究力可視化」「大学発SU支援」「国際発信」から主要KPIを3-5個に絞る。</li>
+<li>AI活用は、研究成果の構造化、探索性向上、連携創出の実務効果として説明する。</li>
+<li>esse-sense Future Forumを成果発信と国際展開の実証機会に位置づける。</li>
+</ul>
+<p>保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_E_文科省 大学DX推進事業.md</p>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>JICA はじめの一歩NGOスタートアップ支援</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>JICA はじめの一歩NGOスタートアップ支援 申請書ドラフト（ミラツク向け）</h1>
+<p><strong>締切</strong>: 通年 | <strong>上限</strong>: 100万円</p>
+<h2>1. 申請者情報（300字・数値組込）</h2>
+<p>特定非営利活動法人ミラツクは、2010年設立、第14期を迎える京都府・東京都拠点のNPOである。専従25名体制で、2024年度営業収益は87.4M円。企業協働20社、コミュニティ参加者350名との共創を通じ、社会課題に関する知を事業・政策・地域実践へ接続してきた。知識基盤として26のSQLite知識データベースを保有し、学術知識30,288概念を含む体系化を進めている。また「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載を通じ、専門知と現場知を社会に開く発信力を有する。</p>
+<h2>2. 助成金概要・応募要件（200字・地の文）</h2>
+<p>本助成は、国際協力活動を始める、または拡大しようとする日本国内のNGO・NPO等を対象に、途上国・地域の貧困削減、生活改善、または日本国内の多文化共生・外国人材受入支援につながる活動を支援する制度である。上限100万円の小規模助成であるため、既存事業の全面展開よりも、現地・国内関係者との信頼形成、課題仮説の検証、次段階のJICA事業や民間協働へつなぐ初期実装が適する。</p>
+<h2>3. 申請テーマ案（A推奨/B代替・各150字）</h2>
+<p>A推奨：アジアの社会起業家・NPOと日本企業・研究者をつなぐ「知の翻訳」型国際協力スタートアップ事業。海外招聘とオンライン対話を組み合わせ、教育、ケア、地域経済等の課題に対し、現地実践知と日本側の技術・事業知を接続する。</p>
+<p>B代替：日本国内の外国人材・留学生コミュニティと企業・自治体をつなぐ多文化共生の共創プログラム。ミラツクの対話設計と知識DBを用い、生活課題、就労課題、地域参加の論点を整理し、小規模な実証活動を形成する。</p>
+<h2>4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字）</h2>
+<p>背景目的：国際協力の現場では、資金や技術だけでなく、異なる地域・文化・セクターの知を翻訳し、協働可能な課題設定へ組み替える機能が不足している。特に初期段階のNGO活動では、現地ニーズ、企業資源、研究知、社会実装の接点を丁寧に設計することが、継続的な協力関係の前提となる。ミラツクは企業協働20社、350名規模のコミュニティ、26のSQLite知識データベース、300話の社会発信を通じて、知を社会へ接続する実践を重ねてきた。本事業では、アジアの社会課題実践者を対象に、海外招聘・オンライン対話・知識整理を組み合わせ、JICA事業への発展可能性を持つ国際協力の初期モデルを構築する。</p>
+<p>方法：対象国・領域は、教育、ケア、地域産業、環境・生活改善のいずれかから、既存ネットワークとJICA国内機関への事前相談を踏まえて選定する。第1段階では、現地NPO、社会起業家、研究者等5-8名にヒアリングを行い、課題構造、当事者、既存支援、協働余地を整理する。第2段階では、ミラツクの企業協働先・研究者・コミュニティ参加者を交えたオンライン対話を2回実施し、現地課題を日本側の技術、事業開発、制度知と接続する。第3段階では、1-2名の海外実践者を招聘し、京都・東京で公開対話と個別ワークショップを行う。得られた知見はSQLite知識DBに構造化し、次年度以降の実証計画、連携候補、必要資源を明確化する。</p>
+<p>成果：成果物は、対象国・領域の課題マップ、協働仮説3件、次年度実証計画1件、公開レポート1本、国内外関係者10-20名の協働リストとする。短期的には、国際協力に関心を持つ企業・研究者・市民が、現地課題を具体的な協働テーマとして理解する状態をつくる。中期的には、JICA草の根技術協力、企業寄付、共同研究等へ接続可能な小規模実証案件を形成し、ミラツクの「知の社会接続」を国際協力領域へ拡張する。</p>
+<h2>5. スケジュールと予算（年次別）</h2>
+<p>1年目上半期は、JICA国内機関への事前相談、対象国・領域の選定、現地候補者の探索、ヒアリング設計を行う。下半期は、オンライン対話、海外招聘、京都・東京でのワークショップ、成果整理、次年度実証計画の作成を進める。予算は、海外招聘旅費・滞在費40万円、通訳・翻訳15万円、ワークショップ運営15万円、調査・ヒアリング謝金15万円、記録・編集・公開レポート10万円、管理費5万円を想定し、合計100万円以内に収める。</p>
+<h2>6. 提出物チェックリスト</h2>
+<ul>
+<li>申請書・事業計画書</li>
+<li>法人登記事項証明書または団体概要資料</li>
+<li>定款、役員名簿、直近年度の事業報告書・決算書</li>
+<li>2024年度営業収益87.4M円、専従25名等を確認できる組織資料</li>
+<li>対象国・連携候補者・招聘候補者の概要</li>
+<li>予算書、見積書、旅費根拠、通訳・会場費根拠</li>
+<li>JICA国内機関への事前相談記録</li>
+</ul>
+<h2>7. 推奨アクション（3-5点）</h2>
+<ul>
+<li>JICA国内機関に、対象国選定と海外招聘の可否、相手国側手続きの要否を事前確認する。</li>
+<li>A案を本命とし、招聘候補者を1-2名まで絞り、招聘目的を「視察」ではなく「次年度実証形成」に置く。</li>
+<li>企業協働20社のうち、国際協力・人材・教育・ケア領域に関心のある企業を早期に巻き込む。</li>
+<li>26のSQLite知識DBと300話連載を、成果公開と波及の根拠として申請書に明記する。</li>
+<li>採択後すぐ動けるよう、ヒアリング候補、通訳、会場、公開レポート編集体制を仮押さえする。</li>
+</ul>
+<p>保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_M_JICA はじめの一歩NGOスタートアップ支援.md</p>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
