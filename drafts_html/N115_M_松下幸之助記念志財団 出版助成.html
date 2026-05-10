@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>松下幸之助記念志財団 出版助成</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>松下幸之助記念志財団 出版助成 申請書ドラフト（ミラツク向け）</h1>
+<p><strong>締切</strong>: 2026-05-27 | <strong>上限</strong>: 200万円</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>法人プロフィールを基に、当該助成金との適合性を強調する自然な文章。営業収益・コミュニティ規模・DB数・連載数等の数値を本文に組み込む。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>助成金の目的・要件・評価ポイントを地の文で整理。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 法人の強み（③）と評価軸に最も合致するテーマ <strong>案B（代替）</strong>: 別角度からのアプローチ （各案にタイトルと150字の要旨）</p>
+<h2>4. 事業/研究計画書本文（推奨案A）</h2>
+<h3>背景・目的（300-400字）</h3>
+<p>社会的・学術的意義を地の文で記述。法人の実績・数値を引用。</p>
+<h3>研究/事業の方法（300-400字）</h3>
+<p>具体的アプローチ、段階的実施計画。</p>
+<h3>期待される成果（200-300字）</h3>
+<p>定量・定性の両面で。</p>
+<h2>5. スケジュールと予算</h2>
+<p>年次別の予算内訳・実施計画。総事業費・補助申請額を明示。</p>
+<h2>6. 提出物チェックリスト</h2>
+<p>申請書類のチェックボックスリスト。</p>
+<h2>7. 推奨アクション</h2>
+<p>即時に行うべき次のステップを箇条書き3-5点。</p>
+<p>【重要】</p>
+<ul>
+<li>地の文中心、箇条書きは補助的に</li>
+<li>法人の数値・実績を本文に組み込む</li>
+<li>1,500-2,500字</li>
+<li>出力の最後に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NM_松下幸之助記念志財団 出版助成.md」と1行で報告</li>
+</ul>
+<p>【ファイル保存】 最終Markdownを完成させたら、以下のパスに保存してください（書き込み権限がない場合はログ末尾に保存対象を明記してください）: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NM_松下幸之助記念志財団 出版助成.md</p>
+<p>codex 指定パスが現在の書き込み許可範囲の外にある可能性があるため、まず保存先ディレクトリの状態を確認します。作成できない場合は、指示どおり保存対象パスを明記してドラフト本文を返します。 exec /bin/bash -lc 'ls -ld /Users/nishimura+/work/miratuku-grants-2026 /Users/nishimura+/work/miratuku-grants-2026/drafts_v2' in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms: drwxr-xr-x  26 nishimura+  staff   832  5月 10 10:58 /Users/nishimura+/work/miratuku-grants-2026 drwxr-xr-x  40 nishimura+  staff  1280  5月 10 10:57 /Users/nishimura+/work/miratuku-grants-2026/drafts_v2</p>
+<p>codex 保存先ディレクトリは存在しています。これから指定構成のMarkdownを作成し、対象ファイルへ書き込みます。 2026-05-10T02:10:04.448886Z ERROR codex_core::tools::router: error=patch rejected: writing outside of the project; rejected by user approval settings codex 指定パスへの直接書き込みはサンドボックス制限で拒否されました。代替として、同じMarkdownを現在の書き込み可能なプロジェクト配下に保存し、最終報告では本来の保存対象パスも明記します。 exec /bin/bash -lc 'mkdir -p drafts_v2' in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms: apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/site/drafts_v2/NM_松下幸之助記念志財団 出版助成.md diff --git a/drafts_v2/NM_松下幸之助記念志財団 出版助成.md b/drafts_v2/NM_松下幸之助記念志財団 出版助成.md new file mode 100644 index 0000000000000000000000000000000000000000..8664f45690e4086041cce66bd057cc9d985f309d --- /dev/null +++ b/drafts_v2/NM_松下幸之助記念志財団 出版助成.md @@ -0,0 +1,52 @@ +# 松下幸之助記念志財団 出版助成 申請書ドラフト（ミラツク向け） + +<strong>締切</strong>: 2026-05-27 | <strong>上限</strong>: 200万円 + +## 1. 申請者情報（300字） +特定非営利活動法人ミラツクは、2010年設立、現在第14期を迎える京都府・東京都を拠点とした実践研究型のNPOである。専従スタッフ25名体制で、企業協働20社、コミュニティ参加者350名とともに、研究者の知を社会課題解決や新規事業創出へ接続してきた。2024年度営業収益は87,405,221円であり、赤字12.2百万円を計上しつつも、繰越正味財産6.2百万円を基盤に次期展開を進めている。学術知識30,288概念、歴史事象91,550件、財団2,140件、採択者2,122件などを含む26のSQLite知識データベースを保有し、「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載を完結させた実績を持つ。出版助成においては、研究者の知の社会接続を出版物として可視化し、公共的な学習資源へ転換できる点に強い適合性がある。 + +## 2. 助成金概要・応募要件（200字） +松下幸之助記念志財団の出版助成は、文化、思想、社会の発展に資する研究成果や実践知を、広く社会に届ける出版活動を支援する制度として位置づけられる。本申請では、単なる活動記録ではなく、学術的知見と社会実践を往還させる編集方針、読者に届く公共性、出版後の普及可能性が評価上重要になる。上限200万円の範囲で、原稿編集、専門家レビュー、デザイン、校正、印刷、流通・広報までを一体の計画として示す必要がある。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 『研究者の知を社会へひらく実践編集学：ミラツク300話連載から見える協働の方法』 + +要旨: ミラツクが完結させた300話の連載と26の知識DBを基盤に、研究者の知が企業、地域、生活者の実践へ接続される過程を体系化する。学術知と社会実装の間にある翻訳、編集、対話の技法を、出版物として共有する。 + +<strong>案B（代替）</strong>: 『変化のかたちを読む：学際知識データベースから描く未来の文化メディア』 + +要旨: 学術知識、歴史、産業、神話、財団・採択者情報を横断するデータベースを活用し、社会変化の兆しを文化メディアとして読み解く。データ解析と編集表現を組み合わせ、一般読者にも届く未来洞察の書籍化を目指す。 + +## 4. 事業/研究計画書本文（推奨案A） +### 背景・目的（300-400字） +研究成果が社会に届くためには、論文や報告書を公開するだけでは不十分であり、異なる分野や立場の人々が理解し、応用できる形へ編集する媒介機能が必要である。ミラツクは、企業協働20社、コミュニティ参加者350名との対話を通じ、研究者の専門知を事業、暮らし、地域、文化の実践へ接続してきた。さらに、学術知識30,288概念、歴史事象91,550件、産業36,734件、神話11,906物語などを含む26のSQLite知識データベースを整備し、知の構造化と社会実装を並行して進めている。本出版では、完結済みの300話連載を素材に、研究者の知がどのように翻訳され、協働の場で意味を持ち、社会に根づくのかを体系的に記述する。目的は、学術と社会の接続を担う編集・対話の方法論を可視化し、研究者、NPO、企業、財団、自治体が参照できる実践知として公開することである。 + +### 研究/事業の方法（300-400字） +事業は、第一に既存連載300話の再読と分類から開始する。「事業のかたち」「暮らしのかたち」「変化のかたち」を、研究者の知の導入、社会課題との接続、協働設計、実装後の変化という観点で再整理し、出版物の章立てへ変換する。第二に、26の知識データベースを参照し、学術概念、歴史事象、産業動向、財団・採択者情報を補助線として加えることで、個別事例に閉じない分析枠組みを整える。第三に、協働先、研究者、編集者によるレビュー会を実施し、記述の正確性、公共性、読者への伝わりやすさを検証する。第四に、専門編集、校正、装丁、印刷、広報を段階的に行い、紙媒体とデジタル発信を連動させる。出版後は、京都・東京での読書会または公開対話を行い、書籍を起点に新たな研究者と実践者の接続を促す。 + +### 期待される成果（200-300字） +成果物は、200から250ページ程度の出版物1点と、出版後の公開対話2回、関連ウェブ記事3本を想定する。定量的には、初版1,000部、関係研究者・財団・企業・NPO等への献本100部、公開対話参加者延べ100名を目標とする。定性的には、研究者の知を社会実装へつなぐ編集方法を明文化し、ミラツクが蓄積してきた300話の連載と知識DBを、次の協働を生む共通言語へ転換する。これにより、学術知を閉じた専門領域に留めず、文化メディアとして社会に流通させる基盤が形成される。 + +## 5. スケジュールと予算 +2026年6月から7月にかけて既存原稿300話の再整理、章立て、掲載候補の選定を行う。8月から10月は追加取材、知識DBを用いた補足分析、研究者・協働先レビューを進める。11月から2027年1月に原稿執筆と編集、2月に校正・デザイン、3月に印刷・製本、4月以降に刊行記念対話と普及広報を実施する。 + +総事業費は2,600,000円、補助申請額は上限の2,000,000円とする。内訳は、編集・執筆謝金900,000円、専門家レビュー・追加取材300,000円、デザイン・組版350,000円、校正150,000円、印刷・製本600,000円、広報・公開対話200,000円、事務管理100,000円を想定する。自己資金600,000円は、ミラツクの事業収益および協働事業の間接費から充当する。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> 所定申請書 +- <input type="checkbox" disabled> 出版企画書・目次案 +- <input type="checkbox" disabled> 著者・編集体制の説明資料 +- <input type="checkbox" disabled> 見積書（編集、デザイン、印刷等） +- <input type="checkbox" disabled> 法人定款または団体概要 +- <input type="checkbox" disabled> 直近年度の事業報告書・決算書 +- <input type="checkbox" disabled> 既存連載300話のサンプル原稿 +- <input type="checkbox" disabled> 出版後の普及計画書 + +## 7. 推奨アクション +- 財団の最新募集要項を確認し、対象分野、対象経費、提出方法、必要部数を確定する。 +- 案Aの章立てを6章程度に整理し、300話連載から掲載候補30本を選定する。 +- 研究者、協働企業、編集者から各1名以上の推薦・協力コメントを取得する。 +- 印刷会社とデザイナーから見積書を取得し、200万円以内の助成対象経費を精査する。 +- 2024年度決算の赤字要因と今後の継続性を、申請書内で簡潔に説明できる補足資料を用意する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NM_松下幸之助記念志財団 出版助成.md</p>
+<p>diff --git a/drafts_v2/NM_松下幸之助記念志財団 出版助成.md b/drafts_v2/NM_松下幸之助記念志財団 出版助成.md new file mode 100644 index 0000000000000000000000000000000000000000..8664f45690e4086041cce66bd057cc9d985f309d --- /dev/null +++ b/drafts_v2/NM_松下幸之助記念志財団 出版助成.md @@ -0,0 +1,52 @@ +# 松下幸之助記念志財団 出版助成 申請書ドラフト（ミラツク向け） + +<strong>締切</strong>: 2026-05-27 | <strong>上限</strong>: 200万円 + +## 1. 申請者情報（300字） +特定非営利活動法人ミラツクは、2010年設立、現在第14期を迎える京都府・東京都を拠点とした実践研究型のNPOである。専従スタッフ25名体制で、企業協働20社、コミュニティ参加者350名とともに、研究者の知を社会課題解決や新規事業創出へ接続してきた。2024年度営業収益は87,405,221円であり、赤字12.2百万円を計上しつつも、繰越正味財産6.2百万円を基盤に次期展開を進めている。学術知識30,288概念、歴史事象91,550件、財団2,140件、採択者2,122件などを含む26のSQLite知識データベースを保有し、「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載を完結させた実績を持つ。出版助成においては、研究者の知の社会接続を出版物として可視化し、公共的な学習資源へ転換できる点に強い適合性がある。 + +## 2. 助成金概要・応募要件（200字） +松下幸之助記念志財団の出版助成は、文化、思想、社会の発展に資する研究成果や実践知を、広く社会に届ける出版活動を支援する制度として位置づけられる。本申請では、単なる活動記録ではなく、学術的知見と社会実践を往還させる編集方針、読者に届く公共性、出版後の普及可能性が評価上重要になる。上限200万円の範囲で、原稿編集、専門家レビュー、デザイン、校正、印刷、流通・広報までを一体の計画として示す必要がある。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 『研究者の知を社会へひらく実践編集学：ミラツク300話連載から見える協働の方法』 + +要旨: ミラツクが完結させた300話の連載と26の知識DBを基盤に、研究者の知が企業、地域、生活者の実践へ接続される過程を体系化する。学術知と社会実装の間にある翻訳、編集、対話の技法を、出版物として共有する。 + +<strong>案B（代替）</strong>: 『変化のかたちを読む：学際知識データベースから描く未来の文化メディア』 + +要旨: 学術知識、歴史、産業、神話、財団・採択者情報を横断するデータベースを活用し、社会変化の兆しを文化メディアとして読み解く。データ解析と編集表現を組み合わせ、一般読者にも届く未来洞察の書籍化を目指す。 + +## 4. 事業/研究計画書本文（推奨案A） +### 背景・目的（300-400字） +研究成果が社会に届くためには、論文や報告書を公開するだけでは不十分であり、異なる分野や立場の人々が理解し、応用できる形へ編集する媒介機能が必要である。ミラツクは、企業協働20社、コミュニティ参加者350名との対話を通じ、研究者の専門知を事業、暮らし、地域、文化の実践へ接続してきた。さらに、学術知識30,288概念、歴史事象91,550件、産業36,734件、神話11,906物語などを含む26のSQLite知識データベースを整備し、知の構造化と社会実装を並行して進めている。本出版では、完結済みの300話連載を素材に、研究者の知がどのように翻訳され、協働の場で意味を持ち、社会に根づくのかを体系的に記述する。目的は、学術と社会の接続を担う編集・対話の方法論を可視化し、研究者、NPO、企業、財団、自治体が参照できる実践知として公開することである。 + +### 研究/事業の方法（300-400字） +事業は、第一に既存連載300話の再読と分類から開始する。「事業のかたち」「暮らしのかたち」「変化のかたち」を、研究者の知の導入、社会課題との接続、協働設計、実装後の変化という観点で再整理し、出版物の章立てへ変換する。第二に、26の知識データベースを参照し、学術概念、歴史事象、産業動向、財団・採択者情報を補助線として加えることで、個別事例に閉じない分析枠組みを整える。第三に、協働先、研究者、編集者によるレビュー会を実施し、記述の正確性、公共性、読者への伝わりやすさを検証する。第四に、専門編集、校正、装丁、印刷、広報を段階的に行い、紙媒体とデジタル発信を連動させる。出版後は、京都・東京での読書会または公開対話を行い、書籍を起点に新たな研究者と実践者の接続を促す。 + +### 期待される成果（200-300字） +成果物は、200から250ページ程度の出版物1点と、出版後の公開対話2回、関連ウェブ記事3本を想定する。定量的には、初版1,000部、関係研究者・財団・企業・NPO等への献本100部、公開対話参加者延べ100名を目標とする。定性的には、研究者の知を社会実装へつなぐ編集方法を明文化し、ミラツクが蓄積してきた300話の連載と知識DBを、次の協働を生む共通言語へ転換する。これにより、学術知を閉じた専門領域に留めず、文化メディアとして社会に流通させる基盤が形成される。 + +## 5. スケジュールと予算 +2026年6月から7月にかけて既存原稿300話の再整理、章立て、掲載候補の選定を行う。8月から10月は追加取材、知識DBを用いた補足分析、研究者・協働先レビューを進める。11月から2027年1月に原稿執筆と編集、2月に校正・デザイン、3月に印刷・製本、4月以降に刊行記念対話と普及広報を実施する。 + +総事業費は2,600,000円、補助申請額は上限の2,000,000円とする。内訳は、編集・執筆謝金900,000円、専門家レビュー・追加取材300,000円、デザイン・組版350,000円、校正150,000円、印刷・製本600,000円、広報・公開対話200,000円、事務管理100,000円を想定する。自己資金600,000円は、ミラツクの事業収益および協働事業の間接費から充当する。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> 所定申請書 +- <input type="checkbox" disabled> 出版企画書・目次案 +- <input type="checkbox" disabled> 著者・編集体制の説明資料 +- <input type="checkbox" disabled> 見積書（編集、デザイン、印刷等） +- <input type="checkbox" disabled> 法人定款または団体概要 +- <input type="checkbox" disabled> 直近年度の事業報告書・決算書 +- <input type="checkbox" disabled> 既存連載300話のサンプル原稿 +- <input type="checkbox" disabled> 出版後の普及計画書 + +## 7. 推奨アクション +- 財団の最新募集要項を確認し、対象分野、対象経費、提出方法、必要部数を確定する。 +- 案Aの章立てを6章程度に整理し、300話連載から掲載候補30本を選定する。 +- 研究者、協働企業、編集者から各1名以上の推薦・協力コメントを取得する。 +- 印刷会社とデザイナーから見積書を取得し、200万円以内の助成対象経費を精査する。 +- 2024年度決算の赤字要因と今後の継続性を、申請書内で簡潔に説明できる補足資料を用意する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NM_松下幸之助記念志財団 出版助成.md</p>
+<p>exec /bin/bash -lc "wc -m drafts_v2/NM_松下幸之助記念志財団\\ 出版助成.md" in /Users/nishimura+/work/miratuku-grants-2026/site exec /bin/bash -lc "tail -n 3 drafts_v2/NM_松下幸之助記念志財団\\ 出版助成.md" in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms:     2887 drafts_v2/NM_松下幸之助記念志財団 出版助成.md</p>
+<p>succeeded in 0ms:</p>
+<ul>
+<li>2024年度決算の赤字要因と今後の継続性を、申請書内で簡潔に説明できる補足資料を用意する。</li>
+</ul>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

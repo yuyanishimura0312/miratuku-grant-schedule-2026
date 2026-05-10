@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>京都市 Arts Aid KYOTO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>京都市 Arts Aid KYOTO 申請書ドラフト（ミラツク向け）</h1>
+<p><strong>締切</strong>: 2026-06-05 | <strong>上限</strong>: 段階設定</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>法人プロフィールを基に、当該助成金との適合性を強調する自然な文章。営業収益・コミュニティ規模・DB数・連載数等の数値を本文に組み込む。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>助成金の目的・要件・評価ポイントを地の文で整理。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 法人の強み（③）と評価軸に最も合致するテーマ <strong>案B（代替）</strong>: 別角度からのアプローチ （各案にタイトルと150字の要旨）</p>
+<h2>4. 事業/研究計画書本文（推奨案A）</h2>
+<h3>背景・目的（300-400字）</h3>
+<p>社会的・学術的意義を地の文で記述。法人の実績・数値を引用。</p>
+<h3>研究/事業の方法（300-400字）</h3>
+<p>具体的アプローチ、段階的実施計画。</p>
+<h3>期待される成果（200-300字）</h3>
+<p>定量・定性の両面で。</p>
+<h2>5. スケジュールと予算</h2>
+<p>年次別の予算内訳・実施計画。総事業費・補助申請額を明示。</p>
+<h2>6. 提出物チェックリスト</h2>
+<p>申請書類のチェックボックスリスト。</p>
+<h2>7. 推奨アクション</h2>
+<p>即時に行うべき次のステップを箇条書き3-5点。</p>
+<p>【重要】</p>
+<ul>
+<li>地の文中心、箇条書きは補助的に</li>
+<li>法人の数値・実績を本文に組み込む</li>
+<li>1,500-2,500字</li>
+<li>出力の最後に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NM_京都市 Arts Aid KYOTO.md」と1行で報告</li>
+</ul>
+<p>【ファイル保存】 最終Markdownを完成させたら、以下のパスに保存してください（書き込み権限がない場合はログ末尾に保存対象を明記してください）: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NM_京都市 Arts Aid KYOTO.md</p>
+<p>codex 提出用ドラフトを作成し、指定パスに保存できるか確認します。権限外の場所なら、指示どおり保存対象パスを明記して内容を返します。 exec /bin/bash -lc 'find .. -maxdepth 2 -type d -name drafts_v2 -print' in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms: ../drafts_v2 ../site/drafts_v2</p>
+<p>exec /bin/bash -lc 'pwd && ls -ld /Users/nishimura+/work/miratuku-grants-2026 /Users/nishimura+/work/miratuku-grants-2026/drafts_v2 2>/dev/null' in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms: /Users/nishimura+/work/miratuku-grants-2026/site drwxr-xr-x  26 nishimura+  staff   832  5月 10 10:58 /Users/nishimura+/work/miratuku-grants-2026 drwxr-xr-x  40 nishimura+  staff  1280  5月 10 10:57 /Users/nishimura+/work/miratuku-grants-2026/drafts_v2</p>
+<p>web search: web search: 京都市 Arts Aid KYOTO 2026 募集要項 文化芸術 活動 支援 web search: web search: <a href="https://www.city.kyoto.lg.jp/bunshi/page/0000353263.html">https://www.city.kyoto.lg.jp/bunshi/page/0000353263.html</a> codex 京都市の令和8年度募集ページで、通常支援型の枠、上限、募集期間、対象者・対象事業を確認しました。これを反映して、ミラツクの「研究者の知の社会接続」に寄せた案Aで本文化します。 exec /bin/bash -lc "test -f '../drafts_v2/NM_京都市 Arts Aid KYOTO.md' && sed -n '1,20p' '../drafts_v2/NM_京都市 Arts Aid KYOTO.md' || true" in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms: codex 指定先のファイルは未作成でした。これから <code>../drafts_v2/NM_京都市 Arts Aid KYOTO.md</code> に新規作成します。 2026-05-10T02:10:16.330674Z ERROR codex_core::tools::router: error=patch rejected: writing outside of the project; rejected by user approval settings codex 指定パスは現在のサンドボックスの書き込み範囲外で拒否されました。代替として、このワークスペース内の書き込み可能な <code>site/drafts_v2/</code> に同名ファイルを保存し、ドラフト末尾には指定された保存対象パスを残します。 apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/site/drafts_v2/NM_京都市 Arts Aid KYOTO.md diff --git a/drafts_v2/NM_京都市 Arts Aid KYOTO.md b/drafts_v2/NM_京都市 Arts Aid KYOTO.md new file mode 100644 index 0000000000000000000000000000000000000000..83f3bf59296331a79a0ca1a8c424b83b07492186 --- /dev/null +++ b/drafts_v2/NM_京都市 Arts Aid KYOTO.md @@ -0,0 +1,60 @@ +# 京都市 Arts Aid KYOTO 申請書ドラフト（ミラツク向け） + +<strong>締切</strong>: 2026-06-05 | <strong>上限</strong>: 段階設定 + +## 1. 申請者情報（300字） + +特定非営利活動法人ミラツクは、2010年設立、京都府・東京都を拠点に第14期を迎える実践研究型NPOである。専従スタッフ25名体制で、2024年度営業収益は87,405,221円、当期は12.2百万円の赤字ながら繰越正味財産6.2百万円を保持し、事業継続と再投資の基盤を有する。主要事業では企業協働20社、コミュニティ参加者350名を形成し、研究者・企業・行政・市民をつなぐ場を継続してきた。加えて、26のSQLite知識データベースに、学術知識30,288概念、歴史事象91,550件、財団2,140件、採択者2,122件、神話11,906物語、産業36,734件等を蓄積し、「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載を完結させている。京都の文化資源を学術知と社会実践の接点から編集・公開する本助成との適合性は高い。 + +## 2. 助成金概要・応募要件（200字） + +Arts Aid KYOTOは、京都市が文化芸術関係者の意欲的な活動を社会全体で支え、持続的な文化芸術の発展を目指す制度である。令和8年度通常支援型は、一般助成枠Aが上限100万円、Bが上限20万円、若手交流促進枠が上限10万円で、2026年5月1日から6月5日午後5時まで募集される。一般助成枠は、京都市内で実施し、文化芸術の振興に資し、不特定多数へ公開する主催事業が対象である。京都市内に活動拠点を持ち、文化芸術事業の実績がある法人として申請可能性がある。 + +## 3. 申請テーマ案 + +<strong>案A（推奨）</strong>: 「京都の知をひらく文化メディア・ラボ」 + +京都の研究者、表現者、企業、市民をつなぎ、学術知を文化メディアとして翻訳・公開する連続公開プログラム。ミラツクの研究者の知の社会接続力と300話の連載制作実績を生かし、対話、リサーチ、記事、公開報告会を組み合わせて京都特有の文化資源を現代社会へ接続する。 + +<strong>案B（代替）</strong>: 「京都文化実践アーカイブの可視化と公開対話」 + +26の知識データベースを活用し、京都の文化芸術活動と社会課題の接点を可視化する公開型リサーチ事業。採択者、財団、歴史事象、産業データを横断し、文化活動の持続可能性を議論するワークショップとオンライン記事を制作する。 + +## 4. 事業/研究計画書本文（推奨案A） + +### 背景・目的（300-400字） + +京都には、芸術、工芸、宗教、大学、地域産業、市民活動が重なり合う文化的厚みがある一方で、研究者が蓄積する知や現場の実践知が、一般市民や次世代の文化活動者に届く経路は十分ではない。文化芸術の振興には、作品発表だけでなく、知を媒介し、異なる領域の参加者が意味を編み直す文化メディアの存在が必要である。ミラツクはこれまで、企業協働20社、350名規模のコミュニティ、26の知識データベース、合計300話の連載制作を通じて、研究者の知を社会に接続する編集・対話・実装の方法を培ってきた。本事業では、京都の文化資源を学術知と市民的関心の双方から再編集し、公開プログラムとして展開することで、京都特有の知的文化を次の創造活動へつなぐ。 + +### 研究/事業の方法（300-400字） + +事業は三段階で実施する。第一段階では、京都に関係する研究者、文化実践者、編集者を選定し、ミラツクの学術知識30,288概念、歴史事象91,550件、神話11,906物語、産業36,734件等のデータベースを参照しながら、文化メディア化に適したテーマを抽出する。第二段階では、対話型リサーチとして小規模研究会を3回開催し、記録を編集して記事、図解、短いレポートに展開する。第三段階では、京都市内で不特定多数に公開する報告会とトークイベントを実施し、研究者の専門知、表現者の制作実感、市民の問いを交差させる。成果はオンラインでも整理し、Arts Aid KYOTOの趣旨に沿って、リアルな公開機会を中心に据えつつ継続的に参照できる文化メディア資産として残す。 + +### 期待される成果（200-300字） + +定量成果として、公開研究会3回、京都市内での公開報告会1回、編集記事5本、図解またはレポート3点、参加者延べ120名を目標とする。定性成果としては、研究者の知を専門領域内に閉じず、京都の文化芸術活動者、市民、企業関係者が共有できる言葉へ翻訳することにより、新たな協働テーマを生み出す。ミラツクの既存コミュニティ350名と企業協働20社の接点を活用することで、単年度の発表にとどまらず、次年度以降の文化芸術支援、共同研究、メディア連載へ発展する基盤を形成する。 + +## 5. スケジュールと予算 + +補助対象期間を2026年8月から2027年3月とし、一般助成枠Aへの申請を想定する。総事業費は1,350,000円、補助申請額は1,000,000円、自己負担・協賛等を350,000円とする。2026年8月から9月にテーマ設計、登壇者調整、既存データベース調査を行い、予算300,000円を充てる。10月から12月に研究会3回、記録編集、記事制作を進め、謝金、会場費、記録費、編集費として600,000円を計上する。2027年1月から3月に公開報告会、成果レポート制作、広報、実績報告を実施し、450,000円を配分する。主な内訳は、研究者・登壇者謝金350,000円、編集・執筆費300,000円、会場・配信・記録費250,000円、広報制作費150,000円、事務局運営費250,000円、予備費50,000円である。 + +## 6. 提出物チェックリスト + +- <input type="checkbox" disabled> Arts Aid KYOTO通常支援型申請フォーム入力内容 +- <input type="checkbox" disabled> 事業計画書 +- <input type="checkbox" disabled> 収支予算書 +- <input type="checkbox" disabled> 団体概要、定款、役員名簿等の法人確認資料 +- <input type="checkbox" disabled> 文化芸術事業の実績資料 +- <input type="checkbox" disabled> 京都市内の活動拠点または実施会場を確認できる資料 +- <input type="checkbox" disabled> 公開報告会・研究会の開催計画、登壇候補者一覧 +- <input type="checkbox" disabled> 事業広報物、成果公開方針の説明資料 + +## 7. 推奨アクション + +- 京都市内の実施会場を仮押さえし、申請書に公開性を明記する。 +- 一般助成枠Aで申請する前提で、補助対象経費と対象外経費を募集案内に照合する。 +- 研究者・文化実践者の登壇候補3-5名に内諾を取り、実績資料を添付できる状態にする。 +- 300話連載と26データベースの実績を、審査者が一読で理解できる1枚資料に整理する。 +- 2026年6月5日午後5時の締切から逆算し、5月中に代表者確認、予算確定、フォーム下書きを完了する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NM_京都市 Arts Aid KYOTO.md</p>
+<p>diff --git a/drafts_v2/NM_京都市 Arts Aid KYOTO.md b/drafts_v2/NM_京都市 Arts Aid KYOTO.md new file mode 100644 index 0000000000000000000000000000000000000000..83f3bf59296331a79a0ca1a8c424b83b07492186 --- /dev/null +++ b/drafts_v2/NM_京都市 Arts Aid KYOTO.md @@ -0,0 +1,60 @@ +# 京都市 Arts Aid KYOTO 申請書ドラフト（ミラツク向け） + +<strong>締切</strong>: 2026-06-05 | <strong>上限</strong>: 段階設定 + +## 1. 申請者情報（300字） + +特定非営利活動法人ミラツクは、2010年設立、京都府・東京都を拠点に第14期を迎える実践研究型NPOである。専従スタッフ25名体制で、2024年度営業収益は87,405,221円、当期は12.2百万円の赤字ながら繰越正味財産6.2百万円を保持し、事業継続と再投資の基盤を有する。主要事業では企業協働20社、コミュニティ参加者350名を形成し、研究者・企業・行政・市民をつなぐ場を継続してきた。加えて、26のSQLite知識データベースに、学術知識30,288概念、歴史事象91,550件、財団2,140件、採択者2,122件、神話11,906物語、産業36,734件等を蓄積し、「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載を完結させている。京都の文化資源を学術知と社会実践の接点から編集・公開する本助成との適合性は高い。 + +## 2. 助成金概要・応募要件（200字） + +Arts Aid KYOTOは、京都市が文化芸術関係者の意欲的な活動を社会全体で支え、持続的な文化芸術の発展を目指す制度である。令和8年度通常支援型は、一般助成枠Aが上限100万円、Bが上限20万円、若手交流促進枠が上限10万円で、2026年5月1日から6月5日午後5時まで募集される。一般助成枠は、京都市内で実施し、文化芸術の振興に資し、不特定多数へ公開する主催事業が対象である。京都市内に活動拠点を持ち、文化芸術事業の実績がある法人として申請可能性がある。 + +## 3. 申請テーマ案 + +<strong>案A（推奨）</strong>: 「京都の知をひらく文化メディア・ラボ」 + +京都の研究者、表現者、企業、市民をつなぎ、学術知を文化メディアとして翻訳・公開する連続公開プログラム。ミラツクの研究者の知の社会接続力と300話の連載制作実績を生かし、対話、リサーチ、記事、公開報告会を組み合わせて京都特有の文化資源を現代社会へ接続する。 + +<strong>案B（代替）</strong>: 「京都文化実践アーカイブの可視化と公開対話」 + +26の知識データベースを活用し、京都の文化芸術活動と社会課題の接点を可視化する公開型リサーチ事業。採択者、財団、歴史事象、産業データを横断し、文化活動の持続可能性を議論するワークショップとオンライン記事を制作する。 + +## 4. 事業/研究計画書本文（推奨案A） + +### 背景・目的（300-400字） + +京都には、芸術、工芸、宗教、大学、地域産業、市民活動が重なり合う文化的厚みがある一方で、研究者が蓄積する知や現場の実践知が、一般市民や次世代の文化活動者に届く経路は十分ではない。文化芸術の振興には、作品発表だけでなく、知を媒介し、異なる領域の参加者が意味を編み直す文化メディアの存在が必要である。ミラツクはこれまで、企業協働20社、350名規模のコミュニティ、26の知識データベース、合計300話の連載制作を通じて、研究者の知を社会に接続する編集・対話・実装の方法を培ってきた。本事業では、京都の文化資源を学術知と市民的関心の双方から再編集し、公開プログラムとして展開することで、京都特有の知的文化を次の創造活動へつなぐ。 + +### 研究/事業の方法（300-400字） + +事業は三段階で実施する。第一段階では、京都に関係する研究者、文化実践者、編集者を選定し、ミラツクの学術知識30,288概念、歴史事象91,550件、神話11,906物語、産業36,734件等のデータベースを参照しながら、文化メディア化に適したテーマを抽出する。第二段階では、対話型リサーチとして小規模研究会を3回開催し、記録を編集して記事、図解、短いレポートに展開する。第三段階では、京都市内で不特定多数に公開する報告会とトークイベントを実施し、研究者の専門知、表現者の制作実感、市民の問いを交差させる。成果はオンラインでも整理し、Arts Aid KYOTOの趣旨に沿って、リアルな公開機会を中心に据えつつ継続的に参照できる文化メディア資産として残す。 + +### 期待される成果（200-300字） + +定量成果として、公開研究会3回、京都市内での公開報告会1回、編集記事5本、図解またはレポート3点、参加者延べ120名を目標とする。定性成果としては、研究者の知を専門領域内に閉じず、京都の文化芸術活動者、市民、企業関係者が共有できる言葉へ翻訳することにより、新たな協働テーマを生み出す。ミラツクの既存コミュニティ350名と企業協働20社の接点を活用することで、単年度の発表にとどまらず、次年度以降の文化芸術支援、共同研究、メディア連載へ発展する基盤を形成する。 + +## 5. スケジュールと予算 + +補助対象期間を2026年8月から2027年3月とし、一般助成枠Aへの申請を想定する。総事業費は1,350,000円、補助申請額は1,000,000円、自己負担・協賛等を350,000円とする。2026年8月から9月にテーマ設計、登壇者調整、既存データベース調査を行い、予算300,000円を充てる。10月から12月に研究会3回、記録編集、記事制作を進め、謝金、会場費、記録費、編集費として600,000円を計上する。2027年1月から3月に公開報告会、成果レポート制作、広報、実績報告を実施し、450,000円を配分する。主な内訳は、研究者・登壇者謝金350,000円、編集・執筆費300,000円、会場・配信・記録費250,000円、広報制作費150,000円、事務局運営費250,000円、予備費50,000円である。 + +## 6. 提出物チェックリスト + +- <input type="checkbox" disabled> Arts Aid KYOTO通常支援型申請フォーム入力内容 +- <input type="checkbox" disabled> 事業計画書 +- <input type="checkbox" disabled> 収支予算書 +- <input type="checkbox" disabled> 団体概要、定款、役員名簿等の法人確認資料 +- <input type="checkbox" disabled> 文化芸術事業の実績資料 +- <input type="checkbox" disabled> 京都市内の活動拠点または実施会場を確認できる資料 +- <input type="checkbox" disabled> 公開報告会・研究会の開催計画、登壇候補者一覧 +- <input type="checkbox" disabled> 事業広報物、成果公開方針の説明資料 + +## 7. 推奨アクション + +- 京都市内の実施会場を仮押さえし、申請書に公開性を明記する。 +- 一般助成枠Aで申請する前提で、補助対象経費と対象外経費を募集案内に照合する。 +- 研究者・文化実践者の登壇候補3-5名に内諾を取り、実績資料を添付できる状態にする。 +- 300話連載と26データベースの実績を、審査者が一読で理解できる1枚資料に整理する。 +- 2026年6月5日午後5時の締切から逆算し、5月中に代表者確認、予算確定、フォーム下書きを完了する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NM_京都市 Arts Aid KYOTO.md</p>
+<p>exec /bin/bash -lc "sed -n '1,12p' 'drafts_v2/NM_京都市 Arts Aid KYOTO.md'" in /Users/nishimura+/work/miratuku-grants-2026/site exec /bin/bash -lc "wc -m 'drafts_v2/NM_京都市 Arts Aid KYOTO.md'" in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms:     2920 drafts_v2/NM_京都市 Arts Aid KYOTO.md</p>
+<p>succeeded in 0ms:</p>
+<h1>京都市 Arts Aid KYOTO 申請書ドラフト（ミラツク向け）</h1>
+<p><strong>締切</strong>: 2026-06-05 | <strong>上限</strong>: 段階設定</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>特定非営利活動法人ミラツクは、2010年設立、京都府・東京都を拠点に第14期を迎える実践研究型NPOである。専従スタッフ25名体制で、2024年度営業収益は87,405,221円、当期は12.2百万円の赤字ながら繰越正味財産6.2百万円を保持し、事業継続と再投資の基盤を有する。主要事業では企業協働20社、コミュニティ参加者350名を形成し、研究者・企業・行政・市民をつなぐ場を継続してきた。加えて、26のSQLite知識データベースに、学術知識30,288概念、歴史事象91,550件、財団2,140件、採択者2,122件、神話11,906物語、産業36,734件等を蓄積し、「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載を完結させている。京都の文化資源を学術知と社会実践の接点から編集・公開する本助成との適合性は高い。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>Arts Aid KYOTOは、京都市が文化芸術関係者の意欲的な活動を社会全体で支え、持続的な文化芸術の発展を目指す制度である。令和8年度通常支援型は、一般助成枠Aが上限100万円、Bが上限20万円、若手交流促進枠が上限10万円で、2026年5月1日から6月5日午後5時まで募集される。一般助成枠は、京都市内で実施し、文化芸術の振興に資し、不特定多数へ公開する主催事業が対象である。京都市内に活動拠点を持ち、文化芸術事業の実績がある法人として申請可能性がある。</p>
+<p>diff --git a/drafts_v2/NM_京都市 Arts Aid KYOTO.md b/drafts_v2/NM_京都市 Arts Aid KYOTO.md new file mode 100644 index 0000000000000000000000000000000000000000..83f3bf59296331a79a0ca1a8c424b83b07492186 --- /dev/null +++ b/drafts_v2/NM_京都市 Arts Aid KYOTO.md @@ -0,0 +1,60 @@ +# 京都市 Arts Aid KYOTO 申請書ドラフト（ミラツク向け） + +<strong>締切</strong>: 2026-06-05 | <strong>上限</strong>: 段階設定 + +## 1. 申請者情報（300字） + +特定非営利活動法人ミラツクは、2010年設立、京都府・東京都を拠点に第14期を迎える実践研究型NPOである。専従スタッフ25名体制で、2024年度営業収益は87,405,221円、当期は12.2百万円の赤字ながら繰越正味財産6.2百万円を保持し、事業継続と再投資の基盤を有する。主要事業では企業協働20社、コミュニティ参加者350名を形成し、研究者・企業・行政・市民をつなぐ場を継続してきた。加えて、26のSQLite知識データベースに、学術知識30,288概念、歴史事象91,550件、財団2,140件、採択者2,122件、神話11,906物語、産業36,734件等を蓄積し、「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載を完結させている。京都の文化資源を学術知と社会実践の接点から編集・公開する本助成との適合性は高い。 + +## 2. 助成金概要・応募要件（200字） + +Arts Aid KYOTOは、京都市が文化芸術関係者の意欲的な活動を社会全体で支え、持続的な文化芸術の発展を目指す制度である。令和8年度通常支援型は、一般助成枠Aが上限100万円、Bが上限20万円、若手交流促進枠が上限10万円で、2026年5月1日から6月5日午後5時まで募集される。一般助成枠は、京都市内で実施し、文化芸術の振興に資し、不特定多数へ公開する主催事業が対象である。京都市内に活動拠点を持ち、文化芸術事業の実績がある法人として申請可能性がある。 + +## 3. 申請テーマ案 + +<strong>案A（推奨）</strong>: 「京都の知をひらく文化メディア・ラボ」 + +京都の研究者、表現者、企業、市民をつなぎ、学術知を文化メディアとして翻訳・公開する連続公開プログラム。ミラツクの研究者の知の社会接続力と300話の連載制作実績を生かし、対話、リサーチ、記事、公開報告会を組み合わせて京都特有の文化資源を現代社会へ接続する。 + +<strong>案B（代替）</strong>: 「京都文化実践アーカイブの可視化と公開対話」 + +26の知識データベースを活用し、京都の文化芸術活動と社会課題の接点を可視化する公開型リサーチ事業。採択者、財団、歴史事象、産業データを横断し、文化活動の持続可能性を議論するワークショップとオンライン記事を制作する。 + +## 4. 事業/研究計画書本文（推奨案A） + +### 背景・目的（300-400字） + +京都には、芸術、工芸、宗教、大学、地域産業、市民活動が重なり合う文化的厚みがある一方で、研究者が蓄積する知や現場の実践知が、一般市民や次世代の文化活動者に届く経路は十分ではない。文化芸術の振興には、作品発表だけでなく、知を媒介し、異なる領域の参加者が意味を編み直す文化メディアの存在が必要である。ミラツクはこれまで、企業協働20社、350名規模のコミュニティ、26の知識データベース、合計300話の連載制作を通じて、研究者の知を社会に接続する編集・対話・実装の方法を培ってきた。本事業では、京都の文化資源を学術知と市民的関心の双方から再編集し、公開プログラムとして展開することで、京都特有の知的文化を次の創造活動へつなぐ。 + +### 研究/事業の方法（300-400字） + +事業は三段階で実施する。第一段階では、京都に関係する研究者、文化実践者、編集者を選定し、ミラツクの学術知識30,288概念、歴史事象91,550件、神話11,906物語、産業36,734件等のデータベースを参照しながら、文化メディア化に適したテーマを抽出する。第二段階では、対話型リサーチとして小規模研究会を3回開催し、記録を編集して記事、図解、短いレポートに展開する。第三段階では、京都市内で不特定多数に公開する報告会とトークイベントを実施し、研究者の専門知、表現者の制作実感、市民の問いを交差させる。成果はオンラインでも整理し、Arts Aid KYOTOの趣旨に沿って、リアルな公開機会を中心に据えつつ継続的に参照できる文化メディア資産として残す。 + +### 期待される成果（200-300字） + +定量成果として、公開研究会3回、京都市内での公開報告会1回、編集記事5本、図解またはレポート3点、参加者延べ120名を目標とする。定性成果としては、研究者の知を専門領域内に閉じず、京都の文化芸術活動者、市民、企業関係者が共有できる言葉へ翻訳することにより、新たな協働テーマを生み出す。ミラツクの既存コミュニティ350名と企業協働20社の接点を活用することで、単年度の発表にとどまらず、次年度以降の文化芸術支援、共同研究、メディア連載へ発展する基盤を形成する。 + +## 5. スケジュールと予算 + +補助対象期間を2026年8月から2027年3月とし、一般助成枠Aへの申請を想定する。総事業費は1,350,000円、補助申請額は1,000,000円、自己負担・協賛等を350,000円とする。2026年8月から9月にテーマ設計、登壇者調整、既存データベース調査を行い、予算300,000円を充てる。10月から12月に研究会3回、記録編集、記事制作を進め、謝金、会場費、記録費、編集費として600,000円を計上する。2027年1月から3月に公開報告会、成果レポート制作、広報、実績報告を実施し、450,000円を配分する。主な内訳は、研究者・登壇者謝金350,000円、編集・執筆費300,000円、会場・配信・記録費250,000円、広報制作費150,000円、事務局運営費250,000円、予備費50,000円である。 + +## 6. 提出物チェックリスト + +- <input type="checkbox" disabled> Arts Aid KYOTO通常支援型申請フォーム入力内容 +- <input type="checkbox" disabled> 事業計画書 +- <input type="checkbox" disabled> 収支予算書 +- <input type="checkbox" disabled> 団体概要、定款、役員名簿等の法人確認資料 +- <input type="checkbox" disabled> 文化芸術事業の実績資料 +- <input type="checkbox" disabled> 京都市内の活動拠点または実施会場を確認できる資料 +- <input type="checkbox" disabled> 公開報告会・研究会の開催計画、登壇候補者一覧 +- <input type="checkbox" disabled> 事業広報物、成果公開方針の説明資料 + +## 7. 推奨アクション + +- 京都市内の実施会場を仮押さえし、申請書に公開性を明記する。 +- 一般助成枠Aで申請する前提で、補助対象経費と対象外経費を募集案内に照合する。 +- 研究者・文化実践者の登壇候補3-5名に内諾を取り、実績資料を添付できる状態にする。 +- 300話連載と26データベースの実績を、審査者が一読で理解できる1枚資料に整理する。 +- 2026年6月5日午後5時の締切から逆算し、5月中に代表者確認、予算確定、フォーム下書きを完了する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NM_京都市 Arts Aid KYOTO.md</p>
+<p>codex 文字数を確認したところ、Markdown全体で約2,920字あり、指定上限を超えています。内容を圧縮して2,500字以内に調整します。 apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/site/drafts_v2/NM_京都市 Arts Aid KYOTO.md diff --git a/drafts_v2/NM_京都市 Arts Aid KYOTO.md b/drafts_v2/NM_京都市 Arts Aid KYOTO.md new file mode 100644 index 0000000000000000000000000000000000000000..be25994ece8b7d1890ca4bb47f529bc16036fb31 --- /dev/null +++ b/drafts_v2/NM_京都市 Arts Aid KYOTO.md @@ -0,0 +1,60 @@ +# 京都市 Arts Aid KYOTO 申請書ドラフト（ミラツク向け） + +<strong>締切</strong>: 2026-06-05 | <strong>上限</strong>: 段階設定 + +## 1. 申請者情報（300字） + +特定非営利活動法人ミラツクは、2010年設立、京都府・東京都を拠点に第14期を迎える実践研究型NPOである。専従スタッフ25名、2024年度営業収益87,405,221円、当期赤字12.2百万円、繰越正味財産6.2百万円の規模で、企業協働20社、コミュニティ参加者350名を形成してきた。26のSQLite知識データベースには、学術知識30,288概念、歴史事象91,550件、財団2,140件、採択者2,122件、神話11,906物語、産業36,734件等を蓄積し、連載「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話を完結させている。京都の文化資源を学術知と社会実践の接点から編集・公開する本助成との適合性は高い。 + +## 2. 助成金概要・応募要件（200字） + +Arts Aid KYOTOは、京都市が文化芸術関係者の意欲的な活動を社会全体で支え、持続的な文化芸術の発展を目指す制度である。令和8年度通常支援型は、一般助成枠Aが上限100万円、Bが上限20万円、若手交流促進枠が上限10万円で、2026年6月5日午後5時締切。一般助成枠は、京都市内で実施し、文化芸術の振興に資し、不特定多数へ公開する主催事業が対象である。 + +## 3. 申請テーマ案 + +<strong>案A（推奨）</strong>: 「京都の知をひらく文化メディア・ラボ」 + +京都の研究者、表現者、企業、市民をつなぎ、学術知を文化メディアとして翻訳・公開する連続プログラム。研究者の知の社会接続力と300話の連載実績を生かし、対話、記事、公開報告会を組み合わせる。 + +<strong>案B（代替）</strong>: 「京都文化実践アーカイブの可視化と公開対話」 + +26の知識データベースを活用し、京都の文化芸術活動と社会課題の接点を可視化する公開型リサーチ事業。採択者、財団、歴史事象、産業データを横断し、ワークショップと記事を制作する。 + +## 4. 事業/研究計画書本文（推奨案A） + +### 背景・目的（300-400字） + +京都には、芸術、工芸、宗教、大学、地域産業、市民活動が重なり合う文化的厚みがある一方で、研究者が蓄積する知や現場の実践知が、市民や次世代の文化活動者に届く経路は十分ではない。文化芸術の振興には、作品発表だけでなく、知を媒介し、異なる領域の参加者が意味を編み直す文化メディアが必要である。ミラツクは、企業協働20社、350名規模のコミュニティ、26の知識データベース、合計300話の連載制作を通じて、研究者の知を社会に接続する編集・対話の方法を培ってきた。本事業では、京都の文化資源を学術知と市民的関心の双方から再編集し、公開プログラムとして展開する。 + +### 研究/事業の方法（300-400字） + +事業は三段階で実施する。第一段階では、京都に関係する研究者、文化実践者、編集者を選定し、ミラツクの学術知識30,288概念、歴史事象91,550件、神話11,906物語、産業36,734件等のデータベースを参照しながらテーマを抽出する。第二段階では、小規模研究会を3回開催し、記録を記事、図解、短いレポートに展開する。第三段階では、京都市内で不特定多数に公開する報告会とトークイベントを実施し、研究者の専門知、表現者の制作実感、市民の問いを交差させる。成果はオンラインでも整理し、リアルな公開機会を中心に据えつつ継続的に参照できる文化メディア資産として残す。 + +### 期待される成果（200-300字） + +定量成果として、公開研究会3回、京都市内での公開報告会1回、編集記事5本、図解またはレポート3点、参加者延べ120名を目標とする。定性成果としては、研究者の知を京都の文化芸術活動者、市民、企業関係者が共有できる言葉へ翻訳し、新たな協働テーマを生み出す。既存コミュニティ350名と企業協働20社の接点を活用し、次年度以降の文化芸術支援、共同研究、メディア連載へ発展する基盤を形成する。 + +## 5. スケジュールと予算 + +補助対象期間を2026年8月から2027年3月とし、一般助成枠Aへの申請を想定する。総事業費は1,350,000円、補助申請額は1,000,000円、自己負担・協賛等は350,000円。8-9月にテーマ設計、登壇者調整、DB調査を行い300,000円、10-12月に研究会3回、記録編集、記事制作を進め600,000円、1-3月に公開報告会、成果レポート、広報、実績報告を実施し450,000円を配分する。内訳は、登壇者謝金350,000円、編集・執筆費300,000円、会場・記録費250,000円、広報費150,000円、事務局運営費250,000円、予備費50,000円である。 + +## 6. 提出物チェックリスト + +- <input type="checkbox" disabled> Arts Aid KYOTO通常支援型申請フォーム入力内容 +- <input type="checkbox" disabled> 事業計画書 +- <input type="checkbox" disabled> 収支予算書 +- <input type="checkbox" disabled> 団体概要、定款、役員名簿等の法人確認資料 +- <input type="checkbox" disabled> 文化芸術事業の実績資料 +- <input type="checkbox" disabled> 京都市内の活動拠点または実施会場を確認できる資料 +- <input type="checkbox" disabled> 公開報告会・研究会の開催計画、登壇候補者一覧 +- <input type="checkbox" disabled> 事業広報物、成果公開方針の説明資料 + +## 7. 推奨アクション + +- 京都市内の実施会場を仮押さえし、申請書に公開性を明記する。 +- 一般助成枠Aで申請する前提で、補助対象経費と対象外経費を募集案内に照合する。 +- 研究者・文化実践者の登壇候補3-5名に内諾を取り、実績資料を添付できる状態にする。 +- 300話連載と26データベースの実績を、審査者が一読で理解できる1枚資料に整理する。 +- 2026年6月5日午後5時の締切から逆算し、5月中に代表者確認、予算確定、フォーム下書きを完了する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NM_京都市 Arts Aid KYOTO.md</p>
+<p>diff --git a/drafts_v2/NM_京都市 Arts Aid KYOTO.md b/drafts_v2/NM_京都市 Arts Aid KYOTO.md new file mode 100644 index 0000000000000000000000000000000000000000..be25994ece8b7d1890ca4bb47f529bc16036fb31 --- /dev/null +++ b/drafts_v2/NM_京都市 Arts Aid KYOTO.md @@ -0,0 +1,60 @@ +# 京都市 Arts Aid KYOTO 申請書ドラフト（ミラツク向け） + +<strong>締切</strong>: 2026-06-05 | <strong>上限</strong>: 段階設定 + +## 1. 申請者情報（300字） + +特定非営利活動法人ミラツクは、2010年設立、京都府・東京都を拠点に第14期を迎える実践研究型NPOである。専従スタッフ25名、2024年度営業収益87,405,221円、当期赤字12.2百万円、繰越正味財産6.2百万円の規模で、企業協働20社、コミュニティ参加者350名を形成してきた。26のSQLite知識データベースには、学術知識30,288概念、歴史事象91,550件、財団2,140件、採択者2,122件、神話11,906物語、産業36,734件等を蓄積し、連載「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話を完結させている。京都の文化資源を学術知と社会実践の接点から編集・公開する本助成との適合性は高い。 + +## 2. 助成金概要・応募要件（200字） + +Arts Aid KYOTOは、京都市が文化芸術関係者の意欲的な活動を社会全体で支え、持続的な文化芸術の発展を目指す制度である。令和8年度通常支援型は、一般助成枠Aが上限100万円、Bが上限20万円、若手交流促進枠が上限10万円で、2026年6月5日午後5時締切。一般助成枠は、京都市内で実施し、文化芸術の振興に資し、不特定多数へ公開する主催事業が対象である。 + +## 3. 申請テーマ案 + +<strong>案A（推奨）</strong>: 「京都の知をひらく文化メディア・ラボ」 + +京都の研究者、表現者、企業、市民をつなぎ、学術知を文化メディアとして翻訳・公開する連続プログラム。研究者の知の社会接続力と300話の連載実績を生かし、対話、記事、公開報告会を組み合わせる。 + +<strong>案B（代替）</strong>: 「京都文化実践アーカイブの可視化と公開対話」 + +26の知識データベースを活用し、京都の文化芸術活動と社会課題の接点を可視化する公開型リサーチ事業。採択者、財団、歴史事象、産業データを横断し、ワークショップと記事を制作する。 + +## 4. 事業/研究計画書本文（推奨案A） + +### 背景・目的（300-400字） + +京都には、芸術、工芸、宗教、大学、地域産業、市民活動が重なり合う文化的厚みがある一方で、研究者が蓄積する知や現場の実践知が、市民や次世代の文化活動者に届く経路は十分ではない。文化芸術の振興には、作品発表だけでなく、知を媒介し、異なる領域の参加者が意味を編み直す文化メディアが必要である。ミラツクは、企業協働20社、350名規模のコミュニティ、26の知識データベース、合計300話の連載制作を通じて、研究者の知を社会に接続する編集・対話の方法を培ってきた。本事業では、京都の文化資源を学術知と市民的関心の双方から再編集し、公開プログラムとして展開する。 + +### 研究/事業の方法（300-400字） + +事業は三段階で実施する。第一段階では、京都に関係する研究者、文化実践者、編集者を選定し、ミラツクの学術知識30,288概念、歴史事象91,550件、神話11,906物語、産業36,734件等のデータベースを参照しながらテーマを抽出する。第二段階では、小規模研究会を3回開催し、記録を記事、図解、短いレポートに展開する。第三段階では、京都市内で不特定多数に公開する報告会とトークイベントを実施し、研究者の専門知、表現者の制作実感、市民の問いを交差させる。成果はオンラインでも整理し、リアルな公開機会を中心に据えつつ継続的に参照できる文化メディア資産として残す。 + +### 期待される成果（200-300字） + +定量成果として、公開研究会3回、京都市内での公開報告会1回、編集記事5本、図解またはレポート3点、参加者延べ120名を目標とする。定性成果としては、研究者の知を京都の文化芸術活動者、市民、企業関係者が共有できる言葉へ翻訳し、新たな協働テーマを生み出す。既存コミュニティ350名と企業協働20社の接点を活用し、次年度以降の文化芸術支援、共同研究、メディア連載へ発展する基盤を形成する。 + +## 5. スケジュールと予算 + +補助対象期間を2026年8月から2027年3月とし、一般助成枠Aへの申請を想定する。総事業費は1,350,000円、補助申請額は1,000,000円、自己負担・協賛等は350,000円。8-9月にテーマ設計、登壇者調整、DB調査を行い300,000円、10-12月に研究会3回、記録編集、記事制作を進め600,000円、1-3月に公開報告会、成果レポート、広報、実績報告を実施し450,000円を配分する。内訳は、登壇者謝金350,000円、編集・執筆費300,000円、会場・記録費250,000円、広報費150,000円、事務局運営費250,000円、予備費50,000円である。 + +## 6. 提出物チェックリスト + +- <input type="checkbox" disabled> Arts Aid KYOTO通常支援型申請フォーム入力内容 +- <input type="checkbox" disabled> 事業計画書 +- <input type="checkbox" disabled> 収支予算書 +- <input type="checkbox" disabled> 団体概要、定款、役員名簿等の法人確認資料 +- <input type="checkbox" disabled> 文化芸術事業の実績資料 +- <input type="checkbox" disabled> 京都市内の活動拠点または実施会場を確認できる資料 +- <input type="checkbox" disabled> 公開報告会・研究会の開催計画、登壇候補者一覧 +- <input type="checkbox" disabled> 事業広報物、成果公開方針の説明資料 + +## 7. 推奨アクション + +- 京都市内の実施会場を仮押さえし、申請書に公開性を明記する。 +- 一般助成枠Aで申請する前提で、補助対象経費と対象外経費を募集案内に照合する。 +- 研究者・文化実践者の登壇候補3-5名に内諾を取り、実績資料を添付できる状態にする。 +- 300話連載と26データベースの実績を、審査者が一読で理解できる1枚資料に整理する。 +- 2026年6月5日午後5時の締切から逆算し、5月中に代表者確認、予算確定、フォーム下書きを完了する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NM_京都市 Arts Aid KYOTO.md</p>
+<p>exec /bin/bash -lc "wc -m 'drafts_v2/NM_京都市 Arts Aid KYOTO.md' && tail -n 8 'drafts_v2/NM_京都市 Arts Aid KYOTO.md'" in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms:     2570 drafts_v2/NM_京都市 Arts Aid KYOTO.md</p>
+<ul>
+<li>京都市内の実施会場を仮押さえし、申請書に公開性を明記する。</li>
+<li>一般助成枠Aで申請する前提で、補助対象経費と対象外経費を募集案内に照合する。</li>
+<li>研究者・文化実践者の登壇候補3-5名に内諾を取り、実績資料を添付できる状態にする。</li>
+<li>300話連載と26データベースの実績を、審査者が一読で理解できる1枚資料に整理する。</li>
+<li>2026年6月5日午後5時の締切から逆算し、5月中に代表者確認、予算確定、フォーム下書きを完了する。</li>
+</ul>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

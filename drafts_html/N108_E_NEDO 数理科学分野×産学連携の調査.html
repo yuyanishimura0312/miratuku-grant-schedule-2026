@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>NEDO 数理科学分野×産学連携の調査</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>NEDO 数理科学分野×産学連携の調査 申請書ドラフト（esse-sense向け）</h1>
+<p><strong>締切</strong>: 2026-05-20 | <strong>上限</strong>: 2,000万円</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>法人プロフィールを基に、当該助成金との適合性を強調する自然な文章。営業収益・コミュニティ規模・DB数・連載数等の数値を本文に組み込む。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>助成金の目的・要件・評価ポイントを地の文で整理。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 法人の強み（①④⑥）と評価軸に最も合致するテーマ <strong>案B（代替）</strong>: 別角度からのアプローチ （各案にタイトルと150字の要旨）</p>
+<h2>4. 事業/研究計画書本文（推奨案A）</h2>
+<h3>背景・目的（300-400字）</h3>
+<p>社会的・学術的意義を地の文で記述。法人の実績・数値を引用。</p>
+<h3>研究/事業の方法（300-400字）</h3>
+<p>具体的アプローチ、段階的実施計画。</p>
+<h3>期待される成果（200-300字）</h3>
+<p>定量・定性の両面で。</p>
+<h2>5. スケジュールと予算</h2>
+<p>年次別の予算内訳・実施計画。総事業費・補助申請額を明示。</p>
+<h2>6. 提出物チェックリスト</h2>
+<p>申請書類のチェックボックスリスト。</p>
+<h2>7. 推奨アクション</h2>
+<p>即時に行うべき次のステップを箇条書き3-5点。</p>
+<p>【重要】</p>
+<ul>
+<li>地の文中心、箇条書きは補助的に</li>
+<li>法人の数値・実績を本文に組み込む</li>
+<li>1,500-2,500字</li>
+<li>出力の最後に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_NEDO 数理科学分野×産学連携の調査.md」と1行で報告</li>
+</ul>
+<p>【ファイル保存】 最終Markdownを完成させたら、以下のパスに保存してください（書き込み権限がない場合はログ末尾に保存対象を明記してください）: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_NEDO 数理科学分野×産学連携の調査.md</p>
+<p>codex 指定パスは現在の書き込み許可範囲（<code>site</code> 配下）より一つ上の <code>drafts_v2</code> 配下です。まず保存可否を確認し、許可されない場合はドラフト本文と保存対象パスを明記して返します。 codex 保存先ディレクトリへの書き込みは sandbox により拒否されました。ドラフトは内容を完成させたうえで、許可範囲内の <code>site</code> 配下にも控えとして保存し、最終報告に指定の保存対象パスを明記します。 apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/site/NE_NEDO 数理科学分野×産学連携の調査.md diff --git a/NE_NEDO 数理科学分野×産学連携の調査.md b/NE_NEDO 数理科学分野×産学連携の調査.md new file mode 100644 index 0000000000000000000000000000000000000000..98f0186384e0a3698e8131198bf541d1dc420404 --- /dev/null +++ b/NE_NEDO 数理科学分野×産学連携の調査.md @@ -0,0 +1,51 @@ +# NEDO 数理科学分野×産学連携の調査 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-05-20 | <strong>上限</strong>: 2,000万円 + +## 1. 申請者情報（300字） +esse-senseは、研究者の知を社会に届けることを主業とする株式会社であり、学術知の編集、発信、データ化を通じて、産学連携の入口を設計してきた。自社記事DBにはarticles 154件、general_articles 34件、合計188件の研究・社会実装関連コンテンツを蓄積しており、学際的知見DB、AIを含むデータ活用、大規模解析・テキスト解析を組み合わせた知識基盤を有する。営業収益、連載数、読者・研究者コミュニティ規模は申請時に直近実績値を追記する前提としつつ、大学発スタートアップ支援、大学・学術機関DX、産学連携支援の実績を背景に、数理科学分野の研究シーズを社会実装へ接続する調査主体として高い適合性を持つ。 + +## 2. 助成金概要・応募要件（200字） +本調査は、数理科学分野における研究知見を、産業課題や社会課題の解決に結び付けるための産学連携可能性を明らかにする国系事業である。評価上は、学際研究としての新規性、産業界との接続可能性、調査設計の具体性、将来の研究開発・事業化への展開性が重視される。esse-senseは、研究者ネットワーク、学際的知見DB、テキスト解析とAI活用の強みを生かし、研究シーズと企業ニーズを可視化する調査に適している。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 数理科学シーズと産業課題を接続する学際知識DB・マッチング調査 + +数理科学分野の研究シーズ、企業課題、大学発スタートアップの技術テーマを収集し、記事DB188件と外部公開情報を統合してテキスト解析を行う。研究者、企業、支援機関へのヒアリングを通じて、重点領域、連携仮説、実証テーマ候補を整理する。 + +<strong>案B（代替）</strong>: 数理科学人材の社会実装経路に関する国際比較調査 + +esse-sense Future Forumの国際展開基盤を活用し、国内外の数理科学人材が産業界・公共領域・大学発スタートアップで活躍する経路を比較する。人材、制度、資金、メディア発信の観点から、日本に必要な連携支援モデルを提案する。 + +## 4. 事業/研究計画書本文（推奨案A） +### 背景・目的（300-400字） +生成AI、材料開発、金融、創薬、都市・交通、エネルギー最適化など、多くの産業領域で数理科学の重要性が高まっている。一方で、数理科学の研究成果は抽象度が高く、企業側の具体課題と結び付く前に機会損失が生じやすい。esse-senseは、研究者の知を社会に届けるメディア事業を通じて、articles 154件、general_articles 34件の知見を蓄積し、学際的な研究テーマを社会向けに翻訳してきた。本事業では、この編集知とデータ基盤を活用し、数理科学シーズと企業・大学発スタートアップ・学術機関DXの課題を横断的に整理する。目的は、産学連携の有望領域を特定し、NEDO事業後の研究開発、実証、共同研究形成につながる調査成果を創出することである。 + +### 研究/事業の方法（300-400字） +事業は三段階で実施する。第一段階では、既存記事DB188件、公開論文、大学発スタートアップ情報、企業の技術課題情報を収集し、数理科学キーワード、応用領域、研究者属性、連携可能性をタグ付けする。第二段階では、AIを用いたテキスト解析とクラスタリングにより、数理最適化、確率・統計、機械学習、シミュレーション、複雑系解析などの研究シーズと、産業課題との対応関係を可視化する。第三段階では、研究者、企業担当者、大学・支援機関に対するヒアリングと小規模ワークショップを行い、連携仮説の妥当性、実証テーマ、制度・契約・知財面の課題を検証する。ミラツクとの共同応募実績を生かし、NPO側の社会課題接続力とesse-senseの知識編集・データ解析力を組み合わせる。 + +### 期待される成果（200-300字） +成果として、数理科学分野の産学連携候補領域マップ、研究シーズ・企業課題対応表、重点テーマ別の連携仮説、実証候補プロジェクト案を作成する。定量面では、既存DB188件を起点に追加情報を収集し、研究テーマ、産業領域、連携ステークホルダーを構造化した分析データを整備する。定性面では、抽象的な数理科学の価値を企業が理解しやすい言葉に翻訳し、共同研究、大学発スタートアップ支援、学術機関DXへ展開できる実務的な提言をまとめる。 + +## 5. スケジュールと予算 +本事業は2026年度内の調査事業として実施し、総事業費2,000万円、補助申請額2,000万円を想定する。第1四半期は調査設計、対象領域整理、DB整備に300万円を配分する。第2四半期は公開情報収集、AI・テキスト解析、研究シーズ分類に500万円を配分する。第3四半期はヒアリング、ワークショップ、連携仮説検証に600万円を配分する。第4四半期は成果報告書、領域マップ、実証テーマ案、次年度展開計画の作成に400万円を充て、管理費・外部有識者謝金・広報整理費として200万円を見込む。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> 申請書本体 +- <input type="checkbox" disabled> 事業計画書・調査設計書 +- <input type="checkbox" disabled> 予算書・積算根拠 +- <input type="checkbox" disabled> 法人登記・会社概要 +- <input type="checkbox" disabled> 直近決算書、営業収益、主要KPI +- <input type="checkbox" disabled> 記事DB、連載、コミュニティ規模の実績資料 +- <input type="checkbox" disabled> ミラツク等との連携実績資料 +- <input type="checkbox" disabled> 研究者・企業ヒアリング候補リスト +- <input type="checkbox" disabled> 反社会的勢力排除、情報管理、知財管理に関する確認書類 + +## 7. 推奨アクション +- 直近決算の営業収益、社員・委託体制、読者・研究者コミュニティ規模を確定する。 +- articles 154件、general_articles 34件のうち数理科学関連候補を抽出し、代表例を5-10件整理する。 +- ミラツクとの役割分担を明文化し、産学連携、社会課題接続、調査実施体制を分けて記述する。 +- NEDO公募要領で委託・補助区分、対象経費、採択後の成果物形式を確認する。 +- ヒアリング候補となる研究者、企業、大学発スタートアップ支援機関を早急にリスト化する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_NEDO 数理科学分野×産学連携の調査.md</p>
+<p>diff --git a/NE_NEDO 数理科学分野×産学連携の調査.md b/NE_NEDO 数理科学分野×産学連携の調査.md new file mode 100644 index 0000000000000000000000000000000000000000..98f0186384e0a3698e8131198bf541d1dc420404 --- /dev/null +++ b/NE_NEDO 数理科学分野×産学連携の調査.md @@ -0,0 +1,51 @@ +# NEDO 数理科学分野×産学連携の調査 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-05-20 | <strong>上限</strong>: 2,000万円 + +## 1. 申請者情報（300字） +esse-senseは、研究者の知を社会に届けることを主業とする株式会社であり、学術知の編集、発信、データ化を通じて、産学連携の入口を設計してきた。自社記事DBにはarticles 154件、general_articles 34件、合計188件の研究・社会実装関連コンテンツを蓄積しており、学際的知見DB、AIを含むデータ活用、大規模解析・テキスト解析を組み合わせた知識基盤を有する。営業収益、連載数、読者・研究者コミュニティ規模は申請時に直近実績値を追記する前提としつつ、大学発スタートアップ支援、大学・学術機関DX、産学連携支援の実績を背景に、数理科学分野の研究シーズを社会実装へ接続する調査主体として高い適合性を持つ。 + +## 2. 助成金概要・応募要件（200字） +本調査は、数理科学分野における研究知見を、産業課題や社会課題の解決に結び付けるための産学連携可能性を明らかにする国系事業である。評価上は、学際研究としての新規性、産業界との接続可能性、調査設計の具体性、将来の研究開発・事業化への展開性が重視される。esse-senseは、研究者ネットワーク、学際的知見DB、テキスト解析とAI活用の強みを生かし、研究シーズと企業ニーズを可視化する調査に適している。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 数理科学シーズと産業課題を接続する学際知識DB・マッチング調査 + +数理科学分野の研究シーズ、企業課題、大学発スタートアップの技術テーマを収集し、記事DB188件と外部公開情報を統合してテキスト解析を行う。研究者、企業、支援機関へのヒアリングを通じて、重点領域、連携仮説、実証テーマ候補を整理する。 + +<strong>案B（代替）</strong>: 数理科学人材の社会実装経路に関する国際比較調査 + +esse-sense Future Forumの国際展開基盤を活用し、国内外の数理科学人材が産業界・公共領域・大学発スタートアップで活躍する経路を比較する。人材、制度、資金、メディア発信の観点から、日本に必要な連携支援モデルを提案する。 + +## 4. 事業/研究計画書本文（推奨案A） +### 背景・目的（300-400字） +生成AI、材料開発、金融、創薬、都市・交通、エネルギー最適化など、多くの産業領域で数理科学の重要性が高まっている。一方で、数理科学の研究成果は抽象度が高く、企業側の具体課題と結び付く前に機会損失が生じやすい。esse-senseは、研究者の知を社会に届けるメディア事業を通じて、articles 154件、general_articles 34件の知見を蓄積し、学際的な研究テーマを社会向けに翻訳してきた。本事業では、この編集知とデータ基盤を活用し、数理科学シーズと企業・大学発スタートアップ・学術機関DXの課題を横断的に整理する。目的は、産学連携の有望領域を特定し、NEDO事業後の研究開発、実証、共同研究形成につながる調査成果を創出することである。 + +### 研究/事業の方法（300-400字） +事業は三段階で実施する。第一段階では、既存記事DB188件、公開論文、大学発スタートアップ情報、企業の技術課題情報を収集し、数理科学キーワード、応用領域、研究者属性、連携可能性をタグ付けする。第二段階では、AIを用いたテキスト解析とクラスタリングにより、数理最適化、確率・統計、機械学習、シミュレーション、複雑系解析などの研究シーズと、産業課題との対応関係を可視化する。第三段階では、研究者、企業担当者、大学・支援機関に対するヒアリングと小規模ワークショップを行い、連携仮説の妥当性、実証テーマ、制度・契約・知財面の課題を検証する。ミラツクとの共同応募実績を生かし、NPO側の社会課題接続力とesse-senseの知識編集・データ解析力を組み合わせる。 + +### 期待される成果（200-300字） +成果として、数理科学分野の産学連携候補領域マップ、研究シーズ・企業課題対応表、重点テーマ別の連携仮説、実証候補プロジェクト案を作成する。定量面では、既存DB188件を起点に追加情報を収集し、研究テーマ、産業領域、連携ステークホルダーを構造化した分析データを整備する。定性面では、抽象的な数理科学の価値を企業が理解しやすい言葉に翻訳し、共同研究、大学発スタートアップ支援、学術機関DXへ展開できる実務的な提言をまとめる。 + +## 5. スケジュールと予算 +本事業は2026年度内の調査事業として実施し、総事業費2,000万円、補助申請額2,000万円を想定する。第1四半期は調査設計、対象領域整理、DB整備に300万円を配分する。第2四半期は公開情報収集、AI・テキスト解析、研究シーズ分類に500万円を配分する。第3四半期はヒアリング、ワークショップ、連携仮説検証に600万円を配分する。第4四半期は成果報告書、領域マップ、実証テーマ案、次年度展開計画の作成に400万円を充て、管理費・外部有識者謝金・広報整理費として200万円を見込む。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> 申請書本体 +- <input type="checkbox" disabled> 事業計画書・調査設計書 +- <input type="checkbox" disabled> 予算書・積算根拠 +- <input type="checkbox" disabled> 法人登記・会社概要 +- <input type="checkbox" disabled> 直近決算書、営業収益、主要KPI +- <input type="checkbox" disabled> 記事DB、連載、コミュニティ規模の実績資料 +- <input type="checkbox" disabled> ミラツク等との連携実績資料 +- <input type="checkbox" disabled> 研究者・企業ヒアリング候補リスト +- <input type="checkbox" disabled> 反社会的勢力排除、情報管理、知財管理に関する確認書類 + +## 7. 推奨アクション +- 直近決算の営業収益、社員・委託体制、読者・研究者コミュニティ規模を確定する。 +- articles 154件、general_articles 34件のうち数理科学関連候補を抽出し、代表例を5-10件整理する。 +- ミラツクとの役割分担を明文化し、産学連携、社会課題接続、調査実施体制を分けて記述する。 +- NEDO公募要領で委託・補助区分、対象経費、採択後の成果物形式を確認する。 +- ヒアリング候補となる研究者、企業、大学発スタートアップ支援機関を早急にリスト化する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_NEDO 数理科学分野×産学連携の調査.md</p>
+<p>codex ドラフトを作成しました。指定パスは書き込み権限外だったため保存できませんでしたが、同内容を許可範囲内の以下に保存しています。</p>
+<p><a href="/Users/nishimura+/work/miratuku-grants-2026/site/NE_NEDO%20数理科学分野×産学連携の調査.md">NE_NEDO 数理科学分野×産学連携の調査.md</a></p>
+<p>指定パスへの保存試行は <code>Operation not permitted</code> で拒否されました。</p>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

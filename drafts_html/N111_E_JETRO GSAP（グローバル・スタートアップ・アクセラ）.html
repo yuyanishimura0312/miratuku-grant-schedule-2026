@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>JETRO GSAP（グローバル・スタートアップ・アクセラ）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>JETRO GSAP（グローバル・スタートアップ・アクセラ） 申請書ドラフト（esse-sense向け）</h1>
+<p><strong>締切</strong>: 2026-05-24 | <strong>上限</strong>: エクイティフリー支援</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>法人プロフィールを基に、当該助成金との適合性を強調する自然な文章。営業収益・コミュニティ規模・DB数・連載数等の数値を本文に組み込む。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>助成金の目的・要件・評価ポイントを地の文で整理。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 法人の強み（③⑤⑦）と評価軸に最も合致するテーマ <strong>案B（代替）</strong>: 別角度からのアプローチ （各案にタイトルと150字の要旨）</p>
+<h2>4. 事業/研究計画書本文（推奨案A）</h2>
+<h3>背景・目的（300-400字）</h3>
+<p>社会的・学術的意義を地の文で記述。法人の実績・数値を引用。</p>
+<h3>研究/事業の方法（300-400字）</h3>
+<p>具体的アプローチ、段階的実施計画。</p>
+<h3>期待される成果（200-300字）</h3>
+<p>定量・定性の両面で。</p>
+<h2>5. スケジュールと予算</h2>
+<p>年次別の予算内訳・実施計画。総事業費・補助申請額を明示。</p>
+<h2>6. 提出物チェックリスト</h2>
+<p>申請書類のチェックボックスリスト。</p>
+<h2>7. 推奨アクション</h2>
+<p>即時に行うべき次のステップを箇条書き3-5点。</p>
+<p>【重要】</p>
+<ul>
+<li>地の文中心、箇条書きは補助的に</li>
+<li>法人の数値・実績を本文に組み込む</li>
+<li>1,500-2,500字</li>
+<li>出力の最後に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md」と1行で報告</li>
+</ul>
+<p>【ファイル保存】 最終Markdownを完成させたら、以下のパスに保存してください（書き込み権限がない場合はログ末尾に保存対象を明記してください）: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md</p>
+<p>codex 指定パスは現在の書き込み可能ルート（<code>site</code> 配下）より一階層上なので、まず保存可否を確認します。権限で止まる場合は、指定どおり保存対象パスを明記してドラフト本文を提示します。 exec /bin/bash -lc "mkdir -p '/Users/nishimura+/work/miratuku-grants-2026/drafts_v2' && test -w '/Users/nishimura+/work/miratuku-grants-2026/drafts_v2' && printf writable || printf not-writable" in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms: not-writable codex 指定先のディレクトリは読み取り確認上 <code>not-writable</code> でした。作業可能な <code>site</code> 配下に同名ドラフトを保存し、本文末尾には指定された保存対象パスをそのまま入れます。 apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/site/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md diff --git a/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md b/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md new file mode 100644 index 0000000000000000000000000000000000000000..af538616c16e6da0f6979fa1ca7d63750b9ec9f1 --- /dev/null +++ b/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md @@ -0,0 +1,59 @@ +# JETRO GSAP（グローバル・スタートアップ・アクセラ） 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-05-24 | <strong>上限</strong>: エクイティフリー支援 + +## 1. 申請者情報（300字） + +esse-senseは、研究者の知を社会に届けることを主要事業とする株式会社であり、学術知と産業・地域・行政を接続するメディア事業を展開している。自社で蓄積する記事データベースはarticles 154件、general_articles 34件に達し、研究者・大学・企業の知見を横断的に整理してきた。営業収益はメディア制作、産学連携支援、大学発スタートアップ支援、大学・学術機関DX支援を組み合わせて形成しており、単なる記事制作にとどまらず、学際的知見DB、データ活用、AI、大規模解析・テキスト解析を用いた事業開発基盤を持つ点が強みである。NPO法人ミラツクとの共同応募実績もあり、社会課題起点のゼブラ型スタートアップとして国際展開支援との適合性が高い。 + +## 2. 助成金概要・応募要件（200字） + +JETRO GSAPは、日本発スタートアップの海外市場展開を加速するため、海外アクセラレーター、メンタリング、投資家・事業会社との接点形成等をエクイティフリーで支援するプログラムである。応募においては、国際展開の必然性、対象市場の明確さ、成長可能性、実行チームの能力、海外展開を通じた社会的・経済的インパクトが重視される。esse-senseは、研究知の国際流通と産学連携DXを軸に、既存DBとAI解析能力を海外展開に転用できる。 + +## 3. 申請テーマ案 + +<strong>案A（推奨）</strong>: 研究知の国際流通を支えるAIメディア・ナレッジ基盤の海外展開 +日本の研究者・大学発スタートアップの知見を多言語で編集・構造化し、海外企業、投資家、大学、支援機関へ届けるAIナレッジ基盤を構築する。既存の記事DB 188件を起点に、国際展開に必要なストーリー化、技術領域分析、マッチング支援を実装する。 + +<strong>案B（代替）</strong>: esse-sense Future Forumを核とした国際産学連携コミュニティ形成 +esse-sense Future Forumを海外展開の実証拠点とし、研究者、大学発スタートアップ、事業会社、支援機関を結ぶ国際コミュニティを形成する。メディア発信とイベント、分析レポートを組み合わせ、継続的な協業案件の創出を目指す。 + +## 4. 事業/研究計画書本文（推奨案A） + +### 背景・目的（300-400字） + +日本の大学・研究機関には、環境、医療、教育、地域、AI、材料、都市など多様な領域で世界的価値を持つ知見が蓄積されている一方、その多くは論文、研究室紹介、個別イベントの中に分散し、海外の事業会社や投資家が理解しやすい形で流通していない。特に大学発スタートアップやゼブラ型スタートアップは、短期的な急成長だけでなく社会的価値の説明が重要であり、技術の意義、研究者の背景、社会実装の文脈を統合して伝える編集・解析機能が求められる。esse-senseはこれまでarticles 154件、general_articles 34件の知見DBを構築し、研究者の知を社会に届ける実務を積み重ねてきた。本事業では、この実績を国際展開に拡張し、日本発の研究知と海外市場をつなぐAIメディア・ナレッジ基盤を構築する。 + +### 研究/事業の方法（300-400字） + +事業は三段階で進める。第一段階では、既存の記事DB 188件を対象に、研究領域、社会課題、技術成熟度、想定顧客、海外市場との接点をタグ付けし、英語発信用の要約・ピッチ素材を整備する。第二段階では、AIとテキスト解析を用いて、研究テーマと海外の事業会社、アクセラレーター、大学、投資家の関心領域を照合するプロトタイプを開発する。第三段階では、JETRO GSAPのメンタリングと海外ネットワークを活用し、北米・欧州・アジアのいずれか優先市場で、esse-sense Future Forumと連動した発信、面談、検証を行う。ミラツクとの共同応募実績を活かし、NPO的な社会課題理解と株式会社としての事業化能力を組み合わせ、海外展開に耐える収益モデルを検証する。 + +### 期待される成果（200-300字） + +定量面では、海外発信用に整備した研究・スタートアップ関連記事50件、海外候補連携先100件、重点面談20件、実証協議5件の創出を目標とする。定性面では、日本の研究知を単発の記事ではなく、社会課題、技術、事業化可能性を統合した国際的なナレッジ資産として提示できるようになる。これにより、大学発スタートアップ支援、産学連携DX、学術機関の国際広報支援というesse-senseの既存事業を海外市場へ展開し、ゼブラ型の成長モデルを具体化する。 + +## 5. スケジュールと予算 + +2026年度は、GSAP採択後から3か月でDB棚卸し、英語要約、海外市場仮説の設定を行い、4-6か月目にAIタグ付け・マッチング試作、海外メンター面談、優先市場の検証を進める。7-9か月目にはesse-sense Future Forumと連動した海外向け発信、個別商談、実証候補先との協議を実施し、10-12か月目に事業モデル、価格、営業資料、次年度展開計画を確定する。総事業費は900万円を想定し、内訳は海外展開調査150万円、英語編集・翻訳180万円、AI解析・DB整備250万円、海外イベント・面談運営170万円、PM・事業開発150万円とする。補助申請額はGSAPのエクイティフリー支援として、アクセラレーション、メンタリング、海外ネットワーク接続、実証機会の提供を申請する。 + +## 6. 提出物チェックリスト + +- <input type="checkbox" disabled> 申請フォーム基本情報 +- <input type="checkbox" disabled> 事業概要・海外展開計画 +- <input type="checkbox" disabled> 会社概要資料 +- <input type="checkbox" disabled> ピッチデック +- <input type="checkbox" disabled> 財務・営業収益の説明資料 +- <input type="checkbox" disabled> 既存記事DB・実績一覧 +- <input type="checkbox" disabled> esse-sense Future Forum関連資料 +- <input type="checkbox" disabled> ミラツク等との連携実績資料 +- <input type="checkbox" disabled> 英語版サービス説明または暫定LP + +## 7. 推奨アクション + +- 既存DB 188件から海外展開に適した研究・スタートアップ関連記事50件を選定する。 +- 営業収益、主要顧客、コミュニティ規模、連載数など未記入の定量実績を補完する。 +- GSAP応募コースの対象市場を北米、欧州、アジアのいずれかに絞り、仮説を明文化する。 +- 英語ピッチデックを10枚程度で作成し、AIナレッジ基盤とFuture Forumの関係を整理する。 +- ミラツクとの共同応募・連携実績を、社会的インパクトの証跡として添付資料化する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md</p>
+<p>diff --git a/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md b/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md new file mode 100644 index 0000000000000000000000000000000000000000..af538616c16e6da0f6979fa1ca7d63750b9ec9f1 --- /dev/null +++ b/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md @@ -0,0 +1,59 @@ +# JETRO GSAP（グローバル・スタートアップ・アクセラ） 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-05-24 | <strong>上限</strong>: エクイティフリー支援 + +## 1. 申請者情報（300字） + +esse-senseは、研究者の知を社会に届けることを主要事業とする株式会社であり、学術知と産業・地域・行政を接続するメディア事業を展開している。自社で蓄積する記事データベースはarticles 154件、general_articles 34件に達し、研究者・大学・企業の知見を横断的に整理してきた。営業収益はメディア制作、産学連携支援、大学発スタートアップ支援、大学・学術機関DX支援を組み合わせて形成しており、単なる記事制作にとどまらず、学際的知見DB、データ活用、AI、大規模解析・テキスト解析を用いた事業開発基盤を持つ点が強みである。NPO法人ミラツクとの共同応募実績もあり、社会課題起点のゼブラ型スタートアップとして国際展開支援との適合性が高い。 + +## 2. 助成金概要・応募要件（200字） + +JETRO GSAPは、日本発スタートアップの海外市場展開を加速するため、海外アクセラレーター、メンタリング、投資家・事業会社との接点形成等をエクイティフリーで支援するプログラムである。応募においては、国際展開の必然性、対象市場の明確さ、成長可能性、実行チームの能力、海外展開を通じた社会的・経済的インパクトが重視される。esse-senseは、研究知の国際流通と産学連携DXを軸に、既存DBとAI解析能力を海外展開に転用できる。 + +## 3. 申請テーマ案 + +<strong>案A（推奨）</strong>: 研究知の国際流通を支えるAIメディア・ナレッジ基盤の海外展開 +日本の研究者・大学発スタートアップの知見を多言語で編集・構造化し、海外企業、投資家、大学、支援機関へ届けるAIナレッジ基盤を構築する。既存の記事DB 188件を起点に、国際展開に必要なストーリー化、技術領域分析、マッチング支援を実装する。 + +<strong>案B（代替）</strong>: esse-sense Future Forumを核とした国際産学連携コミュニティ形成 +esse-sense Future Forumを海外展開の実証拠点とし、研究者、大学発スタートアップ、事業会社、支援機関を結ぶ国際コミュニティを形成する。メディア発信とイベント、分析レポートを組み合わせ、継続的な協業案件の創出を目指す。 + +## 4. 事業/研究計画書本文（推奨案A） + +### 背景・目的（300-400字） + +日本の大学・研究機関には、環境、医療、教育、地域、AI、材料、都市など多様な領域で世界的価値を持つ知見が蓄積されている一方、その多くは論文、研究室紹介、個別イベントの中に分散し、海外の事業会社や投資家が理解しやすい形で流通していない。特に大学発スタートアップやゼブラ型スタートアップは、短期的な急成長だけでなく社会的価値の説明が重要であり、技術の意義、研究者の背景、社会実装の文脈を統合して伝える編集・解析機能が求められる。esse-senseはこれまでarticles 154件、general_articles 34件の知見DBを構築し、研究者の知を社会に届ける実務を積み重ねてきた。本事業では、この実績を国際展開に拡張し、日本発の研究知と海外市場をつなぐAIメディア・ナレッジ基盤を構築する。 + +### 研究/事業の方法（300-400字） + +事業は三段階で進める。第一段階では、既存の記事DB 188件を対象に、研究領域、社会課題、技術成熟度、想定顧客、海外市場との接点をタグ付けし、英語発信用の要約・ピッチ素材を整備する。第二段階では、AIとテキスト解析を用いて、研究テーマと海外の事業会社、アクセラレーター、大学、投資家の関心領域を照合するプロトタイプを開発する。第三段階では、JETRO GSAPのメンタリングと海外ネットワークを活用し、北米・欧州・アジアのいずれか優先市場で、esse-sense Future Forumと連動した発信、面談、検証を行う。ミラツクとの共同応募実績を活かし、NPO的な社会課題理解と株式会社としての事業化能力を組み合わせ、海外展開に耐える収益モデルを検証する。 + +### 期待される成果（200-300字） + +定量面では、海外発信用に整備した研究・スタートアップ関連記事50件、海外候補連携先100件、重点面談20件、実証協議5件の創出を目標とする。定性面では、日本の研究知を単発の記事ではなく、社会課題、技術、事業化可能性を統合した国際的なナレッジ資産として提示できるようになる。これにより、大学発スタートアップ支援、産学連携DX、学術機関の国際広報支援というesse-senseの既存事業を海外市場へ展開し、ゼブラ型の成長モデルを具体化する。 + +## 5. スケジュールと予算 + +2026年度は、GSAP採択後から3か月でDB棚卸し、英語要約、海外市場仮説の設定を行い、4-6か月目にAIタグ付け・マッチング試作、海外メンター面談、優先市場の検証を進める。7-9か月目にはesse-sense Future Forumと連動した海外向け発信、個別商談、実証候補先との協議を実施し、10-12か月目に事業モデル、価格、営業資料、次年度展開計画を確定する。総事業費は900万円を想定し、内訳は海外展開調査150万円、英語編集・翻訳180万円、AI解析・DB整備250万円、海外イベント・面談運営170万円、PM・事業開発150万円とする。補助申請額はGSAPのエクイティフリー支援として、アクセラレーション、メンタリング、海外ネットワーク接続、実証機会の提供を申請する。 + +## 6. 提出物チェックリスト + +- <input type="checkbox" disabled> 申請フォーム基本情報 +- <input type="checkbox" disabled> 事業概要・海外展開計画 +- <input type="checkbox" disabled> 会社概要資料 +- <input type="checkbox" disabled> ピッチデック +- <input type="checkbox" disabled> 財務・営業収益の説明資料 +- <input type="checkbox" disabled> 既存記事DB・実績一覧 +- <input type="checkbox" disabled> esse-sense Future Forum関連資料 +- <input type="checkbox" disabled> ミラツク等との連携実績資料 +- <input type="checkbox" disabled> 英語版サービス説明または暫定LP + +## 7. 推奨アクション + +- 既存DB 188件から海外展開に適した研究・スタートアップ関連記事50件を選定する。 +- 営業収益、主要顧客、コミュニティ規模、連載数など未記入の定量実績を補完する。 +- GSAP応募コースの対象市場を北米、欧州、アジアのいずれかに絞り、仮説を明文化する。 +- 英語ピッチデックを10枚程度で作成し、AIナレッジ基盤とFuture Forumの関係を整理する。 +- ミラツクとの共同応募・連携実績を、社会的インパクトの証跡として添付資料化する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md</p>
+<p>exec /bin/bash -lc "wc -m 'drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md'" in /Users/nishimura+/work/miratuku-grants-2026/site exec /bin/bash -lc "ls -l 'drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md'" in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms:     2935 drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md</p>
+<p>succeeded in 0ms: -rw-r--r--  1 nishimura+  staff  7369  5月 10 11:09 drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md</p>
+<p>diff --git a/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md b/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md new file mode 100644 index 0000000000000000000000000000000000000000..af538616c16e6da0f6979fa1ca7d63750b9ec9f1 --- /dev/null +++ b/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md @@ -0,0 +1,59 @@ +# JETRO GSAP（グローバル・スタートアップ・アクセラ） 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-05-24 | <strong>上限</strong>: エクイティフリー支援 + +## 1. 申請者情報（300字） + +esse-senseは、研究者の知を社会に届けることを主要事業とする株式会社であり、学術知と産業・地域・行政を接続するメディア事業を展開している。自社で蓄積する記事データベースはarticles 154件、general_articles 34件に達し、研究者・大学・企業の知見を横断的に整理してきた。営業収益はメディア制作、産学連携支援、大学発スタートアップ支援、大学・学術機関DX支援を組み合わせて形成しており、単なる記事制作にとどまらず、学際的知見DB、データ活用、AI、大規模解析・テキスト解析を用いた事業開発基盤を持つ点が強みである。NPO法人ミラツクとの共同応募実績もあり、社会課題起点のゼブラ型スタートアップとして国際展開支援との適合性が高い。 + +## 2. 助成金概要・応募要件（200字） + +JETRO GSAPは、日本発スタートアップの海外市場展開を加速するため、海外アクセラレーター、メンタリング、投資家・事業会社との接点形成等をエクイティフリーで支援するプログラムである。応募においては、国際展開の必然性、対象市場の明確さ、成長可能性、実行チームの能力、海外展開を通じた社会的・経済的インパクトが重視される。esse-senseは、研究知の国際流通と産学連携DXを軸に、既存DBとAI解析能力を海外展開に転用できる。 + +## 3. 申請テーマ案 + +<strong>案A（推奨）</strong>: 研究知の国際流通を支えるAIメディア・ナレッジ基盤の海外展開 +日本の研究者・大学発スタートアップの知見を多言語で編集・構造化し、海外企業、投資家、大学、支援機関へ届けるAIナレッジ基盤を構築する。既存の記事DB 188件を起点に、国際展開に必要なストーリー化、技術領域分析、マッチング支援を実装する。 + +<strong>案B（代替）</strong>: esse-sense Future Forumを核とした国際産学連携コミュニティ形成 +esse-sense Future Forumを海外展開の実証拠点とし、研究者、大学発スタートアップ、事業会社、支援機関を結ぶ国際コミュニティを形成する。メディア発信とイベント、分析レポートを組み合わせ、継続的な協業案件の創出を目指す。 + +## 4. 事業/研究計画書本文（推奨案A） + +### 背景・目的（300-400字） + +日本の大学・研究機関には、環境、医療、教育、地域、AI、材料、都市など多様な領域で世界的価値を持つ知見が蓄積されている一方、その多くは論文、研究室紹介、個別イベントの中に分散し、海外の事業会社や投資家が理解しやすい形で流通していない。特に大学発スタートアップやゼブラ型スタートアップは、短期的な急成長だけでなく社会的価値の説明が重要であり、技術の意義、研究者の背景、社会実装の文脈を統合して伝える編集・解析機能が求められる。esse-senseはこれまでarticles 154件、general_articles 34件の知見DBを構築し、研究者の知を社会に届ける実務を積み重ねてきた。本事業では、この実績を国際展開に拡張し、日本発の研究知と海外市場をつなぐAIメディア・ナレッジ基盤を構築する。 + +### 研究/事業の方法（300-400字） + +事業は三段階で進める。第一段階では、既存の記事DB 188件を対象に、研究領域、社会課題、技術成熟度、想定顧客、海外市場との接点をタグ付けし、英語発信用の要約・ピッチ素材を整備する。第二段階では、AIとテキスト解析を用いて、研究テーマと海外の事業会社、アクセラレーター、大学、投資家の関心領域を照合するプロトタイプを開発する。第三段階では、JETRO GSAPのメンタリングと海外ネットワークを活用し、北米・欧州・アジアのいずれか優先市場で、esse-sense Future Forumと連動した発信、面談、検証を行う。ミラツクとの共同応募実績を活かし、NPO的な社会課題理解と株式会社としての事業化能力を組み合わせ、海外展開に耐える収益モデルを検証する。 + +### 期待される成果（200-300字） + +定量面では、海外発信用に整備した研究・スタートアップ関連記事50件、海外候補連携先100件、重点面談20件、実証協議5件の創出を目標とする。定性面では、日本の研究知を単発の記事ではなく、社会課題、技術、事業化可能性を統合した国際的なナレッジ資産として提示できるようになる。これにより、大学発スタートアップ支援、産学連携DX、学術機関の国際広報支援というesse-senseの既存事業を海外市場へ展開し、ゼブラ型の成長モデルを具体化する。 + +## 5. スケジュールと予算 + +2026年度は、GSAP採択後から3か月でDB棚卸し、英語要約、海外市場仮説の設定を行い、4-6か月目にAIタグ付け・マッチング試作、海外メンター面談、優先市場の検証を進める。7-9か月目にはesse-sense Future Forumと連動した海外向け発信、個別商談、実証候補先との協議を実施し、10-12か月目に事業モデル、価格、営業資料、次年度展開計画を確定する。総事業費は900万円を想定し、内訳は海外展開調査150万円、英語編集・翻訳180万円、AI解析・DB整備250万円、海外イベント・面談運営170万円、PM・事業開発150万円とする。補助申請額はGSAPのエクイティフリー支援として、アクセラレーション、メンタリング、海外ネットワーク接続、実証機会の提供を申請する。 + +## 6. 提出物チェックリスト + +- <input type="checkbox" disabled> 申請フォーム基本情報 +- <input type="checkbox" disabled> 事業概要・海外展開計画 +- <input type="checkbox" disabled> 会社概要資料 +- <input type="checkbox" disabled> ピッチデック +- <input type="checkbox" disabled> 財務・営業収益の説明資料 +- <input type="checkbox" disabled> 既存記事DB・実績一覧 +- <input type="checkbox" disabled> esse-sense Future Forum関連資料 +- <input type="checkbox" disabled> ミラツク等との連携実績資料 +- <input type="checkbox" disabled> 英語版サービス説明または暫定LP + +## 7. 推奨アクション + +- 既存DB 188件から海外展開に適した研究・スタートアップ関連記事50件を選定する。 +- 営業収益、主要顧客、コミュニティ規模、連載数など未記入の定量実績を補完する。 +- GSAP応募コースの対象市場を北米、欧州、アジアのいずれかに絞り、仮説を明文化する。 +- 英語ピッチデックを10枚程度で作成し、AIナレッジ基盤とFuture Forumの関係を整理する。 +- ミラツクとの共同応募・連携実績を、社会的インパクトの証跡として添付資料化する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md</p>
+<p>codex 保存できた作業コピーは約2,935字で、指定上限を少し超えています。1,500-2,500字に収まるよう本文を圧縮してから再確認します。 apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/site/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md diff --git a/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md b/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md new file mode 100644 index 0000000000000000000000000000000000000000..d9974926335df91a5df64b392fcfd8b2ae6723f9 --- /dev/null +++ b/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md @@ -0,0 +1,59 @@ +# JETRO GSAP（グローバル・スタートアップ・アクセラ） 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-05-24 | <strong>上限</strong>: エクイティフリー支援 + +## 1. 申請者情報（300字） + +esse-senseは、研究者の知を社会に届ける株式会社であり、学術知と産業・地域・行政を接続するメディア事業を展開している。記事データベースはarticles 154件、general_articles 34件、計188件に達し、研究者・大学・企業の知見を横断的に整理してきた。営業収益はメディア制作、産学連携支援、大学発スタートアップ支援、大学・学術機関DX支援を組み合わせて形成している。学際的知見DB、AI、データ活用、大規模解析・テキスト解析を備え、NPO法人ミラツクとの共同応募実績もあるため、社会課題起点のゼブラ型スタートアップとして国際展開支援との適合性が高い。 + +## 2. 助成金概要・応募要件（200字） + +JETRO GSAPは、日本発スタートアップの海外市場展開を加速するため、海外アクセラレーター、メンタリング、投資家・事業会社との接点形成等をエクイティフリーで支援するプログラムである。評価では、国際展開の必然性、対象市場、成長可能性、実行チーム、社会的・経済的インパクトが重視される。esse-senseは、研究知の国際流通と産学連携DXを軸に、既存DBとAI解析能力を海外展開へ転用できる。 + +## 3. 申請テーマ案 + +<strong>案A（推奨）</strong>: 研究知の国際流通を支えるAIメディア・ナレッジ基盤の海外展開 +日本の研究者・大学発スタートアップの知見を多言語で編集・構造化し、海外企業、投資家、大学へ届けるAIナレッジ基盤を構築する。既存DB 188件を起点に、ストーリー化、技術領域分析、マッチング支援を実装する。 + +<strong>案B（代替）</strong>: esse-sense Future Forumを核とした国際産学連携コミュニティ形成 +esse-sense Future Forumを海外展開の実証拠点とし、研究者、大学発スタートアップ、事業会社、支援機関を結ぶ国際コミュニティを形成する。発信、イベント、分析レポートを組み合わせ、協業案件の創出を目指す。 + +## 4. 事業/研究計画書本文（推奨案A） + +### 背景・目的（300-400字） + +日本の大学・研究機関には、環境、医療、教育、地域、AI、材料など世界的価値を持つ知見が蓄積されている一方、その多くは論文、研究室紹介、個別イベントに分散し、海外の事業会社や投資家が理解しやすい形で流通していない。大学発・ゼブラ型スタートアップには、技術の意義、研究者の背景、社会実装の文脈を統合して伝える編集・解析機能が必要である。esse-senseはarticles 154件、general_articles 34件の知見DBを構築してきた。本事業では、この実績を国際展開に拡張し、日本発の研究知と海外市場をつなぐAIメディア・ナレッジ基盤を構築する。 + +### 研究/事業の方法（300-400字） + +事業は三段階で進める。第一段階では、既存DB 188件を対象に、研究領域、社会課題、技術成熟度、想定顧客、海外市場との接点をタグ付けし、英語発信用の要約・ピッチ素材を整備する。第二段階では、AIとテキスト解析を用いて、研究テーマと海外の事業会社、アクセラレーター、大学、投資家の関心領域を照合する試作版を開発する。第三段階では、JETRO GSAPのメンタリングと海外ネットワークを活用し、優先市場でFuture Forumと連動した発信、面談、検証を行う。ミラツクとの共同応募実績を活かし、社会課題理解と事業化能力を組み合わせた収益モデルを検証する。 + +### 期待される成果（200-300字） + +定量面では、海外発信用の記事50件、海外候補連携先100件、重点面談20件、実証協議5件の創出を目標とする。定性面では、日本の研究知を単発記事ではなく、社会課題、技術、事業化可能性を統合した国際的なナレッジ資産として提示できる。これにより、大学発スタートアップ支援、産学連携DX、学術機関の国際広報支援を海外市場へ展開し、ゼブラ型の成長モデルを具体化する。 + +## 5. スケジュールと予算 + +2026年度は、採択後3か月でDB棚卸し、英語要約、海外市場仮説を設定し、4-6か月目にAIタグ付け・マッチング試作、海外メンター面談、優先市場の検証を進める。7-9か月目にはFuture Forumと連動した海外向け発信、個別商談、実証候補先との協議を行い、10-12か月目に事業モデル、価格、営業資料、次年度計画を確定する。総事業費は900万円を想定し、内訳は海外展開調査150万円、英語編集・翻訳180万円、AI解析・DB整備250万円、海外イベント・面談運営170万円、PM・事業開発150万円とする。補助申請額はGSAPのエクイティフリー支援として、アクセラレーション、メンタリング、海外ネットワーク接続、実証機会の提供を申請する。 + +## 6. 提出物チェックリスト + +- <input type="checkbox" disabled> 申請フォーム基本情報 +- <input type="checkbox" disabled> 事業概要・海外展開計画 +- <input type="checkbox" disabled> 会社概要資料 +- <input type="checkbox" disabled> ピッチデック +- <input type="checkbox" disabled> 財務・営業収益の説明資料 +- <input type="checkbox" disabled> 既存記事DB・実績一覧 +- <input type="checkbox" disabled> esse-sense Future Forum関連資料 +- <input type="checkbox" disabled> ミラツク等との連携実績資料 +- <input type="checkbox" disabled> 英語版サービス説明または暫定LP + +## 7. 推奨アクション + +- 既存DB 188件から海外展開に適した研究・スタートアップ関連記事50件を選定する。 +- 営業収益、主要顧客、コミュニティ規模、連載数など未記入の定量実績を補完する。 +- GSAP応募コースの対象市場を北米、欧州、アジアのいずれかに絞り、仮説を明文化する。 +- 英語ピッチデックを10枚程度で作成し、AIナレッジ基盤とFuture Forumの関係を整理する。 +- ミラツクとの共同応募・連携実績を、社会的インパクトの証跡として添付資料化する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md</p>
+<p>diff --git a/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md b/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md new file mode 100644 index 0000000000000000000000000000000000000000..d9974926335df91a5df64b392fcfd8b2ae6723f9 --- /dev/null +++ b/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md @@ -0,0 +1,59 @@ +# JETRO GSAP（グローバル・スタートアップ・アクセラ） 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-05-24 | <strong>上限</strong>: エクイティフリー支援 + +## 1. 申請者情報（300字） + +esse-senseは、研究者の知を社会に届ける株式会社であり、学術知と産業・地域・行政を接続するメディア事業を展開している。記事データベースはarticles 154件、general_articles 34件、計188件に達し、研究者・大学・企業の知見を横断的に整理してきた。営業収益はメディア制作、産学連携支援、大学発スタートアップ支援、大学・学術機関DX支援を組み合わせて形成している。学際的知見DB、AI、データ活用、大規模解析・テキスト解析を備え、NPO法人ミラツクとの共同応募実績もあるため、社会課題起点のゼブラ型スタートアップとして国際展開支援との適合性が高い。 + +## 2. 助成金概要・応募要件（200字） + +JETRO GSAPは、日本発スタートアップの海外市場展開を加速するため、海外アクセラレーター、メンタリング、投資家・事業会社との接点形成等をエクイティフリーで支援するプログラムである。評価では、国際展開の必然性、対象市場、成長可能性、実行チーム、社会的・経済的インパクトが重視される。esse-senseは、研究知の国際流通と産学連携DXを軸に、既存DBとAI解析能力を海外展開へ転用できる。 + +## 3. 申請テーマ案 + +<strong>案A（推奨）</strong>: 研究知の国際流通を支えるAIメディア・ナレッジ基盤の海外展開 +日本の研究者・大学発スタートアップの知見を多言語で編集・構造化し、海外企業、投資家、大学へ届けるAIナレッジ基盤を構築する。既存DB 188件を起点に、ストーリー化、技術領域分析、マッチング支援を実装する。 + +<strong>案B（代替）</strong>: esse-sense Future Forumを核とした国際産学連携コミュニティ形成 +esse-sense Future Forumを海外展開の実証拠点とし、研究者、大学発スタートアップ、事業会社、支援機関を結ぶ国際コミュニティを形成する。発信、イベント、分析レポートを組み合わせ、協業案件の創出を目指す。 + +## 4. 事業/研究計画書本文（推奨案A） + +### 背景・目的（300-400字） + +日本の大学・研究機関には、環境、医療、教育、地域、AI、材料など世界的価値を持つ知見が蓄積されている一方、その多くは論文、研究室紹介、個別イベントに分散し、海外の事業会社や投資家が理解しやすい形で流通していない。大学発・ゼブラ型スタートアップには、技術の意義、研究者の背景、社会実装の文脈を統合して伝える編集・解析機能が必要である。esse-senseはarticles 154件、general_articles 34件の知見DBを構築してきた。本事業では、この実績を国際展開に拡張し、日本発の研究知と海外市場をつなぐAIメディア・ナレッジ基盤を構築する。 + +### 研究/事業の方法（300-400字） + +事業は三段階で進める。第一段階では、既存DB 188件を対象に、研究領域、社会課題、技術成熟度、想定顧客、海外市場との接点をタグ付けし、英語発信用の要約・ピッチ素材を整備する。第二段階では、AIとテキスト解析を用いて、研究テーマと海外の事業会社、アクセラレーター、大学、投資家の関心領域を照合する試作版を開発する。第三段階では、JETRO GSAPのメンタリングと海外ネットワークを活用し、優先市場でFuture Forumと連動した発信、面談、検証を行う。ミラツクとの共同応募実績を活かし、社会課題理解と事業化能力を組み合わせた収益モデルを検証する。 + +### 期待される成果（200-300字） + +定量面では、海外発信用の記事50件、海外候補連携先100件、重点面談20件、実証協議5件の創出を目標とする。定性面では、日本の研究知を単発記事ではなく、社会課題、技術、事業化可能性を統合した国際的なナレッジ資産として提示できる。これにより、大学発スタートアップ支援、産学連携DX、学術機関の国際広報支援を海外市場へ展開し、ゼブラ型の成長モデルを具体化する。 + +## 5. スケジュールと予算 + +2026年度は、採択後3か月でDB棚卸し、英語要約、海外市場仮説を設定し、4-6か月目にAIタグ付け・マッチング試作、海外メンター面談、優先市場の検証を進める。7-9か月目にはFuture Forumと連動した海外向け発信、個別商談、実証候補先との協議を行い、10-12か月目に事業モデル、価格、営業資料、次年度計画を確定する。総事業費は900万円を想定し、内訳は海外展開調査150万円、英語編集・翻訳180万円、AI解析・DB整備250万円、海外イベント・面談運営170万円、PM・事業開発150万円とする。補助申請額はGSAPのエクイティフリー支援として、アクセラレーション、メンタリング、海外ネットワーク接続、実証機会の提供を申請する。 + +## 6. 提出物チェックリスト + +- <input type="checkbox" disabled> 申請フォーム基本情報 +- <input type="checkbox" disabled> 事業概要・海外展開計画 +- <input type="checkbox" disabled> 会社概要資料 +- <input type="checkbox" disabled> ピッチデック +- <input type="checkbox" disabled> 財務・営業収益の説明資料 +- <input type="checkbox" disabled> 既存記事DB・実績一覧 +- <input type="checkbox" disabled> esse-sense Future Forum関連資料 +- <input type="checkbox" disabled> ミラツク等との連携実績資料 +- <input type="checkbox" disabled> 英語版サービス説明または暫定LP + +## 7. 推奨アクション + +- 既存DB 188件から海外展開に適した研究・スタートアップ関連記事50件を選定する。 +- 営業収益、主要顧客、コミュニティ規模、連載数など未記入の定量実績を補完する。 +- GSAP応募コースの対象市場を北米、欧州、アジアのいずれかに絞り、仮説を明文化する。 +- 英語ピッチデックを10枚程度で作成し、AIナレッジ基盤とFuture Forumの関係を整理する。 +- ミラツクとの共同応募・連携実績を、社会的インパクトの証跡として添付資料化する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md</p>
+<p>exec /bin/bash -lc "wc -m 'drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md'" in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms:     2668 drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md</p>
+<p>diff --git a/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md b/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md new file mode 100644 index 0000000000000000000000000000000000000000..d9974926335df91a5df64b392fcfd8b2ae6723f9 --- /dev/null +++ b/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md @@ -0,0 +1,59 @@ +# JETRO GSAP（グローバル・スタートアップ・アクセラ） 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-05-24 | <strong>上限</strong>: エクイティフリー支援 + +## 1. 申請者情報（300字） + +esse-senseは、研究者の知を社会に届ける株式会社であり、学術知と産業・地域・行政を接続するメディア事業を展開している。記事データベースはarticles 154件、general_articles 34件、計188件に達し、研究者・大学・企業の知見を横断的に整理してきた。営業収益はメディア制作、産学連携支援、大学発スタートアップ支援、大学・学術機関DX支援を組み合わせて形成している。学際的知見DB、AI、データ活用、大規模解析・テキスト解析を備え、NPO法人ミラツクとの共同応募実績もあるため、社会課題起点のゼブラ型スタートアップとして国際展開支援との適合性が高い。 + +## 2. 助成金概要・応募要件（200字） + +JETRO GSAPは、日本発スタートアップの海外市場展開を加速するため、海外アクセラレーター、メンタリング、投資家・事業会社との接点形成等をエクイティフリーで支援するプログラムである。評価では、国際展開の必然性、対象市場、成長可能性、実行チーム、社会的・経済的インパクトが重視される。esse-senseは、研究知の国際流通と産学連携DXを軸に、既存DBとAI解析能力を海外展開へ転用できる。 + +## 3. 申請テーマ案 + +<strong>案A（推奨）</strong>: 研究知の国際流通を支えるAIメディア・ナレッジ基盤の海外展開 +日本の研究者・大学発スタートアップの知見を多言語で編集・構造化し、海外企業、投資家、大学へ届けるAIナレッジ基盤を構築する。既存DB 188件を起点に、ストーリー化、技術領域分析、マッチング支援を実装する。 + +<strong>案B（代替）</strong>: esse-sense Future Forumを核とした国際産学連携コミュニティ形成 +esse-sense Future Forumを海外展開の実証拠点とし、研究者、大学発スタートアップ、事業会社、支援機関を結ぶ国際コミュニティを形成する。発信、イベント、分析レポートを組み合わせ、協業案件の創出を目指す。 + +## 4. 事業/研究計画書本文（推奨案A） + +### 背景・目的（300-400字） + +日本の大学・研究機関には、環境、医療、教育、地域、AI、材料など世界的価値を持つ知見が蓄積されている一方、その多くは論文、研究室紹介、個別イベントに分散し、海外の事業会社や投資家が理解しやすい形で流通していない。大学発・ゼブラ型スタートアップには、技術の意義、研究者の背景、社会実装の文脈を統合して伝える編集・解析機能が必要である。esse-senseはarticles 154件、general_articles 34件の知見DBを構築してきた。本事業では、この実績を国際展開に拡張し、日本発の研究知と海外市場をつなぐAIメディア・ナレッジ基盤を構築する。 + +### 研究/事業の方法（300-400字） + +事業は三段階で進める。第一段階では、既存DB 188件を対象に、研究領域、社会課題、技術成熟度、想定顧客、海外市場との接点をタグ付けし、英語発信用の要約・ピッチ素材を整備する。第二段階では、AIとテキスト解析を用いて、研究テーマと海外の事業会社、アクセラレーター、大学、投資家の関心領域を照合する試作版を開発する。第三段階では、JETRO GSAPのメンタリングと海外ネットワークを活用し、優先市場でFuture Forumと連動した発信、面談、検証を行う。ミラツクとの共同応募実績を活かし、社会課題理解と事業化能力を組み合わせた収益モデルを検証する。 + +### 期待される成果（200-300字） + +定量面では、海外発信用の記事50件、海外候補連携先100件、重点面談20件、実証協議5件の創出を目標とする。定性面では、日本の研究知を単発記事ではなく、社会課題、技術、事業化可能性を統合した国際的なナレッジ資産として提示できる。これにより、大学発スタートアップ支援、産学連携DX、学術機関の国際広報支援を海外市場へ展開し、ゼブラ型の成長モデルを具体化する。 + +## 5. スケジュールと予算 + +2026年度は、採択後3か月でDB棚卸し、英語要約、海外市場仮説を設定し、4-6か月目にAIタグ付け・マッチング試作、海外メンター面談、優先市場の検証を進める。7-9か月目にはFuture Forumと連動した海外向け発信、個別商談、実証候補先との協議を行い、10-12か月目に事業モデル、価格、営業資料、次年度計画を確定する。総事業費は900万円を想定し、内訳は海外展開調査150万円、英語編集・翻訳180万円、AI解析・DB整備250万円、海外イベント・面談運営170万円、PM・事業開発150万円とする。補助申請額はGSAPのエクイティフリー支援として、アクセラレーション、メンタリング、海外ネットワーク接続、実証機会の提供を申請する。 + +## 6. 提出物チェックリスト + +- <input type="checkbox" disabled> 申請フォーム基本情報 +- <input type="checkbox" disabled> 事業概要・海外展開計画 +- <input type="checkbox" disabled> 会社概要資料 +- <input type="checkbox" disabled> ピッチデック +- <input type="checkbox" disabled> 財務・営業収益の説明資料 +- <input type="checkbox" disabled> 既存記事DB・実績一覧 +- <input type="checkbox" disabled> esse-sense Future Forum関連資料 +- <input type="checkbox" disabled> ミラツク等との連携実績資料 +- <input type="checkbox" disabled> 英語版サービス説明または暫定LP + +## 7. 推奨アクション + +- 既存DB 188件から海外展開に適した研究・スタートアップ関連記事50件を選定する。 +- 営業収益、主要顧客、コミュニティ規模、連載数など未記入の定量実績を補完する。 +- GSAP応募コースの対象市場を北米、欧州、アジアのいずれかに絞り、仮説を明文化する。 +- 英語ピッチデックを10枚程度で作成し、AIナレッジ基盤とFuture Forumの関係を整理する。 +- ミラツクとの共同応募・連携実績を、社会的インパクトの証跡として添付資料化する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md</p>
+<p>apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/site/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md diff --git a/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md b/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md new file mode 100644 index 0000000000000000000000000000000000000000..13c5fb5589effa230c71a74bbf00f9385e41e543 --- /dev/null +++ b/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md @@ -0,0 +1,59 @@ +# JETRO GSAP（グローバル・スタートアップ・アクセラ） 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-05-24 | <strong>上限</strong>: エクイティフリー支援 + +## 1. 申請者情報（300字） + +esse-senseは、研究者の知を社会に届ける株式会社であり、学術知と産業・地域・行政を接続するメディア事業を展開している。記事DBはarticles 154件、general_articles 34件、計188件に達し、研究者・大学・企業の知見を横断的に整理してきた。営業収益はメディア制作、産学連携支援、大学発SU支援、学術機関DX支援を組み合わせて形成している。学際的知見DB、AI、大規模解析・テキスト解析を備え、ミラツクとの共同応募実績もあるため、ゼブラ型SUとして国際展開支援との適合性が高い。 + +## 2. 助成金概要・応募要件（200字） + +JETRO GSAPは、日本発SUの海外市場展開を加速するため、海外アクセラレーター、メンタリング、投資家・事業会社との接点形成等をエクイティフリーで支援する。評価では、国際展開の必然性、対象市場、成長可能性、実行チーム、社会的・経済的インパクトが重視される。 + +## 3. 申請テーマ案 + +<strong>案A（推奨）</strong>: 研究知の国際流通を支えるAIメディア・ナレッジ基盤の海外展開 +日本の研究者・大学発SUの知見を多言語で編集・構造化し、海外企業、投資家、大学へ届けるAIナレッジ基盤を構築する。既存DB 188件を起点に、技術領域分析とマッチング支援を実装する。 + +<strong>案B（代替）</strong>: esse-sense Future Forumを核とした国際産学連携コミュニティ形成 +esse-sense Future Forumを海外展開の実証拠点とし、研究者、大学発SU、事業会社、支援機関を結ぶ国際コミュニティを形成する。発信、イベント、分析レポートを組み合わせ、協業案件を創出する。 + +## 4. 事業/研究計画書本文（推奨案A） + +### 背景・目的（300-400字） + +日本の大学・研究機関には、環境、医療、教育、地域、AI、材料など世界的価値を持つ知見が蓄積されている一方、その多くは論文、研究室紹介、個別イベントに分散し、海外の事業会社や投資家が理解しやすい形で流通していない。大学発・ゼブラ型SUには、技術の意義、研究者の背景、社会実装の文脈を統合して伝える編集・解析機能が必要である。esse-senseは計188件の知見DBを構築してきた。本事業では、この実績を国際展開に拡張し、日本発の研究知と海外市場をつなぐAIメディア・ナレッジ基盤を構築する。 + +### 研究/事業の方法（300-400字） + +事業は三段階で進める。第一段階では、既存DB 188件を対象に、研究領域、社会課題、技術成熟度、想定顧客、海外市場との接点をタグ付けし、英語要約・ピッチ素材を整備する。第二段階では、AIとテキスト解析を用いて、研究テーマと海外の事業会社、大学、投資家の関心領域を照合する試作版を開発する。第三段階では、GSAPのメンタリングと海外ネットワークを活用し、優先市場でFuture Forumと連動した発信、面談、検証を行う。 + +### 期待される成果（200-300字） + +定量面では、海外発信用の記事50件、海外候補連携先100件、重点面談20件、実証協議5件を目標とする。定性面では、日本の研究知を単発記事ではなく、社会課題、技術、事業化可能性を統合した国際的なナレッジ資産として提示できる。これにより、大学発SU支援、産学連携DX、学術機関の国際広報支援を海外市場へ展開する。 + +## 5. スケジュールと予算 + +2026年度は、採択後3か月でDB棚卸し、英語要約、海外市場仮説を設定し、4-6か月目にAIタグ付け・マッチング試作、海外メンター面談、優先市場の検証を進める。7-9か月目にはFuture Forumと連動した海外発信、個別商談、実証候補先との協議を行い、10-12か月目に事業モデル、価格、営業資料、次年度計画を確定する。総事業費は900万円を想定し、内訳は海外展開調査150万円、英語編集・翻訳180万円、AI解析・DB整備250万円、海外イベント運営170万円、PM・事業開発150万円とする。補助申請額はGSAPのエクイティフリー支援として、メンタリング、海外ネットワーク接続、実証機会の提供を申請する。 + +## 6. 提出物チェックリスト + +- <input type="checkbox" disabled> 申請フォーム基本情報 +- <input type="checkbox" disabled> 事業概要・海外展開計画 +- <input type="checkbox" disabled> 会社概要資料 +- <input type="checkbox" disabled> ピッチデック +- <input type="checkbox" disabled> 財務・営業収益の説明資料 +- <input type="checkbox" disabled> 既存記事DB・実績一覧 +- <input type="checkbox" disabled> esse-sense Future Forum関連資料 +- <input type="checkbox" disabled> ミラツク等との連携実績資料 +- <input type="checkbox" disabled> 英語版サービス説明または暫定LP + +## 7. 推奨アクション + +- 既存DB 188件から海外展開に適した研究・スタートアップ関連記事50件を選定する。 +- 営業収益、主要顧客、コミュニティ規模、連載数など未記入の定量実績を補完する。 +- GSAP応募コースの対象市場を北米、欧州、アジアのいずれかに絞り、仮説を明文化する。 +- 英語ピッチデックを10枚程度で作成し、AIナレッジ基盤とFuture Forumの関係を整理する。 +- ミラツクとの共同応募・連携実績を、社会的インパクトの証跡として添付資料化する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md</p>
+<p>diff --git a/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md b/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md new file mode 100644 index 0000000000000000000000000000000000000000..13c5fb5589effa230c71a74bbf00f9385e41e543 --- /dev/null +++ b/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md @@ -0,0 +1,59 @@ +# JETRO GSAP（グローバル・スタートアップ・アクセラ） 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-05-24 | <strong>上限</strong>: エクイティフリー支援 + +## 1. 申請者情報（300字） + +esse-senseは、研究者の知を社会に届ける株式会社であり、学術知と産業・地域・行政を接続するメディア事業を展開している。記事DBはarticles 154件、general_articles 34件、計188件に達し、研究者・大学・企業の知見を横断的に整理してきた。営業収益はメディア制作、産学連携支援、大学発SU支援、学術機関DX支援を組み合わせて形成している。学際的知見DB、AI、大規模解析・テキスト解析を備え、ミラツクとの共同応募実績もあるため、ゼブラ型SUとして国際展開支援との適合性が高い。 + +## 2. 助成金概要・応募要件（200字） + +JETRO GSAPは、日本発SUの海外市場展開を加速するため、海外アクセラレーター、メンタリング、投資家・事業会社との接点形成等をエクイティフリーで支援する。評価では、国際展開の必然性、対象市場、成長可能性、実行チーム、社会的・経済的インパクトが重視される。 + +## 3. 申請テーマ案 + +<strong>案A（推奨）</strong>: 研究知の国際流通を支えるAIメディア・ナレッジ基盤の海外展開 +日本の研究者・大学発SUの知見を多言語で編集・構造化し、海外企業、投資家、大学へ届けるAIナレッジ基盤を構築する。既存DB 188件を起点に、技術領域分析とマッチング支援を実装する。 + +<strong>案B（代替）</strong>: esse-sense Future Forumを核とした国際産学連携コミュニティ形成 +esse-sense Future Forumを海外展開の実証拠点とし、研究者、大学発SU、事業会社、支援機関を結ぶ国際コミュニティを形成する。発信、イベント、分析レポートを組み合わせ、協業案件を創出する。 + +## 4. 事業/研究計画書本文（推奨案A） + +### 背景・目的（300-400字） + +日本の大学・研究機関には、環境、医療、教育、地域、AI、材料など世界的価値を持つ知見が蓄積されている一方、その多くは論文、研究室紹介、個別イベントに分散し、海外の事業会社や投資家が理解しやすい形で流通していない。大学発・ゼブラ型SUには、技術の意義、研究者の背景、社会実装の文脈を統合して伝える編集・解析機能が必要である。esse-senseは計188件の知見DBを構築してきた。本事業では、この実績を国際展開に拡張し、日本発の研究知と海外市場をつなぐAIメディア・ナレッジ基盤を構築する。 + +### 研究/事業の方法（300-400字） + +事業は三段階で進める。第一段階では、既存DB 188件を対象に、研究領域、社会課題、技術成熟度、想定顧客、海外市場との接点をタグ付けし、英語要約・ピッチ素材を整備する。第二段階では、AIとテキスト解析を用いて、研究テーマと海外の事業会社、大学、投資家の関心領域を照合する試作版を開発する。第三段階では、GSAPのメンタリングと海外ネットワークを活用し、優先市場でFuture Forumと連動した発信、面談、検証を行う。 + +### 期待される成果（200-300字） + +定量面では、海外発信用の記事50件、海外候補連携先100件、重点面談20件、実証協議5件を目標とする。定性面では、日本の研究知を単発記事ではなく、社会課題、技術、事業化可能性を統合した国際的なナレッジ資産として提示できる。これにより、大学発SU支援、産学連携DX、学術機関の国際広報支援を海外市場へ展開する。 + +## 5. スケジュールと予算 + +2026年度は、採択後3か月でDB棚卸し、英語要約、海外市場仮説を設定し、4-6か月目にAIタグ付け・マッチング試作、海外メンター面談、優先市場の検証を進める。7-9か月目にはFuture Forumと連動した海外発信、個別商談、実証候補先との協議を行い、10-12か月目に事業モデル、価格、営業資料、次年度計画を確定する。総事業費は900万円を想定し、内訳は海外展開調査150万円、英語編集・翻訳180万円、AI解析・DB整備250万円、海外イベント運営170万円、PM・事業開発150万円とする。補助申請額はGSAPのエクイティフリー支援として、メンタリング、海外ネットワーク接続、実証機会の提供を申請する。 + +## 6. 提出物チェックリスト + +- <input type="checkbox" disabled> 申請フォーム基本情報 +- <input type="checkbox" disabled> 事業概要・海外展開計画 +- <input type="checkbox" disabled> 会社概要資料 +- <input type="checkbox" disabled> ピッチデック +- <input type="checkbox" disabled> 財務・営業収益の説明資料 +- <input type="checkbox" disabled> 既存記事DB・実績一覧 +- <input type="checkbox" disabled> esse-sense Future Forum関連資料 +- <input type="checkbox" disabled> ミラツク等との連携実績資料 +- <input type="checkbox" disabled> 英語版サービス説明または暫定LP + +## 7. 推奨アクション + +- 既存DB 188件から海外展開に適した研究・スタートアップ関連記事50件を選定する。 +- 営業収益、主要顧客、コミュニティ規模、連載数など未記入の定量実績を補完する。 +- GSAP応募コースの対象市場を北米、欧州、アジアのいずれかに絞り、仮説を明文化する。 +- 英語ピッチデックを10枚程度で作成し、AIナレッジ基盤とFuture Forumの関係を整理する。 +- ミラツクとの共同応募・連携実績を、社会的インパクトの証跡として添付資料化する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md</p>
+<p>exec /bin/bash -lc "wc -m 'drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md'" in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms:     2408 drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md</p>
+<p>diff --git a/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md b/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md new file mode 100644 index 0000000000000000000000000000000000000000..13c5fb5589effa230c71a74bbf00f9385e41e543 --- /dev/null +++ b/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md @@ -0,0 +1,59 @@ +# JETRO GSAP（グローバル・スタートアップ・アクセラ） 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-05-24 | <strong>上限</strong>: エクイティフリー支援 + +## 1. 申請者情報（300字） + +esse-senseは、研究者の知を社会に届ける株式会社であり、学術知と産業・地域・行政を接続するメディア事業を展開している。記事DBはarticles 154件、general_articles 34件、計188件に達し、研究者・大学・企業の知見を横断的に整理してきた。営業収益はメディア制作、産学連携支援、大学発SU支援、学術機関DX支援を組み合わせて形成している。学際的知見DB、AI、大規模解析・テキスト解析を備え、ミラツクとの共同応募実績もあるため、ゼブラ型SUとして国際展開支援との適合性が高い。 + +## 2. 助成金概要・応募要件（200字） + +JETRO GSAPは、日本発SUの海外市場展開を加速するため、海外アクセラレーター、メンタリング、投資家・事業会社との接点形成等をエクイティフリーで支援する。評価では、国際展開の必然性、対象市場、成長可能性、実行チーム、社会的・経済的インパクトが重視される。 + +## 3. 申請テーマ案 + +<strong>案A（推奨）</strong>: 研究知の国際流通を支えるAIメディア・ナレッジ基盤の海外展開 +日本の研究者・大学発SUの知見を多言語で編集・構造化し、海外企業、投資家、大学へ届けるAIナレッジ基盤を構築する。既存DB 188件を起点に、技術領域分析とマッチング支援を実装する。 + +<strong>案B（代替）</strong>: esse-sense Future Forumを核とした国際産学連携コミュニティ形成 +esse-sense Future Forumを海外展開の実証拠点とし、研究者、大学発SU、事業会社、支援機関を結ぶ国際コミュニティを形成する。発信、イベント、分析レポートを組み合わせ、協業案件を創出する。 + +## 4. 事業/研究計画書本文（推奨案A） + +### 背景・目的（300-400字） + +日本の大学・研究機関には、環境、医療、教育、地域、AI、材料など世界的価値を持つ知見が蓄積されている一方、その多くは論文、研究室紹介、個別イベントに分散し、海外の事業会社や投資家が理解しやすい形で流通していない。大学発・ゼブラ型SUには、技術の意義、研究者の背景、社会実装の文脈を統合して伝える編集・解析機能が必要である。esse-senseは計188件の知見DBを構築してきた。本事業では、この実績を国際展開に拡張し、日本発の研究知と海外市場をつなぐAIメディア・ナレッジ基盤を構築する。 + +### 研究/事業の方法（300-400字） + +事業は三段階で進める。第一段階では、既存DB 188件を対象に、研究領域、社会課題、技術成熟度、想定顧客、海外市場との接点をタグ付けし、英語要約・ピッチ素材を整備する。第二段階では、AIとテキスト解析を用いて、研究テーマと海外の事業会社、大学、投資家の関心領域を照合する試作版を開発する。第三段階では、GSAPのメンタリングと海外ネットワークを活用し、優先市場でFuture Forumと連動した発信、面談、検証を行う。 + +### 期待される成果（200-300字） + +定量面では、海外発信用の記事50件、海外候補連携先100件、重点面談20件、実証協議5件を目標とする。定性面では、日本の研究知を単発記事ではなく、社会課題、技術、事業化可能性を統合した国際的なナレッジ資産として提示できる。これにより、大学発SU支援、産学連携DX、学術機関の国際広報支援を海外市場へ展開する。 + +## 5. スケジュールと予算 + +2026年度は、採択後3か月でDB棚卸し、英語要約、海外市場仮説を設定し、4-6か月目にAIタグ付け・マッチング試作、海外メンター面談、優先市場の検証を進める。7-9か月目にはFuture Forumと連動した海外発信、個別商談、実証候補先との協議を行い、10-12か月目に事業モデル、価格、営業資料、次年度計画を確定する。総事業費は900万円を想定し、内訳は海外展開調査150万円、英語編集・翻訳180万円、AI解析・DB整備250万円、海外イベント運営170万円、PM・事業開発150万円とする。補助申請額はGSAPのエクイティフリー支援として、メンタリング、海外ネットワーク接続、実証機会の提供を申請する。 + +## 6. 提出物チェックリスト + +- <input type="checkbox" disabled> 申請フォーム基本情報 +- <input type="checkbox" disabled> 事業概要・海外展開計画 +- <input type="checkbox" disabled> 会社概要資料 +- <input type="checkbox" disabled> ピッチデック +- <input type="checkbox" disabled> 財務・営業収益の説明資料 +- <input type="checkbox" disabled> 既存記事DB・実績一覧 +- <input type="checkbox" disabled> esse-sense Future Forum関連資料 +- <input type="checkbox" disabled> ミラツク等との連携実績資料 +- <input type="checkbox" disabled> 英語版サービス説明または暫定LP + +## 7. 推奨アクション + +- 既存DB 188件から海外展開に適した研究・スタートアップ関連記事50件を選定する。 +- 営業収益、主要顧客、コミュニティ規模、連載数など未記入の定量実績を補完する。 +- GSAP応募コースの対象市場を北米、欧州、アジアのいずれかに絞り、仮説を明文化する。 +- 英語ピッチデックを10枚程度で作成し、AIナレッジ基盤とFuture Forumの関係を整理する。 +- ミラツクとの共同応募・連携実績を、社会的インパクトの証跡として添付資料化する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md</p>
+<p>codex ドラフトを作成し、書き込み可能な作業コピーとして保存しました。</p>
+<p>保存済み作業コピー: <a href="/Users/nishimura+/work/miratuku-grants-2026/site/drafts_v2/NE_JETRO%20GSAP（グローバル・スタートアップ・アクセラ）.md">drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md</a></p>
+<p>指定先 <code>/Users/nishimura+/work/miratuku-grants-2026/drafts_v2/</code> はこの環境では書き込み不可だったため、指定どおり末尾に保存対象パスを記載しています。文字数は <code>wc -m</code> で2,408字です。</p>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

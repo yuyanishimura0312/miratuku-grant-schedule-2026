@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>内藤記念国際会議開催助成金</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>内藤記念国際会議開催助成金 申請書ドラフト（esse-sense向け）</h1>
+<p><strong>締切</strong>: 2026-05-29 | <strong>上限</strong>: —</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>法人プロフィールを基に、当該助成金との適合性を強調する自然な文章。営業収益・コミュニティ規模・DB数・連載数等の数値を本文に組み込む。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>助成金の目的・要件・評価ポイントを地の文で整理。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 法人の強み（⑦）と評価軸に最も合致するテーマ <strong>案B（代替）</strong>: 別角度からのアプローチ （各案にタイトルと150字の要旨）</p>
+<h2>4. 事業/研究計画書本文（推奨案A）</h2>
+<h3>背景・目的（300-400字）</h3>
+<p>社会的・学術的意義を地の文で記述。法人の実績・数値を引用。</p>
+<h3>研究/事業の方法（300-400字）</h3>
+<p>具体的アプローチ、段階的実施計画。</p>
+<h3>期待される成果（200-300字）</h3>
+<p>定量・定性の両面で。</p>
+<h2>5. スケジュールと予算</h2>
+<p>年次別の予算内訳・実施計画。総事業費・補助申請額を明示。</p>
+<h2>6. 提出物チェックリスト</h2>
+<p>申請書類のチェックボックスリスト。</p>
+<h2>7. 推奨アクション</h2>
+<p>即時に行うべき次のステップを箇条書き3-5点。</p>
+<p>【重要】</p>
+<ul>
+<li>地の文中心、箇条書きは補助的に</li>
+<li>法人の数値・実績を本文に組み込む</li>
+<li>1,500-2,500字</li>
+<li>出力の最後に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_内藤記念国際会議開催助成金.md」と1行で報告</li>
+</ul>
+<p>【ファイル保存】 最終Markdownを完成させたら、以下のパスに保存してください（書き込み権限がない場合はログ末尾に保存対象を明記してください）: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_内藤記念国際会議開催助成金.md</p>
+<p>codex 指定パスが現在の書き込み許可範囲の外にあるため、まず保存先ディレクトリの状態を確認します。保存できない場合は、指示どおり保存対象パスを明記してドラフトを提示します。 exec /bin/bash -lc 'ls -ld /Users/nishimura+/work/miratuku-grants-2026 /Users/nishimura+/work/miratuku-grants-2026/drafts_v2' in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms: drwxr-xr-x  26 nishimura+  staff   832  5月 10 10:58 /Users/nishimura+/work/miratuku-grants-2026 drwxr-xr-x  40 nishimura+  staff  1280  5月 10 10:57 /Users/nishimura+/work/miratuku-grants-2026/drafts_v2</p>
+<p>web search: web search: 内藤記念国際会議開催助成金 2026 募集要項 codex 募集要項を確認し、前期締切が2026年5月29日、対象会議の開始日が2027年1月1日から6月30日、助成上限が50万円である点を反映します。これから指定構成のMarkdownを作成し、指定パスへの保存を試みます。 2026-05-10T02:10:02.368160Z ERROR codex_core::tools::router: error=patch rejected: writing outside of the project; rejected by user approval settings codex 指定パスへの書き込みはサンドボックスで拒否されました。作業可能な範囲内に同名ドラフトを保存し、最終報告で指定の保存対象パスも明記します。 exec /bin/bash -lc 'mkdir -p drafts_v2' in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms: apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/site/drafts_v2/NE_内藤記念国際会議開催助成金.md diff --git a/drafts_v2/NE_内藤記念国際会議開催助成金.md b/drafts_v2/NE_内藤記念国際会議開催助成金.md new file mode 100644 index 0000000000000000000000000000000000000000..002bf3e77887ea68c9916dc0a038fd79161d8b74 --- /dev/null +++ b/drafts_v2/NE_内藤記念国際会議開催助成金.md @@ -0,0 +1,62 @@ +# 内藤記念国際会議開催助成金 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-05-29 | <strong>上限</strong>: 500,000円 + +## 1. 申請者情報（300字） + +esse-senseは、研究者の知を社会に届けることを主要事業とする営利法人であり、学際的知見の編集・発信、研究広報、産学連携支援、大学発スタートアップ支援、大学・学術機関DXに強みを有する。自社で蓄積する記事データベースはarticles 154件、general_articles 34件の計188件に達し、研究成果を社会実装や国際対話につなげるための編集・データ活用基盤を整備している。AI、大規模解析、テキスト解析を用いた知見整理に加え、esse-sense Future Forumを通じた国際的な研究交流の運営経験を持つ点は、自然科学の基礎研究をめぐる小規模国際会議の企画・発信に適合する。本申請では、連携大学の研究者を開催責任者とし、ミラツクとの共同応募実績を生かして、研究者・学生・産業界を接続する会議設計を担う。 + +## 2. 助成金概要・応募要件（200字） + +本助成金は、国内で開催される自然科学の基礎的研究に関する国際会議のうち、新しい研究分野や挑戦的課題を扱う比較的小規模な会議の開催費を補助する制度である。2026年度前期は、2027年1月1日から6月30日までに開始される会議が対象で、参加者総数50名以上500名以下、日本を含む2カ国以上の参加が要件となる。申請者は日本の研究機関に所属する開催責任者である必要があるため、esse-senseは連携大学と共同し、企画・広報・記録・成果発信を担う体制が望ましい。 + +## 3. 申請テーマ案 + +<strong>案A（推奨）</strong>: 「AI時代の基礎生命科学と知識循環に関する国際会議」 + +生命科学・情報科学・研究DXの研究者を国内外から招き、基礎研究の発見をAIとデータベースにより再利用可能な知識へ転換する方法を議論する。esse-senseの188件の記事DBとテキスト解析力を活用し、会議後の知見発信まで一体化する。 + +<strong>案B（代替）</strong>: 「大学発研究成果の国際共創と社会実装に関する若手研究者会議」 + +大学発スタートアップ支援と産学連携の経験を軸に、基礎研究を国際共同研究や事業化の入口へつなげる小規模会議を開催する。若手研究者の発表、海外研究者との討議、社会実装支援者との対話を組み合わせる。 + +## 4. 事業/研究計画書本文（推奨案A） + +### 背景・目的（300-400字） + +自然科学の基礎研究は、生命現象の理解、新規技術の創出、医療・環境・産業への波及を支える一方、研究領域の細分化と情報量の増大により、異分野間で知識を接続する機会が不足している。特にAIと大規模テキスト解析の進展により、論文・講演・研究者インタビューを横断的に整理し、国際的な研究課題を可視化することが可能になりつつある。本会議は、連携大学の基礎生命科学研究者を開催責任者とし、国内外の研究者50名以上を集め、AI時代における基礎研究の知識循環と国際共同研究の形成を目的として開催する。esse-senseはarticles 154件、general_articles 34件の計188件の研究発信資産を持ち、学際的知見DB、AI、データ活用、大学・学術機関DXの経験を通じて、会議の議論を社会に届く形で記録・編集・公開する。 + +### 研究/事業の方法（300-400字） + +実施方法は三段階とする。第一に、連携大学の開催責任者、海外招へい研究者、esse-sense、ミラツクで企画委員会を設置し、基礎生命科学、AI、知識基盤、研究広報の4領域から登壇者を選定する。第二に、2027年前期に国内会場で2日間の国際会議を開催し、基調講演、若手研究者発表、ラウンドテーブル、共同研究テーマ形成ワークショップを組み合わせる。参加規模は80名程度、日本を含む3カ国以上を想定する。第三に、会議前後の発表要旨、討議記録、参加者アンケートをテキスト解析し、主要論点、共同研究候補、社会発信可能な研究ストーリーを整理する。esse-senseは編集・DB化・記事化を担い、会議終了後も研究者間の接続と成果発信を継続する。 + +### 期待される成果（200-300字） + +定量的には、国内外研究者80名程度の参加、招へい講演6件、若手発表12件、国際共同研究候補3件、会議記録記事5件以上の公開を目標とする。定性的には、基礎生命科学とAI・データ活用の接点を整理し、研究者が相互に参照できる知識基盤を形成することで、新しい研究分野や挑戦的課題の可視化を進める。さらに、esse-sense Future Forum等の国際展開経験を活用し、会議を一過性のイベントにせず、継続的な共同研究と社会発信の起点とする。 + +## 5. スケジュールと予算 + +2026年6月から9月に企画委員会を設置し、テーマ確定、招へい候補者選定、会場仮予約を行う。2026年10月から12月にプログラム、アブストラクト、参加者募集、広報計画を確定し、2027年1月から6月の間に国際会議を開催する。会議後1カ月以内に記録整理とアンケート分析を行い、3カ月以内に成果記事と共同研究候補リストを公開する。総事業費は1,500,000円を想定し、内訳は海外招へい旅費600,000円、会場・配信費300,000円、通訳・翻訳費250,000円、記録編集・広報費250,000円、事務費100,000円とする。補助申請額は上限の500,000円とし、主に海外招へい旅費および通訳・翻訳費に充当する。 + +## 6. 提出物チェックリスト + +- <input type="checkbox" disabled> 申請Webサイトへの登録情報 +- <input type="checkbox" disabled> 開催責任者の所属・職位・連絡先 +- <input type="checkbox" disabled> 開催趣意書 +- <input type="checkbox" disabled> 収支予算書 +- <input type="checkbox" disabled> プログラム案 +- <input type="checkbox" disabled> アブストラクトまたは講演要旨 +- <input type="checkbox" disabled> 会議概要・規模が分かる資料 +- <input type="checkbox" disabled> 参加者数50名以上500名以下、日本を含む2カ国以上の確認資料 +- <input type="checkbox" disabled> 連携大学、esse-sense、ミラツクの役割分担表 +- <input type="checkbox" disabled> 学内または学会推薦が必要な場合の推薦手続き確認 + +## 7. 推奨アクション + +- 連携大学側の開催責任者を確定し、申請者資格を満たすことを確認する。 +- 会議開始日を2027年1月1日から6月30日の範囲で確定し、会場を仮押さえする。 +- 海外招へい候補者と参加国数を早急に整理し、50名以上の参加見込みを文書化する。 +- esse-senseの188件の記事DB、AI・テキスト解析、Future Forum実績を補足資料に落とし込む。 +- 2026年5月29日の締切から逆算し、開催趣意書、予算書、プログラム案を1週間以内に初稿化する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_内藤記念国際会議開催助成金.md</p>
+<p>diff --git a/drafts_v2/NE_内藤記念国際会議開催助成金.md b/drafts_v2/NE_内藤記念国際会議開催助成金.md new file mode 100644 index 0000000000000000000000000000000000000000..002bf3e77887ea68c9916dc0a038fd79161d8b74 --- /dev/null +++ b/drafts_v2/NE_内藤記念国際会議開催助成金.md @@ -0,0 +1,62 @@ +# 内藤記念国際会議開催助成金 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-05-29 | <strong>上限</strong>: 500,000円 + +## 1. 申請者情報（300字） + +esse-senseは、研究者の知を社会に届けることを主要事業とする営利法人であり、学際的知見の編集・発信、研究広報、産学連携支援、大学発スタートアップ支援、大学・学術機関DXに強みを有する。自社で蓄積する記事データベースはarticles 154件、general_articles 34件の計188件に達し、研究成果を社会実装や国際対話につなげるための編集・データ活用基盤を整備している。AI、大規模解析、テキスト解析を用いた知見整理に加え、esse-sense Future Forumを通じた国際的な研究交流の運営経験を持つ点は、自然科学の基礎研究をめぐる小規模国際会議の企画・発信に適合する。本申請では、連携大学の研究者を開催責任者とし、ミラツクとの共同応募実績を生かして、研究者・学生・産業界を接続する会議設計を担う。 + +## 2. 助成金概要・応募要件（200字） + +本助成金は、国内で開催される自然科学の基礎的研究に関する国際会議のうち、新しい研究分野や挑戦的課題を扱う比較的小規模な会議の開催費を補助する制度である。2026年度前期は、2027年1月1日から6月30日までに開始される会議が対象で、参加者総数50名以上500名以下、日本を含む2カ国以上の参加が要件となる。申請者は日本の研究機関に所属する開催責任者である必要があるため、esse-senseは連携大学と共同し、企画・広報・記録・成果発信を担う体制が望ましい。 + +## 3. 申請テーマ案 + +<strong>案A（推奨）</strong>: 「AI時代の基礎生命科学と知識循環に関する国際会議」 + +生命科学・情報科学・研究DXの研究者を国内外から招き、基礎研究の発見をAIとデータベースにより再利用可能な知識へ転換する方法を議論する。esse-senseの188件の記事DBとテキスト解析力を活用し、会議後の知見発信まで一体化する。 + +<strong>案B（代替）</strong>: 「大学発研究成果の国際共創と社会実装に関する若手研究者会議」 + +大学発スタートアップ支援と産学連携の経験を軸に、基礎研究を国際共同研究や事業化の入口へつなげる小規模会議を開催する。若手研究者の発表、海外研究者との討議、社会実装支援者との対話を組み合わせる。 + +## 4. 事業/研究計画書本文（推奨案A） + +### 背景・目的（300-400字） + +自然科学の基礎研究は、生命現象の理解、新規技術の創出、医療・環境・産業への波及を支える一方、研究領域の細分化と情報量の増大により、異分野間で知識を接続する機会が不足している。特にAIと大規模テキスト解析の進展により、論文・講演・研究者インタビューを横断的に整理し、国際的な研究課題を可視化することが可能になりつつある。本会議は、連携大学の基礎生命科学研究者を開催責任者とし、国内外の研究者50名以上を集め、AI時代における基礎研究の知識循環と国際共同研究の形成を目的として開催する。esse-senseはarticles 154件、general_articles 34件の計188件の研究発信資産を持ち、学際的知見DB、AI、データ活用、大学・学術機関DXの経験を通じて、会議の議論を社会に届く形で記録・編集・公開する。 + +### 研究/事業の方法（300-400字） + +実施方法は三段階とする。第一に、連携大学の開催責任者、海外招へい研究者、esse-sense、ミラツクで企画委員会を設置し、基礎生命科学、AI、知識基盤、研究広報の4領域から登壇者を選定する。第二に、2027年前期に国内会場で2日間の国際会議を開催し、基調講演、若手研究者発表、ラウンドテーブル、共同研究テーマ形成ワークショップを組み合わせる。参加規模は80名程度、日本を含む3カ国以上を想定する。第三に、会議前後の発表要旨、討議記録、参加者アンケートをテキスト解析し、主要論点、共同研究候補、社会発信可能な研究ストーリーを整理する。esse-senseは編集・DB化・記事化を担い、会議終了後も研究者間の接続と成果発信を継続する。 + +### 期待される成果（200-300字） + +定量的には、国内外研究者80名程度の参加、招へい講演6件、若手発表12件、国際共同研究候補3件、会議記録記事5件以上の公開を目標とする。定性的には、基礎生命科学とAI・データ活用の接点を整理し、研究者が相互に参照できる知識基盤を形成することで、新しい研究分野や挑戦的課題の可視化を進める。さらに、esse-sense Future Forum等の国際展開経験を活用し、会議を一過性のイベントにせず、継続的な共同研究と社会発信の起点とする。 + +## 5. スケジュールと予算 + +2026年6月から9月に企画委員会を設置し、テーマ確定、招へい候補者選定、会場仮予約を行う。2026年10月から12月にプログラム、アブストラクト、参加者募集、広報計画を確定し、2027年1月から6月の間に国際会議を開催する。会議後1カ月以内に記録整理とアンケート分析を行い、3カ月以内に成果記事と共同研究候補リストを公開する。総事業費は1,500,000円を想定し、内訳は海外招へい旅費600,000円、会場・配信費300,000円、通訳・翻訳費250,000円、記録編集・広報費250,000円、事務費100,000円とする。補助申請額は上限の500,000円とし、主に海外招へい旅費および通訳・翻訳費に充当する。 + +## 6. 提出物チェックリスト + +- <input type="checkbox" disabled> 申請Webサイトへの登録情報 +- <input type="checkbox" disabled> 開催責任者の所属・職位・連絡先 +- <input type="checkbox" disabled> 開催趣意書 +- <input type="checkbox" disabled> 収支予算書 +- <input type="checkbox" disabled> プログラム案 +- <input type="checkbox" disabled> アブストラクトまたは講演要旨 +- <input type="checkbox" disabled> 会議概要・規模が分かる資料 +- <input type="checkbox" disabled> 参加者数50名以上500名以下、日本を含む2カ国以上の確認資料 +- <input type="checkbox" disabled> 連携大学、esse-sense、ミラツクの役割分担表 +- <input type="checkbox" disabled> 学内または学会推薦が必要な場合の推薦手続き確認 + +## 7. 推奨アクション + +- 連携大学側の開催責任者を確定し、申請者資格を満たすことを確認する。 +- 会議開始日を2027年1月1日から6月30日の範囲で確定し、会場を仮押さえする。 +- 海外招へい候補者と参加国数を早急に整理し、50名以上の参加見込みを文書化する。 +- esse-senseの188件の記事DB、AI・テキスト解析、Future Forum実績を補足資料に落とし込む。 +- 2026年5月29日の締切から逆算し、開催趣意書、予算書、プログラム案を1週間以内に初稿化する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_内藤記念国際会議開催助成金.md</p>
+<p>exec /bin/bash -lc 'wc -m drafts_v2/NE_内藤記念国際会議開催助成金.md' in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms:     2928 drafts_v2/NE_内藤記念国際会議開催助成金.md</p>
+<p>exec /bin/bash -lc 'tail -n 3 drafts_v2/NE_内藤記念国際会議開催助成金.md' in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms:</p>
+<ul>
+<li>2026年5月29日の締切から逆算し、開催趣意書、予算書、プログラム案を1週間以内に初稿化する。</li>
+</ul>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

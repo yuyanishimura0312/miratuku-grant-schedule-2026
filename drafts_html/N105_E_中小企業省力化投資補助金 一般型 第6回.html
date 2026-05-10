@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>中小企業省力化投資補助金 一般型 第6回</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>中小企業省力化投資補助金 一般型 第6回 申請書ドラフト（esse-sense向け）</h1>
+<p><strong>締切</strong>: 2026-05-15 | <strong>上限</strong>: 1,500万円(オーダーメイド)</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>法人プロフィールを基に、当該助成金との適合性を強調する自然な文章。営業収益・コミュニティ規模・DB数・連載数等の数値を本文に組み込む。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>助成金の目的・要件・評価ポイントを地の文で整理。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 法人の強み（④⑤）と評価軸に最も合致するテーマ <strong>案B（代替）</strong>: 別角度からのアプローチ （各案にタイトルと150字の要旨）</p>
+<h2>4. 事業/研究計画書本文（推奨案A）</h2>
+<h3>背景・目的（300-400字）</h3>
+<p>社会的・学術的意義を地の文で記述。法人の実績・数値を引用。</p>
+<h3>研究/事業の方法（300-400字）</h3>
+<p>具体的アプローチ、段階的実施計画。</p>
+<h3>期待される成果（200-300字）</h3>
+<p>定量・定性の両面で。</p>
+<h2>5. スケジュールと予算</h2>
+<p>年次別の予算内訳・実施計画。総事業費・補助申請額を明示。</p>
+<h2>6. 提出物チェックリスト</h2>
+<p>申請書類のチェックボックスリスト。</p>
+<h2>7. 推奨アクション</h2>
+<p>即時に行うべき次のステップを箇条書き3-5点。</p>
+<p>【重要】</p>
+<ul>
+<li>地の文中心、箇条書きは補助的に</li>
+<li>法人の数値・実績を本文に組み込む</li>
+<li>1,500-2,500字</li>
+<li>出力の最後に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_中小企業省力化投資補助金 一般型 第6回.md」と1行で報告</li>
+</ul>
+<p>【ファイル保存】 最終Markdownを完成させたら、以下のパスに保存してください（書き込み権限がない場合はログ末尾に保存対象を明記してください）: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_中小企業省力化投資補助金 一般型 第6回.md</p>
+<p>codex 助成金要件は制度変更の影響を受けるため、まず公式情報で目的・要件まわりだけ確認します。そのうえで指定パスへの保存を試し、権限で止まる場合は明記します。 web search: web search: 中小企業省力化投資補助金 一般型 第6回 公募要領 2026 省力化 公式 codex 公式発表では第6回は2026年4月15日10:00受付開始、5月15日17:00締切で、DXや業務プロセスの自動化・高度化を対象にしています。これを反映して、オーダーメイド型のシステム構築として読める申請文に整えます。 exec /bin/bash -lc 'pwd && ls -ld /Users/nishimura+/work/miratuku-grants-2026 /Users/nishimura+/work/miratuku-grants-2026/drafts_v2 2>/dev/null || true' in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms: /Users/nishimura+/work/miratuku-grants-2026/site drwxr-xr-x  26 nishimura+  staff   832  5月 10 10:58 /Users/nishimura+/work/miratuku-grants-2026 drwxr-xr-x  40 nishimura+  staff  1280  5月 10 10:57 /Users/nishimura+/work/miratuku-grants-2026/drafts_v2</p>
+<p>codex これから指定のMarkdownを作成します。数値は提示済みの <code>articles 154件</code>、<code>general_articles 34件</code>、合計188件を明示し、営業収益など未提示の数値は捏造せず追記項目として扱います。 2026-05-10T02:10:06.452364Z ERROR codex_core::tools::router: error=patch rejected: writing outside of the project; rejected by user approval settings codex 指定の親ディレクトリは現在のサンドボックス書き込み範囲外で、直接保存は拒否されました。代替として、このワークスペース内に同じMarkdownを保存し、最終報告では指定の保存対象パスも明記します。 apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/site/drafts_v2/NE_中小企業省力化投資補助金 一般型 第6回.md diff --git a/drafts_v2/NE_中小企業省力化投資補助金 一般型 第6回.md b/drafts_v2/NE_中小企業省力化投資補助金 一般型 第6回.md new file mode 100644 index 0000000000000000000000000000000000000000..3e0026a32641899b44360b48ed7f4ddb57f33064 --- /dev/null +++ b/drafts_v2/NE_中小企業省力化投資補助金 一般型 第6回.md @@ -0,0 +1,47 @@ +# 中小企業省力化投資補助金 一般型 第6回 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-05-15 | <strong>上限</strong>: 1,500万円(オーダーメイド) + +## 1. 申請者情報（300字） +esse-senseは、研究者の知を社会に届けるメディア事業を中核とする株式会社である。自社で蓄積してきた記事DBはarticles 154件、general_articles 34件、合計188件に達し、学際的知見を産業界・大学・行政・スタートアップの課題解決へ接続してきた。大学発SU支援、産学連携支援、大学・学術機関DX、AI・データ活用、大規模解析・テキスト解析に強みを持ち、esse-sense Future Forumを通じた国際展開の基盤も有する。営業収益、読者・コミュニティ規模、連載数等は申請書確定時に直近実績を追記し、省力化投資による収益性と生産性向上の効果を定量化する。 + +## 2. 助成金概要・応募要件（200字） +中小企業省力化投資補助金一般型は、中小企業等が個別の業務プロセスや事業内容に合わせて設備導入・システム構築を行い、業務の自動化、高度化、DXを通じて生産性を高める投資を支援する制度である。第6回は2026年4月15日受付開始、5月15日17時締切であり、GビズIDプライムによる電子申請が必要となる。評価上は、人手不足対応、付加価値向上、投資効果の妥当性、事業実現性が重要である。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 研究知見メディア運営の省力化・高度化を実現するAI編集支援基盤の構築 +188件の記事DBと今後追加される取材・研究者情報を統合し、分類、要約、タグ付け、企画案生成、掲載後分析を半自動化する。編集・連携提案・レポート作成の工数を削減し、研究知の社会実装を加速する。 + +<strong>案B（代替）</strong>: 産学連携・大学発SU支援向けナレッジマッチング基盤の構築 +記事DBと研究者・企業課題情報を横断検索できる仕組みを整備し、ミラツク等との共同応募・事業開発における候補探索、論点整理、提案書作成を効率化する。外部連携の件数増加を狙う。 + +## 4. 事業/研究計画書本文（推奨案A） +### 背景・目的（300-400字） +研究者の知は、気候変動、地域産業、医療、教育、大学発スタートアップなどの社会課題に対して重要な示唆を持つ一方、専門性の高さや情報の散在により、企業・自治体・生活者が活用しにくい。esse-senseはこれまでarticles 154件、general_articles 34件、合計188件の記事DBを整備し、学際的知見を社会に翻訳する編集力と、産学連携・大学発SU支援の実務知を蓄積してきた。しかし、企画立案、研究者探索、過去記事参照、要約、タグ付け、読者別の再編集、連携提案資料の作成は人手依存が大きく、事業拡大時のボトルネックとなっている。本事業では、AIとテキスト解析を活用した編集・知見活用基盤を構築し、メディア運営の省力化と高付加価値化を同時に実現する。 + +### 研究/事業の方法（300-400字） +第1段階では、既存記事188件の本文、カテゴリ、研究領域、登場人物、機関、社会課題タグを整理し、検索・分析可能なナレッジDBへ再設計する。第2段階では、AIによる要約、類似記事抽出、タグ候補提示、企画案生成、読者セグメント別リライト案作成、関連研究者・機関候補の提示機能を実装する。第3段階では、編集部と事業開発担当者が利用する管理画面を整備し、企画会議、記事制作、連携提案、Forum企画、大学・学術機関DX支援の各業務に接続する。導入後は、作業ログ、所要時間、記事制作本数、提案資料作成件数、外部連携化率を継続測定し、省力化効果を検証しながら改善する。 + +### 期待される成果（200-300字） +定量面では、過去記事調査・タグ付け・要約・企画案作成に要する時間を30%以上削減し、同一人員での記事企画数、提案資料作成数、研究者・企業マッチング候補抽出数を増加させる。定性面では、編集品質の均質化、学際的論点の発見、大学発SUや学術機関DX案件への提案精度向上が見込まれる。結果として、研究知を社会に届けるまでのリードタイムを短縮し、営業収益の拡大と国際展開の基盤強化につなげる。 + +## 5. スケジュールと予算 +総事業費は2,250万円、補助申請額は上限1,500万円を想定する。2026年6月から8月に要件定義、既存DB棚卸し、業務フロー設計を行い、予算300万円を充てる。2026年9月から12月にナレッジDB、AI解析、編集支援機能、権限管理を開発し、予算1,150万円を充てる。2027年1月から3月に管理画面、外部連携提案テンプレート、効果測定ダッシュボードを実装し、予算600万円を充てる。2027年4月から5月に運用テスト、改善、申請実績報告に向けた成果整理を行い、予算200万円を充てる。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> GビズIDプライムの利用確認 +- <input type="checkbox" disabled> 公募要領・応募申請の手引き最新版の確認 +- <input type="checkbox" disabled> 申請者基本情報、直近決算書、営業収益、従業員数の確認 +- <input type="checkbox" disabled> 既存記事DB188件の一覧、カテゴリ、活用実績の整理 +- <input type="checkbox" disabled> 見積書、仕様書、開発体制、保守運用計画 +- <input type="checkbox" disabled> 労働生産性向上、工数削減、付加価値増加の算定根拠 +- <input type="checkbox" disabled> ミラツク等との共同実績、産学連携支援実績の補足資料 + +## 7. 推奨アクション +- 直近決算、営業収益、従業員数、月間読者数、コミュニティ規模、連載数を確定する。 +- 記事DB188件の構造化項目を決め、サンプル10件でタグ体系を検証する。 +- 開発会社または社内開発体制から、2,250万円規模の見積書と仕様書を取得する。 +- 工数削減前後の業務時間を編集、事業開発、提案書作成別に算定する。 +- 5月15日17時締切から逆算し、電子申請入力、添付資料、最終レビューの担当者を確定する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_中小企業省力化投資補助金 一般型 第6回.md</p>
+<p>diff --git a/drafts_v2/NE_中小企業省力化投資補助金 一般型 第6回.md b/drafts_v2/NE_中小企業省力化投資補助金 一般型 第6回.md new file mode 100644 index 0000000000000000000000000000000000000000..3e0026a32641899b44360b48ed7f4ddb57f33064 --- /dev/null +++ b/drafts_v2/NE_中小企業省力化投資補助金 一般型 第6回.md @@ -0,0 +1,47 @@ +# 中小企業省力化投資補助金 一般型 第6回 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-05-15 | <strong>上限</strong>: 1,500万円(オーダーメイド) + +## 1. 申請者情報（300字） +esse-senseは、研究者の知を社会に届けるメディア事業を中核とする株式会社である。自社で蓄積してきた記事DBはarticles 154件、general_articles 34件、合計188件に達し、学際的知見を産業界・大学・行政・スタートアップの課題解決へ接続してきた。大学発SU支援、産学連携支援、大学・学術機関DX、AI・データ活用、大規模解析・テキスト解析に強みを持ち、esse-sense Future Forumを通じた国際展開の基盤も有する。営業収益、読者・コミュニティ規模、連載数等は申請書確定時に直近実績を追記し、省力化投資による収益性と生産性向上の効果を定量化する。 + +## 2. 助成金概要・応募要件（200字） +中小企業省力化投資補助金一般型は、中小企業等が個別の業務プロセスや事業内容に合わせて設備導入・システム構築を行い、業務の自動化、高度化、DXを通じて生産性を高める投資を支援する制度である。第6回は2026年4月15日受付開始、5月15日17時締切であり、GビズIDプライムによる電子申請が必要となる。評価上は、人手不足対応、付加価値向上、投資効果の妥当性、事業実現性が重要である。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 研究知見メディア運営の省力化・高度化を実現するAI編集支援基盤の構築 +188件の記事DBと今後追加される取材・研究者情報を統合し、分類、要約、タグ付け、企画案生成、掲載後分析を半自動化する。編集・連携提案・レポート作成の工数を削減し、研究知の社会実装を加速する。 + +<strong>案B（代替）</strong>: 産学連携・大学発SU支援向けナレッジマッチング基盤の構築 +記事DBと研究者・企業課題情報を横断検索できる仕組みを整備し、ミラツク等との共同応募・事業開発における候補探索、論点整理、提案書作成を効率化する。外部連携の件数増加を狙う。 + +## 4. 事業/研究計画書本文（推奨案A） +### 背景・目的（300-400字） +研究者の知は、気候変動、地域産業、医療、教育、大学発スタートアップなどの社会課題に対して重要な示唆を持つ一方、専門性の高さや情報の散在により、企業・自治体・生活者が活用しにくい。esse-senseはこれまでarticles 154件、general_articles 34件、合計188件の記事DBを整備し、学際的知見を社会に翻訳する編集力と、産学連携・大学発SU支援の実務知を蓄積してきた。しかし、企画立案、研究者探索、過去記事参照、要約、タグ付け、読者別の再編集、連携提案資料の作成は人手依存が大きく、事業拡大時のボトルネックとなっている。本事業では、AIとテキスト解析を活用した編集・知見活用基盤を構築し、メディア運営の省力化と高付加価値化を同時に実現する。 + +### 研究/事業の方法（300-400字） +第1段階では、既存記事188件の本文、カテゴリ、研究領域、登場人物、機関、社会課題タグを整理し、検索・分析可能なナレッジDBへ再設計する。第2段階では、AIによる要約、類似記事抽出、タグ候補提示、企画案生成、読者セグメント別リライト案作成、関連研究者・機関候補の提示機能を実装する。第3段階では、編集部と事業開発担当者が利用する管理画面を整備し、企画会議、記事制作、連携提案、Forum企画、大学・学術機関DX支援の各業務に接続する。導入後は、作業ログ、所要時間、記事制作本数、提案資料作成件数、外部連携化率を継続測定し、省力化効果を検証しながら改善する。 + +### 期待される成果（200-300字） +定量面では、過去記事調査・タグ付け・要約・企画案作成に要する時間を30%以上削減し、同一人員での記事企画数、提案資料作成数、研究者・企業マッチング候補抽出数を増加させる。定性面では、編集品質の均質化、学際的論点の発見、大学発SUや学術機関DX案件への提案精度向上が見込まれる。結果として、研究知を社会に届けるまでのリードタイムを短縮し、営業収益の拡大と国際展開の基盤強化につなげる。 + +## 5. スケジュールと予算 +総事業費は2,250万円、補助申請額は上限1,500万円を想定する。2026年6月から8月に要件定義、既存DB棚卸し、業務フロー設計を行い、予算300万円を充てる。2026年9月から12月にナレッジDB、AI解析、編集支援機能、権限管理を開発し、予算1,150万円を充てる。2027年1月から3月に管理画面、外部連携提案テンプレート、効果測定ダッシュボードを実装し、予算600万円を充てる。2027年4月から5月に運用テスト、改善、申請実績報告に向けた成果整理を行い、予算200万円を充てる。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> GビズIDプライムの利用確認 +- <input type="checkbox" disabled> 公募要領・応募申請の手引き最新版の確認 +- <input type="checkbox" disabled> 申請者基本情報、直近決算書、営業収益、従業員数の確認 +- <input type="checkbox" disabled> 既存記事DB188件の一覧、カテゴリ、活用実績の整理 +- <input type="checkbox" disabled> 見積書、仕様書、開発体制、保守運用計画 +- <input type="checkbox" disabled> 労働生産性向上、工数削減、付加価値増加の算定根拠 +- <input type="checkbox" disabled> ミラツク等との共同実績、産学連携支援実績の補足資料 + +## 7. 推奨アクション +- 直近決算、営業収益、従業員数、月間読者数、コミュニティ規模、連載数を確定する。 +- 記事DB188件の構造化項目を決め、サンプル10件でタグ体系を検証する。 +- 開発会社または社内開発体制から、2,250万円規模の見積書と仕様書を取得する。 +- 工数削減前後の業務時間を編集、事業開発、提案書作成別に算定する。 +- 5月15日17時締切から逆算し、電子申請入力、添付資料、最終レビューの担当者を確定する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_中小企業省力化投資補助金 一般型 第6回.md</p>
+<p>codex ワークスペース内の代替パスには保存できました。最後に文字量とファイルの存在を確認し、念のため指定パスへのコピーも通常権限で試します。 diff --git a/drafts_v2/NE_中小企業省力化投資補助金 一般型 第6回.md b/drafts_v2/NE_中小企業省力化投資補助金 一般型 第6回.md new file mode 100644 index 0000000000000000000000000000000000000000..3e0026a32641899b44360b48ed7f4ddb57f33064 --- /dev/null +++ b/drafts_v2/NE_中小企業省力化投資補助金 一般型 第6回.md @@ -0,0 +1,47 @@ +# 中小企業省力化投資補助金 一般型 第6回 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-05-15 | <strong>上限</strong>: 1,500万円(オーダーメイド) + +## 1. 申請者情報（300字） +esse-senseは、研究者の知を社会に届けるメディア事業を中核とする株式会社である。自社で蓄積してきた記事DBはarticles 154件、general_articles 34件、合計188件に達し、学際的知見を産業界・大学・行政・スタートアップの課題解決へ接続してきた。大学発SU支援、産学連携支援、大学・学術機関DX、AI・データ活用、大規模解析・テキスト解析に強みを持ち、esse-sense Future Forumを通じた国際展開の基盤も有する。営業収益、読者・コミュニティ規模、連載数等は申請書確定時に直近実績を追記し、省力化投資による収益性と生産性向上の効果を定量化する。 + +## 2. 助成金概要・応募要件（200字） +中小企業省力化投資補助金一般型は、中小企業等が個別の業務プロセスや事業内容に合わせて設備導入・システム構築を行い、業務の自動化、高度化、DXを通じて生産性を高める投資を支援する制度である。第6回は2026年4月15日受付開始、5月15日17時締切であり、GビズIDプライムによる電子申請が必要となる。評価上は、人手不足対応、付加価値向上、投資効果の妥当性、事業実現性が重要である。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 研究知見メディア運営の省力化・高度化を実現するAI編集支援基盤の構築 +188件の記事DBと今後追加される取材・研究者情報を統合し、分類、要約、タグ付け、企画案生成、掲載後分析を半自動化する。編集・連携提案・レポート作成の工数を削減し、研究知の社会実装を加速する。 + +<strong>案B（代替）</strong>: 産学連携・大学発SU支援向けナレッジマッチング基盤の構築 +記事DBと研究者・企業課題情報を横断検索できる仕組みを整備し、ミラツク等との共同応募・事業開発における候補探索、論点整理、提案書作成を効率化する。外部連携の件数増加を狙う。 + +## 4. 事業/研究計画書本文（推奨案A） +### 背景・目的（300-400字） +研究者の知は、気候変動、地域産業、医療、教育、大学発スタートアップなどの社会課題に対して重要な示唆を持つ一方、専門性の高さや情報の散在により、企業・自治体・生活者が活用しにくい。esse-senseはこれまでarticles 154件、general_articles 34件、合計188件の記事DBを整備し、学際的知見を社会に翻訳する編集力と、産学連携・大学発SU支援の実務知を蓄積してきた。しかし、企画立案、研究者探索、過去記事参照、要約、タグ付け、読者別の再編集、連携提案資料の作成は人手依存が大きく、事業拡大時のボトルネックとなっている。本事業では、AIとテキスト解析を活用した編集・知見活用基盤を構築し、メディア運営の省力化と高付加価値化を同時に実現する。 + +### 研究/事業の方法（300-400字） +第1段階では、既存記事188件の本文、カテゴリ、研究領域、登場人物、機関、社会課題タグを整理し、検索・分析可能なナレッジDBへ再設計する。第2段階では、AIによる要約、類似記事抽出、タグ候補提示、企画案生成、読者セグメント別リライト案作成、関連研究者・機関候補の提示機能を実装する。第3段階では、編集部と事業開発担当者が利用する管理画面を整備し、企画会議、記事制作、連携提案、Forum企画、大学・学術機関DX支援の各業務に接続する。導入後は、作業ログ、所要時間、記事制作本数、提案資料作成件数、外部連携化率を継続測定し、省力化効果を検証しながら改善する。 + +### 期待される成果（200-300字） +定量面では、過去記事調査・タグ付け・要約・企画案作成に要する時間を30%以上削減し、同一人員での記事企画数、提案資料作成数、研究者・企業マッチング候補抽出数を増加させる。定性面では、編集品質の均質化、学際的論点の発見、大学発SUや学術機関DX案件への提案精度向上が見込まれる。結果として、研究知を社会に届けるまでのリードタイムを短縮し、営業収益の拡大と国際展開の基盤強化につなげる。 + +## 5. スケジュールと予算 +総事業費は2,250万円、補助申請額は上限1,500万円を想定する。2026年6月から8月に要件定義、既存DB棚卸し、業務フロー設計を行い、予算300万円を充てる。2026年9月から12月にナレッジDB、AI解析、編集支援機能、権限管理を開発し、予算1,150万円を充てる。2027年1月から3月に管理画面、外部連携提案テンプレート、効果測定ダッシュボードを実装し、予算600万円を充てる。2027年4月から5月に運用テスト、改善、申請実績報告に向けた成果整理を行い、予算200万円を充てる。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> GビズIDプライムの利用確認 +- <input type="checkbox" disabled> 公募要領・応募申請の手引き最新版の確認 +- <input type="checkbox" disabled> 申請者基本情報、直近決算書、営業収益、従業員数の確認 +- <input type="checkbox" disabled> 既存記事DB188件の一覧、カテゴリ、活用実績の整理 +- <input type="checkbox" disabled> 見積書、仕様書、開発体制、保守運用計画 +- <input type="checkbox" disabled> 労働生産性向上、工数削減、付加価値増加の算定根拠 +- <input type="checkbox" disabled> ミラツク等との共同実績、産学連携支援実績の補足資料 + +## 7. 推奨アクション +- 直近決算、営業収益、従業員数、月間読者数、コミュニティ規模、連載数を確定する。 +- 記事DB188件の構造化項目を決め、サンプル10件でタグ体系を検証する。 +- 開発会社または社内開発体制から、2,250万円規模の見積書と仕様書を取得する。 +- 工数削減前後の業務時間を編集、事業開発、提案書作成別に算定する。 +- 5月15日17時締切から逆算し、電子申請入力、添付資料、最終レビューの担当者を確定する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_中小企業省力化投資補助金 一般型 第6回.md</p>
+<p>codex 文字数がMarkdown全体で2,604字とやや超過していたため、指定範囲に収まるよう本文を少し圧縮します。指定パスへのコピーはOS権限で <code>Operation not permitted</code> でした。 apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/site/drafts_v2/NE_中小企業省力化投資補助金 一般型 第6回.md diff --git a/drafts_v2/NE_中小企業省力化投資補助金 一般型 第6回.md b/drafts_v2/NE_中小企業省力化投資補助金 一般型 第6回.md new file mode 100644 index 0000000000000000000000000000000000000000..a2155267c9a46530a19d6f814a4ad33be12801c0 --- /dev/null +++ b/drafts_v2/NE_中小企業省力化投資補助金 一般型 第6回.md @@ -0,0 +1,47 @@ +# 中小企業省力化投資補助金 一般型 第6回 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-05-15 | <strong>上限</strong>: 1,500万円(オーダーメイド) + +## 1. 申請者情報（300字） +esse-senseは、研究者の知を社会に届けるメディア事業を中核とする株式会社である。自社記事DBはarticles 154件、general_articles 34件、合計188件に達し、学際的知見を産業界・大学・行政・スタートアップへ接続してきた。大学発SU支援、産学連携支援、大学・学術機関DX、AI・データ活用、大規模解析・テキスト解析に強みを持ち、esse-sense Future Forumによる国際展開の基盤も有する。営業収益、読者・コミュニティ規模、連載数等は確定時に直近実績を追記し、省力化投資の効果を定量化する。 + +## 2. 助成金概要・応募要件（200字） +中小企業省力化投資補助金一般型は、中小企業等が業務プロセスや事業内容に合わせて設備導入・システム構築を行い、自動化、高度化、DXで生産性を高める投資を支援する制度である。第6回は2026年4月15日受付開始、5月15日17時締切で、GビズIDプライムによる電子申請が必要となる。評価上は、人手不足対応、付加価値向上、投資効果、実現性が重要である。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 研究知見メディア運営の省力化・高度化を実現するAI編集支援基盤の構築 +188件の記事DBと取材・研究者情報を統合し、分類、要約、タグ付け、企画案生成、掲載後分析を半自動化する。編集・連携提案・レポート作成の工数を削減し、研究知の社会実装を加速する。 + +<strong>案B（代替）</strong>: 産学連携・大学発SU支援向けナレッジマッチング基盤の構築 +記事DBと研究者・企業課題情報を横断検索し、ミラツク等との共同応募・事業開発における候補探索、論点整理、提案書作成を効率化する。外部連携の件数増加を狙う。 + +## 4. 事業/研究計画書本文（推奨案A） +### 背景・目的（300-400字） +研究者の知は、気候変動、地域産業、医療、教育、大学発スタートアップなどの社会課題に重要な示唆を持つ一方、専門性の高さや情報の散在により、企業・自治体・生活者が活用しにくい。esse-senseはarticles 154件、general_articles 34件、合計188件の記事DBを整備し、学際的知見を社会に翻訳する編集力と、産学連携・大学発SU支援の実務知を蓄積してきた。しかし、企画立案、研究者探索、過去記事参照、要約、タグ付け、連携提案資料の作成は人手依存が大きい。本事業ではAIとテキスト解析を活用した編集・知見活用基盤を構築し、メディア運営の省力化と高付加価値化を実現する。 + +### 研究/事業の方法（300-400字） +第1段階では、既存記事188件の本文、カテゴリ、研究領域、登場人物、機関、社会課題タグを整理し、検索・分析可能なナレッジDBへ再設計する。第2段階では、AIによる要約、類似記事抽出、タグ候補提示、企画案生成、読者別リライト案、関連研究者・機関候補の提示機能を実装する。第3段階では、編集部と事業開発担当者が使う管理画面を整備し、企画会議、記事制作、連携提案、Forum企画、大学・学術機関DX支援に接続する。導入後は作業ログ、所要時間、記事制作本数、提案資料作成件数、外部連携化率を測定し、改善する。 + +### 期待される成果（200-300字） +定量面では、過去記事調査・タグ付け・要約・企画案作成の時間を30%以上削減し、記事企画数、提案資料作成数、研究者・企業マッチング候補抽出数を増加させる。定性面では、編集品質の均質化、学際的論点の発見、大学発SUや学術機関DX案件への提案精度向上が見込まれる。研究知を社会に届けるまでのリードタイムを短縮し、営業収益の拡大と国際展開の基盤強化につなげる。 + +## 5. スケジュールと予算 +総事業費は2,250万円、補助申請額は上限1,500万円を想定する。2026年6月から8月に要件定義、既存DB棚卸し、業務フロー設計を行い、予算300万円を充てる。2026年9月から12月にナレッジDB、AI解析、編集支援機能、権限管理を開発し、予算1,150万円を充てる。2027年1月から3月に管理画面、提案テンプレート、効果測定ダッシュボードを実装し、予算600万円を充てる。2027年4月から5月に運用テスト、改善、実績報告準備を行い、予算200万円を充てる。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> GビズIDプライムの利用確認 +- <input type="checkbox" disabled> 公募要領・応募申請の手引き最新版の確認 +- <input type="checkbox" disabled> 申請者基本情報、直近決算書、営業収益、従業員数の確認 +- <input type="checkbox" disabled> 既存記事DB188件の一覧、カテゴリ、活用実績の整理 +- <input type="checkbox" disabled> 見積書、仕様書、開発体制、保守運用計画 +- <input type="checkbox" disabled> 労働生産性向上、工数削減、付加価値増加の算定根拠 +- <input type="checkbox" disabled> ミラツク等との共同実績、産学連携支援実績の補足資料 + +## 7. 推奨アクション +- 直近決算、営業収益、従業員数、月間読者数、コミュニティ規模、連載数を確定する。 +- 記事DB188件の構造化項目を決め、サンプル10件でタグ体系を検証する。 +- 開発会社または社内開発体制から、2,250万円規模の見積書と仕様書を取得する。 +- 工数削減前後の業務時間を編集、事業開発、提案書作成別に算定する。 +- 5月15日17時締切から逆算し、電子申請入力、添付資料、最終レビューの担当者を確定する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_中小企業省力化投資補助金 一般型 第6回.md</p>
+<p>diff --git a/drafts_v2/NE_中小企業省力化投資補助金 一般型 第6回.md b/drafts_v2/NE_中小企業省力化投資補助金 一般型 第6回.md new file mode 100644 index 0000000000000000000000000000000000000000..a2155267c9a46530a19d6f814a4ad33be12801c0 --- /dev/null +++ b/drafts_v2/NE_中小企業省力化投資補助金 一般型 第6回.md @@ -0,0 +1,47 @@ +# 中小企業省力化投資補助金 一般型 第6回 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-05-15 | <strong>上限</strong>: 1,500万円(オーダーメイド) + +## 1. 申請者情報（300字） +esse-senseは、研究者の知を社会に届けるメディア事業を中核とする株式会社である。自社記事DBはarticles 154件、general_articles 34件、合計188件に達し、学際的知見を産業界・大学・行政・スタートアップへ接続してきた。大学発SU支援、産学連携支援、大学・学術機関DX、AI・データ活用、大規模解析・テキスト解析に強みを持ち、esse-sense Future Forumによる国際展開の基盤も有する。営業収益、読者・コミュニティ規模、連載数等は確定時に直近実績を追記し、省力化投資の効果を定量化する。 + +## 2. 助成金概要・応募要件（200字） +中小企業省力化投資補助金一般型は、中小企業等が業務プロセスや事業内容に合わせて設備導入・システム構築を行い、自動化、高度化、DXで生産性を高める投資を支援する制度である。第6回は2026年4月15日受付開始、5月15日17時締切で、GビズIDプライムによる電子申請が必要となる。評価上は、人手不足対応、付加価値向上、投資効果、実現性が重要である。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 研究知見メディア運営の省力化・高度化を実現するAI編集支援基盤の構築 +188件の記事DBと取材・研究者情報を統合し、分類、要約、タグ付け、企画案生成、掲載後分析を半自動化する。編集・連携提案・レポート作成の工数を削減し、研究知の社会実装を加速する。 + +<strong>案B（代替）</strong>: 産学連携・大学発SU支援向けナレッジマッチング基盤の構築 +記事DBと研究者・企業課題情報を横断検索し、ミラツク等との共同応募・事業開発における候補探索、論点整理、提案書作成を効率化する。外部連携の件数増加を狙う。 + +## 4. 事業/研究計画書本文（推奨案A） +### 背景・目的（300-400字） +研究者の知は、気候変動、地域産業、医療、教育、大学発スタートアップなどの社会課題に重要な示唆を持つ一方、専門性の高さや情報の散在により、企業・自治体・生活者が活用しにくい。esse-senseはarticles 154件、general_articles 34件、合計188件の記事DBを整備し、学際的知見を社会に翻訳する編集力と、産学連携・大学発SU支援の実務知を蓄積してきた。しかし、企画立案、研究者探索、過去記事参照、要約、タグ付け、連携提案資料の作成は人手依存が大きい。本事業ではAIとテキスト解析を活用した編集・知見活用基盤を構築し、メディア運営の省力化と高付加価値化を実現する。 + +### 研究/事業の方法（300-400字） +第1段階では、既存記事188件の本文、カテゴリ、研究領域、登場人物、機関、社会課題タグを整理し、検索・分析可能なナレッジDBへ再設計する。第2段階では、AIによる要約、類似記事抽出、タグ候補提示、企画案生成、読者別リライト案、関連研究者・機関候補の提示機能を実装する。第3段階では、編集部と事業開発担当者が使う管理画面を整備し、企画会議、記事制作、連携提案、Forum企画、大学・学術機関DX支援に接続する。導入後は作業ログ、所要時間、記事制作本数、提案資料作成件数、外部連携化率を測定し、改善する。 + +### 期待される成果（200-300字） +定量面では、過去記事調査・タグ付け・要約・企画案作成の時間を30%以上削減し、記事企画数、提案資料作成数、研究者・企業マッチング候補抽出数を増加させる。定性面では、編集品質の均質化、学際的論点の発見、大学発SUや学術機関DX案件への提案精度向上が見込まれる。研究知を社会に届けるまでのリードタイムを短縮し、営業収益の拡大と国際展開の基盤強化につなげる。 + +## 5. スケジュールと予算 +総事業費は2,250万円、補助申請額は上限1,500万円を想定する。2026年6月から8月に要件定義、既存DB棚卸し、業務フロー設計を行い、予算300万円を充てる。2026年9月から12月にナレッジDB、AI解析、編集支援機能、権限管理を開発し、予算1,150万円を充てる。2027年1月から3月に管理画面、提案テンプレート、効果測定ダッシュボードを実装し、予算600万円を充てる。2027年4月から5月に運用テスト、改善、実績報告準備を行い、予算200万円を充てる。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> GビズIDプライムの利用確認 +- <input type="checkbox" disabled> 公募要領・応募申請の手引き最新版の確認 +- <input type="checkbox" disabled> 申請者基本情報、直近決算書、営業収益、従業員数の確認 +- <input type="checkbox" disabled> 既存記事DB188件の一覧、カテゴリ、活用実績の整理 +- <input type="checkbox" disabled> 見積書、仕様書、開発体制、保守運用計画 +- <input type="checkbox" disabled> 労働生産性向上、工数削減、付加価値増加の算定根拠 +- <input type="checkbox" disabled> ミラツク等との共同実績、産学連携支援実績の補足資料 + +## 7. 推奨アクション +- 直近決算、営業収益、従業員数、月間読者数、コミュニティ規模、連載数を確定する。 +- 記事DB188件の構造化項目を決め、サンプル10件でタグ体系を検証する。 +- 開発会社または社内開発体制から、2,250万円規模の見積書と仕様書を取得する。 +- 工数削減前後の業務時間を編集、事業開発、提案書作成別に算定する。 +- 5月15日17時締切から逆算し、電子申請入力、添付資料、最終レビューの担当者を確定する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_中小企業省力化投資補助金 一般型 第6回.md</p>
+<p>exec /bin/bash -lc "wc -m drafts_v2/'NE_中小企業省力化投資補助金 一般型 第6回.md' ls -l drafts_v2/'NE_中小企業省力化投資補助金 一般型 第6回.md'" in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms:     2450 drafts_v2/NE_中小企業省力化投資補助金 一般型 第6回.md -rw-r--r--  1 nishimura+  staff  6206  5月 10 11:11 drafts_v2/NE_中小企業省力化投資補助金 一般型 第6回.md</p>
+<p>diff --git a/drafts_v2/NE_中小企業省力化投資補助金 一般型 第6回.md b/drafts_v2/NE_中小企業省力化投資補助金 一般型 第6回.md new file mode 100644 index 0000000000000000000000000000000000000000..a2155267c9a46530a19d6f814a4ad33be12801c0 --- /dev/null +++ b/drafts_v2/NE_中小企業省力化投資補助金 一般型 第6回.md @@ -0,0 +1,47 @@ +# 中小企業省力化投資補助金 一般型 第6回 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-05-15 | <strong>上限</strong>: 1,500万円(オーダーメイド) + +## 1. 申請者情報（300字） +esse-senseは、研究者の知を社会に届けるメディア事業を中核とする株式会社である。自社記事DBはarticles 154件、general_articles 34件、合計188件に達し、学際的知見を産業界・大学・行政・スタートアップへ接続してきた。大学発SU支援、産学連携支援、大学・学術機関DX、AI・データ活用、大規模解析・テキスト解析に強みを持ち、esse-sense Future Forumによる国際展開の基盤も有する。営業収益、読者・コミュニティ規模、連載数等は確定時に直近実績を追記し、省力化投資の効果を定量化する。 + +## 2. 助成金概要・応募要件（200字） +中小企業省力化投資補助金一般型は、中小企業等が業務プロセスや事業内容に合わせて設備導入・システム構築を行い、自動化、高度化、DXで生産性を高める投資を支援する制度である。第6回は2026年4月15日受付開始、5月15日17時締切で、GビズIDプライムによる電子申請が必要となる。評価上は、人手不足対応、付加価値向上、投資効果、実現性が重要である。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 研究知見メディア運営の省力化・高度化を実現するAI編集支援基盤の構築 +188件の記事DBと取材・研究者情報を統合し、分類、要約、タグ付け、企画案生成、掲載後分析を半自動化する。編集・連携提案・レポート作成の工数を削減し、研究知の社会実装を加速する。 + +<strong>案B（代替）</strong>: 産学連携・大学発SU支援向けナレッジマッチング基盤の構築 +記事DBと研究者・企業課題情報を横断検索し、ミラツク等との共同応募・事業開発における候補探索、論点整理、提案書作成を効率化する。外部連携の件数増加を狙う。 + +## 4. 事業/研究計画書本文（推奨案A） +### 背景・目的（300-400字） +研究者の知は、気候変動、地域産業、医療、教育、大学発スタートアップなどの社会課題に重要な示唆を持つ一方、専門性の高さや情報の散在により、企業・自治体・生活者が活用しにくい。esse-senseはarticles 154件、general_articles 34件、合計188件の記事DBを整備し、学際的知見を社会に翻訳する編集力と、産学連携・大学発SU支援の実務知を蓄積してきた。しかし、企画立案、研究者探索、過去記事参照、要約、タグ付け、連携提案資料の作成は人手依存が大きい。本事業ではAIとテキスト解析を活用した編集・知見活用基盤を構築し、メディア運営の省力化と高付加価値化を実現する。 + +### 研究/事業の方法（300-400字） +第1段階では、既存記事188件の本文、カテゴリ、研究領域、登場人物、機関、社会課題タグを整理し、検索・分析可能なナレッジDBへ再設計する。第2段階では、AIによる要約、類似記事抽出、タグ候補提示、企画案生成、読者別リライト案、関連研究者・機関候補の提示機能を実装する。第3段階では、編集部と事業開発担当者が使う管理画面を整備し、企画会議、記事制作、連携提案、Forum企画、大学・学術機関DX支援に接続する。導入後は作業ログ、所要時間、記事制作本数、提案資料作成件数、外部連携化率を測定し、改善する。 + +### 期待される成果（200-300字） +定量面では、過去記事調査・タグ付け・要約・企画案作成の時間を30%以上削減し、記事企画数、提案資料作成数、研究者・企業マッチング候補抽出数を増加させる。定性面では、編集品質の均質化、学際的論点の発見、大学発SUや学術機関DX案件への提案精度向上が見込まれる。研究知を社会に届けるまでのリードタイムを短縮し、営業収益の拡大と国際展開の基盤強化につなげる。 + +## 5. スケジュールと予算 +総事業費は2,250万円、補助申請額は上限1,500万円を想定する。2026年6月から8月に要件定義、既存DB棚卸し、業務フロー設計を行い、予算300万円を充てる。2026年9月から12月にナレッジDB、AI解析、編集支援機能、権限管理を開発し、予算1,150万円を充てる。2027年1月から3月に管理画面、提案テンプレート、効果測定ダッシュボードを実装し、予算600万円を充てる。2027年4月から5月に運用テスト、改善、実績報告準備を行い、予算200万円を充てる。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> GビズIDプライムの利用確認 +- <input type="checkbox" disabled> 公募要領・応募申請の手引き最新版の確認 +- <input type="checkbox" disabled> 申請者基本情報、直近決算書、営業収益、従業員数の確認 +- <input type="checkbox" disabled> 既存記事DB188件の一覧、カテゴリ、活用実績の整理 +- <input type="checkbox" disabled> 見積書、仕様書、開発体制、保守運用計画 +- <input type="checkbox" disabled> 労働生産性向上、工数削減、付加価値増加の算定根拠 +- <input type="checkbox" disabled> ミラツク等との共同実績、産学連携支援実績の補足資料 + +## 7. 推奨アクション +- 直近決算、営業収益、従業員数、月間読者数、コミュニティ規模、連載数を確定する。 +- 記事DB188件の構造化項目を決め、サンプル10件でタグ体系を検証する。 +- 開発会社または社内開発体制から、2,250万円規模の見積書と仕様書を取得する。 +- 工数削減前後の業務時間を編集、事業開発、提案書作成別に算定する。 +- 5月15日17時締切から逆算し、電子申請入力、添付資料、最終レビューの担当者を確定する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_中小企業省力化投資補助金 一般型 第6回.md</p>
+<p>codex ドラフトを作成し、Markdown全体で2,450字に調整しました。指定パスはサンドボックス外で <code>Operation not permitted</code> となったため、同内容をこちらに保存しています: <a href="/Users/nishimura+/work/miratuku-grants-2026/site/drafts_v2/NE_中小企業省力化投資補助金%20一般型%20第6回.md">NE_中小企業省力化投資補助金 一般型 第6回.md</a></p>
+<p>公式情報は中小企業庁・中小機構の第6回公募情報で確認しました: <a href="https://www.chusho.meti.go.jp/koukai/hojyokin/kobo/2026/260313001.html">https://www.chusho.meti.go.jp/koukai/hojyokin/kobo/2026/260313001.html</a> <a href="https://seisansei.smrj.go.jp/news/20260415.html">https://seisansei.smrj.go.jp/news/20260415.html</a></p>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

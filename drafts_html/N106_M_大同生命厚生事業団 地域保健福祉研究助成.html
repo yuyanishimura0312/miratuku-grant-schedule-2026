@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>大同生命厚生事業団 地域保健福祉研究助成</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>大同生命厚生事業団 地域保健福祉研究助成 申請書ドラフト（ミラツク向け）</h1>
+<p><strong>締切</strong>: 2026-05-18 | <strong>上限</strong>: 要公式確認</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>法人プロフィールを基に、当該助成金との適合性を強調する自然な文章。営業収益・コミュニティ規模・DB数・連載数等の数値を本文に組み込む。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>助成金の目的・要件・評価ポイントを地の文で整理。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 法人の強み（①③）と評価軸に最も合致するテーマ <strong>案B（代替）</strong>: 別角度からのアプローチ （各案にタイトルと150字の要旨）</p>
+<h2>4. 事業/研究計画書本文（推奨案A）</h2>
+<h3>背景・目的（300-400字）</h3>
+<p>社会的・学術的意義を地の文で記述。法人の実績・数値を引用。</p>
+<h3>研究/事業の方法（300-400字）</h3>
+<p>具体的アプローチ、段階的実施計画。</p>
+<h3>期待される成果（200-300字）</h3>
+<p>定量・定性の両面で。</p>
+<h2>5. スケジュールと予算</h2>
+<p>年次別の予算内訳・実施計画。総事業費・補助申請額を明示。</p>
+<h2>6. 提出物チェックリスト</h2>
+<p>申請書類のチェックボックスリスト。</p>
+<h2>7. 推奨アクション</h2>
+<p>即時に行うべき次のステップを箇条書き3-5点。</p>
+<p>【重要】</p>
+<ul>
+<li>地の文中心、箇条書きは補助的に</li>
+<li>法人の数値・実績を本文に組み込む</li>
+<li>1,500-2,500字</li>
+<li>出力の最後に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NM_大同生命厚生事業団 地域保健福祉研究助成.md」と1行で報告</li>
+</ul>
+<p>【ファイル保存】 最終Markdownを完成させたら、以下のパスに保存してください（書き込み権限がない場合はログ末尾に保存対象を明記してください）: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NM_大同生命厚生事業団 地域保健福祉研究助成.md</p>
+<p>codex 提出先パスが現在の書き込み許可ルートの外にある可能性があるため、まずディレクトリの状態を確認します。保存できない場合は、指定どおり保存対象パスを明記します。 exec /bin/bash -lc 'pwd && ls -ld /Users/nishimura+/work/miratuku-grants-2026 /Users/nishimura+/work/miratuku-grants-2026/drafts_v2 /Users/nishimura+/work/miratuku-grants-2026/site' in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms: /Users/nishimura+/work/miratuku-grants-2026/site drwxr-xr-x  26 nishimura+  staff   832  5月 10 10:58 /Users/nishimura+/work/miratuku-grants-2026 drwxr-xr-x  40 nishimura+  staff  1280  5月 10 10:57 /Users/nishimura+/work/miratuku-grants-2026/drafts_v2 drwxr-xr-x  11 nishimura+  staff   352  5月 10 11:00 /Users/nishimura+/work/miratuku-grants-2026/site</p>
+<p>exec /bin/bash -lc "rg --files -g '<em>大同生命</em>' -g '<em>地域保健福祉</em>' /Users/nishimura+/work/miratuku-grants-2026 2>/dev/null" in /Users/nishimura+/work/miratuku-grants-2026/site  exited 1 in 0ms: web search: web search: 大同生命厚生事業団 地域保健福祉研究助成 2026 上限額 応募要件 codex 公式ページで2026年度要領を確認し、1件原則36万円、優秀研究は50万円限度、締切は2026年5月18日（月）当日消印有効と確認できました。これを反映してドラフトを作成し、指定パスへの保存を試みます。 2026-05-10T02:10:16.741539Z ERROR codex_core::tools::router: error=patch rejected: writing outside of the project; rejected by user approval settings codex 指定パスはサンドボックスの書き込み許可範囲外で拒否されました。内容は失わないよう、許可範囲内の <code>site/drafts_v2/</code> に同名ファイルとして保存し、最終報告で本来の保存対象パスも明記します。 apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/site/drafts_v2/NM_大同生命厚生事業団 地域保健福祉研究助成.md diff --git a/drafts_v2/NM_大同生命厚生事業団 地域保健福祉研究助成.md b/drafts_v2/NM_大同生命厚生事業団 地域保健福祉研究助成.md new file mode 100644 index 0000000000000000000000000000000000000000..f4b45d158fa38f73063cc52bed49678c343a292b --- /dev/null +++ b/drafts_v2/NM_大同生命厚生事業団 地域保健福祉研究助成.md @@ -0,0 +1,51 @@ +# 大同生命厚生事業団 地域保健福祉研究助成 申請書ドラフト（ミラツク向け） + +<strong>締切</strong>: 2026-05-18 | <strong>上限</strong>: 1件原則36万円、特に優秀な研究は50万円限度（公式要領確認済） + +## 1. 申請者情報（300字） +特定非営利活動法人ミラツクは、2010年設立、第14期を迎える京都府・東京都拠点のNPOである。専従スタッフ25名により、企業協働20社、コミュニティ参加者350名を基盤に、研究者・企業・行政・市民をつなぐ実践型の知識創造に取り組んできた。2024年度営業収益は87,405,221円で、赤字12.2百万円を計上しつつも繰越正味財産6.2百万円を保持し、社会課題領域への継続投資を行っている。学術知識30,288概念、歴史事象91,550件、財団2,140件、採択者2,122件等を含む26のSQLite知識データベースと、「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載成果を活用できる点は、地域福祉研究における学際的知見の整理と社会接続に適合する。 + +## 2. 助成金概要・応募要件（200字） +本助成は、地域で保健・医療・福祉の活動に従事する者の研究を支援し、わが国の保健・医療・福祉の向上に寄与することを目的とする。対象は地域保健および福祉、在宅・施設の医療・福祉・介護、住民の健康増進に役立つ研究で、原則として特定地域を対象とする。大学教員・大学院生の単独または主研究者は不可であり、ミラツクは保健・医療・福祉の実務従事者を研究代表者または共同研究者に据えた共同研究体制を組む必要がある。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 地域福祉実践知の可視化による孤立予防支援モデルの研究 +京都・東京の地域福祉実践者を対象に、支援現場で暗黙知化している孤立予防の判断、連携、資源接続のパターンを収集し、ミラツクの学際的知見DBと研究者ネットワークを用いて整理する。現場で再利用可能な実践知マップを作成し、地域福祉の質向上に資する。 + +<strong>案B（代替）</strong>: 住民参加型コミュニティにおけるウェルビーイング資源の研究 +350名規模のコミュニティ参加者と協働し、地域住民が健康増進や生活支援に活用している非制度的資源を調査する。暮らしの知恵、関係性、活動拠点を分類し、地域福祉計画やNPO連携に活用できる資源リストとして整理する。 + +## 4. 事業/研究計画書本文（推奨案A） + +### 背景・目的（300-400字） +高齢化、単身世帯化、地域コミュニティの希薄化により、生活困窮、介護不安、子育て孤立、メンタルヘルス不調などは、制度別の窓口だけでは把握しにくい複合課題として現れている。地域福祉の現場では、専門職やNPOが住民の小さな変化を捉え、医療、介護、行政、地域活動へつなぐ実践を重ねているが、その判断過程や連携の工夫は個人経験に依存し、共有可能な研究知として蓄積されにくい。ミラツクは26の知識データベース、学術知識30,288概念、財団・採択者データ、300話の社会実践連載を保有し、研究者の知を社会に接続する経験を持つ。本研究は、京都・東京を中心とした地域福祉実践知を可視化し、孤立予防に資する支援モデルとして整理することを目的とする。 + +### 研究/事業の方法（300-400字） +研究は三段階で実施する。第一に、保健・医療・福祉の実務従事者、地域包括支援センター、NPO、住民活動団体等から10から15名程度を対象に半構造化インタビューを行い、孤立の兆候、初期対応、関係機関への接続、支援継続上の困難を記録する。第二に、得られた語りをミラツクの学際的知見DBと照合し、支援場面、関係資源、判断基準、失敗要因、再現条件の観点からコード化する。第三に、研究者および実務者による検討会を2回開催し、現場で理解しやすい実践知マップと簡易チェックリストを作成する。個人情報を扱う場合は研究代表者または共同研究者の所属機関で倫理確認を行い、記録は匿名化して分析する。 + +### 期待される成果（200-300字） +成果として、京都・東京の特定地域における孤立予防支援の実践知を、研究報告書、実践知マップ、現場向けチェックリストとしてまとめる。定量面ではインタビュー10から15件、検討会2回、支援場面コード30項目以上、関係資源分類20項目以上を目標とする。定性面では、個人の経験に閉じていた判断や連携の工夫を共有可能な知識に変換し、地域福祉実務者、NPO、研究者が共通言語を持って協働する基盤を形成する。助成終了後はミラツクのコミュニティ350名や企業協働20社との接点を活かし、他地域への展開可能性も検討する。 + +## 5. スケジュールと予算 +実施期間は2026年9月から2027年8月までの1年間とする。2026年9月から10月に研究体制を確定し、実務従事者の協力依頼、倫理確認、調査設計を行う。11月から2027年2月にインタビューを実施し、3月から5月にコード化とDB照合、6月から7月に検討会と成果物作成、8月に報告書を完成させる。総事業費は500,000円、助成申請額は500,000円とする。内訳は、インタビュー謝金150,000円、文字起こし・分析補助120,000円、検討会運営費80,000円、資料作成・印刷費50,000円、交通費60,000円、通信・郵送・事務費40,000円である。パソコン等備品、学会参加費、論文投稿料、英文翻訳料は対象外経費として計上しない。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> 所定申込書A4サイズ3枚 +- <input type="checkbox" disabled> 研究部門「B 福祉研究」への丸印 +- <input type="checkbox" disabled> 研究課題「地域保健および福祉に関する研究」への丸印 +- <input type="checkbox" disabled> 研究代表者の応募資格確認（保健・医療・福祉の実務従事者等） +- <input type="checkbox" disabled> 勤務先・上司の承諾、記名・押印 +- <input type="checkbox" disabled> 共同研究者の分担記載 +- <input type="checkbox" disabled> 研究テーマ40字以内、研究目的200字以内への圧縮版 +- <input type="checkbox" disabled> 助成金使途明細、対象外経費の除外 +- <input type="checkbox" disabled> 個人対象研究に関する倫理面への配慮記載 +- <input type="checkbox" disabled> 2026年5月18日当日消印有効で郵送 + +## 7. 推奨アクション +- 研究代表者を「保健・医療・福祉の実務従事者」から確定し、ミラツクは共同研究・分析支援の立場を明確化する。 +- 研究テーマを40字以内に整え、「孤立予防」「地域福祉実践知」「特定地域」の語を残す。 +- 申請額は50万円で作成しつつ、原則36万円への減額採択に備えた優先順位付き予算表を準備する。 +- インタビュー候補者10から15名の所属、役割、承諾状況を一覧化する。 +- 公式実施要領と申込書様式を最終確認し、5月15日までに押印・郵送可能な状態にする。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NM_大同生命厚生事業団 地域保健福祉研究助成.md</p>
+<p>diff --git a/drafts_v2/NM_大同生命厚生事業団 地域保健福祉研究助成.md b/drafts_v2/NM_大同生命厚生事業団 地域保健福祉研究助成.md new file mode 100644 index 0000000000000000000000000000000000000000..f4b45d158fa38f73063cc52bed49678c343a292b --- /dev/null +++ b/drafts_v2/NM_大同生命厚生事業団 地域保健福祉研究助成.md @@ -0,0 +1,51 @@ +# 大同生命厚生事業団 地域保健福祉研究助成 申請書ドラフト（ミラツク向け） + +<strong>締切</strong>: 2026-05-18 | <strong>上限</strong>: 1件原則36万円、特に優秀な研究は50万円限度（公式要領確認済） + +## 1. 申請者情報（300字） +特定非営利活動法人ミラツクは、2010年設立、第14期を迎える京都府・東京都拠点のNPOである。専従スタッフ25名により、企業協働20社、コミュニティ参加者350名を基盤に、研究者・企業・行政・市民をつなぐ実践型の知識創造に取り組んできた。2024年度営業収益は87,405,221円で、赤字12.2百万円を計上しつつも繰越正味財産6.2百万円を保持し、社会課題領域への継続投資を行っている。学術知識30,288概念、歴史事象91,550件、財団2,140件、採択者2,122件等を含む26のSQLite知識データベースと、「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載成果を活用できる点は、地域福祉研究における学際的知見の整理と社会接続に適合する。 + +## 2. 助成金概要・応募要件（200字） +本助成は、地域で保健・医療・福祉の活動に従事する者の研究を支援し、わが国の保健・医療・福祉の向上に寄与することを目的とする。対象は地域保健および福祉、在宅・施設の医療・福祉・介護、住民の健康増進に役立つ研究で、原則として特定地域を対象とする。大学教員・大学院生の単独または主研究者は不可であり、ミラツクは保健・医療・福祉の実務従事者を研究代表者または共同研究者に据えた共同研究体制を組む必要がある。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 地域福祉実践知の可視化による孤立予防支援モデルの研究 +京都・東京の地域福祉実践者を対象に、支援現場で暗黙知化している孤立予防の判断、連携、資源接続のパターンを収集し、ミラツクの学際的知見DBと研究者ネットワークを用いて整理する。現場で再利用可能な実践知マップを作成し、地域福祉の質向上に資する。 + +<strong>案B（代替）</strong>: 住民参加型コミュニティにおけるウェルビーイング資源の研究 +350名規模のコミュニティ参加者と協働し、地域住民が健康増進や生活支援に活用している非制度的資源を調査する。暮らしの知恵、関係性、活動拠点を分類し、地域福祉計画やNPO連携に活用できる資源リストとして整理する。 + +## 4. 事業/研究計画書本文（推奨案A） + +### 背景・目的（300-400字） +高齢化、単身世帯化、地域コミュニティの希薄化により、生活困窮、介護不安、子育て孤立、メンタルヘルス不調などは、制度別の窓口だけでは把握しにくい複合課題として現れている。地域福祉の現場では、専門職やNPOが住民の小さな変化を捉え、医療、介護、行政、地域活動へつなぐ実践を重ねているが、その判断過程や連携の工夫は個人経験に依存し、共有可能な研究知として蓄積されにくい。ミラツクは26の知識データベース、学術知識30,288概念、財団・採択者データ、300話の社会実践連載を保有し、研究者の知を社会に接続する経験を持つ。本研究は、京都・東京を中心とした地域福祉実践知を可視化し、孤立予防に資する支援モデルとして整理することを目的とする。 + +### 研究/事業の方法（300-400字） +研究は三段階で実施する。第一に、保健・医療・福祉の実務従事者、地域包括支援センター、NPO、住民活動団体等から10から15名程度を対象に半構造化インタビューを行い、孤立の兆候、初期対応、関係機関への接続、支援継続上の困難を記録する。第二に、得られた語りをミラツクの学際的知見DBと照合し、支援場面、関係資源、判断基準、失敗要因、再現条件の観点からコード化する。第三に、研究者および実務者による検討会を2回開催し、現場で理解しやすい実践知マップと簡易チェックリストを作成する。個人情報を扱う場合は研究代表者または共同研究者の所属機関で倫理確認を行い、記録は匿名化して分析する。 + +### 期待される成果（200-300字） +成果として、京都・東京の特定地域における孤立予防支援の実践知を、研究報告書、実践知マップ、現場向けチェックリストとしてまとめる。定量面ではインタビュー10から15件、検討会2回、支援場面コード30項目以上、関係資源分類20項目以上を目標とする。定性面では、個人の経験に閉じていた判断や連携の工夫を共有可能な知識に変換し、地域福祉実務者、NPO、研究者が共通言語を持って協働する基盤を形成する。助成終了後はミラツクのコミュニティ350名や企業協働20社との接点を活かし、他地域への展開可能性も検討する。 + +## 5. スケジュールと予算 +実施期間は2026年9月から2027年8月までの1年間とする。2026年9月から10月に研究体制を確定し、実務従事者の協力依頼、倫理確認、調査設計を行う。11月から2027年2月にインタビューを実施し、3月から5月にコード化とDB照合、6月から7月に検討会と成果物作成、8月に報告書を完成させる。総事業費は500,000円、助成申請額は500,000円とする。内訳は、インタビュー謝金150,000円、文字起こし・分析補助120,000円、検討会運営費80,000円、資料作成・印刷費50,000円、交通費60,000円、通信・郵送・事務費40,000円である。パソコン等備品、学会参加費、論文投稿料、英文翻訳料は対象外経費として計上しない。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> 所定申込書A4サイズ3枚 +- <input type="checkbox" disabled> 研究部門「B 福祉研究」への丸印 +- <input type="checkbox" disabled> 研究課題「地域保健および福祉に関する研究」への丸印 +- <input type="checkbox" disabled> 研究代表者の応募資格確認（保健・医療・福祉の実務従事者等） +- <input type="checkbox" disabled> 勤務先・上司の承諾、記名・押印 +- <input type="checkbox" disabled> 共同研究者の分担記載 +- <input type="checkbox" disabled> 研究テーマ40字以内、研究目的200字以内への圧縮版 +- <input type="checkbox" disabled> 助成金使途明細、対象外経費の除外 +- <input type="checkbox" disabled> 個人対象研究に関する倫理面への配慮記載 +- <input type="checkbox" disabled> 2026年5月18日当日消印有効で郵送 + +## 7. 推奨アクション +- 研究代表者を「保健・医療・福祉の実務従事者」から確定し、ミラツクは共同研究・分析支援の立場を明確化する。 +- 研究テーマを40字以内に整え、「孤立予防」「地域福祉実践知」「特定地域」の語を残す。 +- 申請額は50万円で作成しつつ、原則36万円への減額採択に備えた優先順位付き予算表を準備する。 +- インタビュー候補者10から15名の所属、役割、承諾状況を一覧化する。 +- 公式実施要領と申込書様式を最終確認し、5月15日までに押印・郵送可能な状態にする。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NM_大同生命厚生事業団 地域保健福祉研究助成.md</p>
+<p>exec /bin/bash -lc "ls -l drafts_v2/NM_大同生命厚生事業団\\ 地域保健福祉研究助成.md" in /Users/nishimura+/work/miratuku-grants-2026/site exec /bin/bash -lc "wc -m drafts_v2/NM_大同生命厚生事業団\\ 地域保健福祉研究助成.md" in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms: -rw-r--r--  1 nishimura+  staff  7618  5月 10 11:11 drafts_v2/NM_大同生命厚生事業団 地域保健福祉研究助成.md</p>
+<p>succeeded in 0ms:     2910 drafts_v2/NM_大同生命厚生事業団 地域保健福祉研究助成.md</p>
+<p>diff --git a/drafts_v2/NM_大同生命厚生事業団 地域保健福祉研究助成.md b/drafts_v2/NM_大同生命厚生事業団 地域保健福祉研究助成.md new file mode 100644 index 0000000000000000000000000000000000000000..f4b45d158fa38f73063cc52bed49678c343a292b --- /dev/null +++ b/drafts_v2/NM_大同生命厚生事業団 地域保健福祉研究助成.md @@ -0,0 +1,51 @@ +# 大同生命厚生事業団 地域保健福祉研究助成 申請書ドラフト（ミラツク向け） + +<strong>締切</strong>: 2026-05-18 | <strong>上限</strong>: 1件原則36万円、特に優秀な研究は50万円限度（公式要領確認済） + +## 1. 申請者情報（300字） +特定非営利活動法人ミラツクは、2010年設立、第14期を迎える京都府・東京都拠点のNPOである。専従スタッフ25名により、企業協働20社、コミュニティ参加者350名を基盤に、研究者・企業・行政・市民をつなぐ実践型の知識創造に取り組んできた。2024年度営業収益は87,405,221円で、赤字12.2百万円を計上しつつも繰越正味財産6.2百万円を保持し、社会課題領域への継続投資を行っている。学術知識30,288概念、歴史事象91,550件、財団2,140件、採択者2,122件等を含む26のSQLite知識データベースと、「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載成果を活用できる点は、地域福祉研究における学際的知見の整理と社会接続に適合する。 + +## 2. 助成金概要・応募要件（200字） +本助成は、地域で保健・医療・福祉の活動に従事する者の研究を支援し、わが国の保健・医療・福祉の向上に寄与することを目的とする。対象は地域保健および福祉、在宅・施設の医療・福祉・介護、住民の健康増進に役立つ研究で、原則として特定地域を対象とする。大学教員・大学院生の単独または主研究者は不可であり、ミラツクは保健・医療・福祉の実務従事者を研究代表者または共同研究者に据えた共同研究体制を組む必要がある。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 地域福祉実践知の可視化による孤立予防支援モデルの研究 +京都・東京の地域福祉実践者を対象に、支援現場で暗黙知化している孤立予防の判断、連携、資源接続のパターンを収集し、ミラツクの学際的知見DBと研究者ネットワークを用いて整理する。現場で再利用可能な実践知マップを作成し、地域福祉の質向上に資する。 + +<strong>案B（代替）</strong>: 住民参加型コミュニティにおけるウェルビーイング資源の研究 +350名規模のコミュニティ参加者と協働し、地域住民が健康増進や生活支援に活用している非制度的資源を調査する。暮らしの知恵、関係性、活動拠点を分類し、地域福祉計画やNPO連携に活用できる資源リストとして整理する。 + +## 4. 事業/研究計画書本文（推奨案A） + +### 背景・目的（300-400字） +高齢化、単身世帯化、地域コミュニティの希薄化により、生活困窮、介護不安、子育て孤立、メンタルヘルス不調などは、制度別の窓口だけでは把握しにくい複合課題として現れている。地域福祉の現場では、専門職やNPOが住民の小さな変化を捉え、医療、介護、行政、地域活動へつなぐ実践を重ねているが、その判断過程や連携の工夫は個人経験に依存し、共有可能な研究知として蓄積されにくい。ミラツクは26の知識データベース、学術知識30,288概念、財団・採択者データ、300話の社会実践連載を保有し、研究者の知を社会に接続する経験を持つ。本研究は、京都・東京を中心とした地域福祉実践知を可視化し、孤立予防に資する支援モデルとして整理することを目的とする。 + +### 研究/事業の方法（300-400字） +研究は三段階で実施する。第一に、保健・医療・福祉の実務従事者、地域包括支援センター、NPO、住民活動団体等から10から15名程度を対象に半構造化インタビューを行い、孤立の兆候、初期対応、関係機関への接続、支援継続上の困難を記録する。第二に、得られた語りをミラツクの学際的知見DBと照合し、支援場面、関係資源、判断基準、失敗要因、再現条件の観点からコード化する。第三に、研究者および実務者による検討会を2回開催し、現場で理解しやすい実践知マップと簡易チェックリストを作成する。個人情報を扱う場合は研究代表者または共同研究者の所属機関で倫理確認を行い、記録は匿名化して分析する。 + +### 期待される成果（200-300字） +成果として、京都・東京の特定地域における孤立予防支援の実践知を、研究報告書、実践知マップ、現場向けチェックリストとしてまとめる。定量面ではインタビュー10から15件、検討会2回、支援場面コード30項目以上、関係資源分類20項目以上を目標とする。定性面では、個人の経験に閉じていた判断や連携の工夫を共有可能な知識に変換し、地域福祉実務者、NPO、研究者が共通言語を持って協働する基盤を形成する。助成終了後はミラツクのコミュニティ350名や企業協働20社との接点を活かし、他地域への展開可能性も検討する。 + +## 5. スケジュールと予算 +実施期間は2026年9月から2027年8月までの1年間とする。2026年9月から10月に研究体制を確定し、実務従事者の協力依頼、倫理確認、調査設計を行う。11月から2027年2月にインタビューを実施し、3月から5月にコード化とDB照合、6月から7月に検討会と成果物作成、8月に報告書を完成させる。総事業費は500,000円、助成申請額は500,000円とする。内訳は、インタビュー謝金150,000円、文字起こし・分析補助120,000円、検討会運営費80,000円、資料作成・印刷費50,000円、交通費60,000円、通信・郵送・事務費40,000円である。パソコン等備品、学会参加費、論文投稿料、英文翻訳料は対象外経費として計上しない。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> 所定申込書A4サイズ3枚 +- <input type="checkbox" disabled> 研究部門「B 福祉研究」への丸印 +- <input type="checkbox" disabled> 研究課題「地域保健および福祉に関する研究」への丸印 +- <input type="checkbox" disabled> 研究代表者の応募資格確認（保健・医療・福祉の実務従事者等） +- <input type="checkbox" disabled> 勤務先・上司の承諾、記名・押印 +- <input type="checkbox" disabled> 共同研究者の分担記載 +- <input type="checkbox" disabled> 研究テーマ40字以内、研究目的200字以内への圧縮版 +- <input type="checkbox" disabled> 助成金使途明細、対象外経費の除外 +- <input type="checkbox" disabled> 個人対象研究に関する倫理面への配慮記載 +- <input type="checkbox" disabled> 2026年5月18日当日消印有効で郵送 + +## 7. 推奨アクション +- 研究代表者を「保健・医療・福祉の実務従事者」から確定し、ミラツクは共同研究・分析支援の立場を明確化する。 +- 研究テーマを40字以内に整え、「孤立予防」「地域福祉実践知」「特定地域」の語を残す。 +- 申請額は50万円で作成しつつ、原則36万円への減額採択に備えた優先順位付き予算表を準備する。 +- インタビュー候補者10から15名の所属、役割、承諾状況を一覧化する。 +- 公式実施要領と申込書様式を最終確認し、5月15日までに押印・郵送可能な状態にする。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NM_大同生命厚生事業団 地域保健福祉研究助成.md</p>
+<p>codex 文字数確認で約2,900字となり、指定の上限を超えていました。内容を保ったまま圧縮して、1,500から2,500字の範囲に収めます。 apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/site/drafts_v2/NM_大同生命厚生事業団 地域保健福祉研究助成.md diff --git a/drafts_v2/NM_大同生命厚生事業団 地域保健福祉研究助成.md b/drafts_v2/NM_大同生命厚生事業団 地域保健福祉研究助成.md new file mode 100644 index 0000000000000000000000000000000000000000..d178f4697302726a881013adb455e72fb4bab6e8 --- /dev/null +++ b/drafts_v2/NM_大同生命厚生事業団 地域保健福祉研究助成.md @@ -0,0 +1,51 @@ +# 大同生命厚生事業団 地域保健福祉研究助成 申請書ドラフト（ミラツク向け） + +<strong>締切</strong>: 2026-05-18 | <strong>上限</strong>: 1件原則36万円、特に優秀な研究は50万円限度（公式確認済） + +## 1. 申請者情報（300字） +特定非営利活動法人ミラツクは、2010年設立、第14期を迎える京都府・東京都拠点のNPOである。専従スタッフ25名により、企業協働20社、コミュニティ参加者350名を基盤に、研究者・企業・行政・市民をつなぐ実践型の知識創造に取り組んできた。2024年度営業収益は87,405,221円で、赤字12.2百万円を計上しつつも繰越正味財産6.2百万円を保持している。学術知識30,288概念、歴史事象91,550件、財団2,140件、採択者2,122件等を含む26のSQLite知識データベースと、合計300話の連載成果は、地域福祉研究における学際的知見の整理と社会接続に適合する。 + +## 2. 助成金概要・応募要件（200字） +本助成は、地域で保健・医療・福祉に従事する者の研究を支援し、わが国の保健・医療・福祉の向上に寄与する制度である。対象は地域保健・福祉、在宅・施設の医療・福祉・介護、住民の健康増進に役立つ研究で、原則として特定地域を対象とする。大学教員・大学院生の単独または主研究者は不可のため、ミラツクは保健・医療・福祉の実務従事者を研究代表者または共同研究者に据える必要がある。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 地域福祉実践知の可視化による孤立予防支援モデルの研究 +京都・東京の地域福祉実践者を対象に、孤立予防の判断、連携、資源接続のパターンを収集し、ミラツクの学際的知見DBと研究者ネットワークを用いて整理する。現場で再利用可能な実践知マップを作成する。 + +<strong>案B（代替）</strong>: 住民参加型コミュニティにおけるウェルビーイング資源の研究 +350名規模のコミュニティ参加者と協働し、住民が健康増進や生活支援に活用している非制度的資源を調査する。暮らしの知恵、関係性、活動拠点を分類し、地域福祉計画やNPO連携に活かす。 + +## 4. 事業/研究計画書本文（推奨案A） + +### 背景・目的（300-400字） +高齢化、単身世帯化、地域コミュニティの希薄化により、生活困窮、介護不安、子育て孤立、メンタルヘルス不調は、制度別の窓口だけでは把握しにくい複合課題として現れている。地域福祉の現場では、専門職やNPOが住民の小さな変化を捉え、医療、介護、行政、地域活動へつなぐ実践を重ねているが、その判断過程は個人経験に依存し、共有可能な研究知として蓄積されにくい。ミラツクは26の知識データベース、学術知識30,288概念、300話の社会実践連載を保有し、研究者の知を社会に接続してきた。本研究は、京都・東京を中心とした地域福祉実践知を可視化し、孤立予防に資する支援モデルとして整理する。 + +### 研究/事業の方法（300-400字） +研究は三段階で実施する。第一に、保健・医療・福祉の実務従事者、地域包括支援センター、NPO、住民活動団体等から10から15名程度を対象に半構造化インタビューを行い、孤立の兆候、初期対応、関係機関への接続、支援継続上の困難を記録する。第二に、得られた語りをミラツクの学際的知見DBと照合し、支援場面、関係資源、判断基準、失敗要因、再現条件の観点からコード化する。第三に、研究者と実務者による検討会を2回開催し、実践知マップと簡易チェックリストを作成する。個人情報は匿名化し、必要に応じて倫理確認を行う。 + +### 期待される成果（200-300字） +成果として、京都・東京の特定地域における孤立予防支援の実践知を、研究報告書、実践知マップ、現場向けチェックリストとしてまとめる。定量面ではインタビュー10から15件、検討会2回、支援場面コード30項目以上、関係資源分類20項目以上を目標とする。定性面では、個人の経験に閉じていた判断や連携の工夫を共有可能な知識に変換し、地域福祉実務者、NPO、研究者が共通言語を持って協働する基盤を形成する。 + +## 5. スケジュールと予算 +実施期間は2026年9月から2027年8月までの1年間とする。9から10月に研究体制確定、協力依頼、倫理確認、調査設計を行い、11月から2027年2月にインタビューを実施する。3から5月にコード化とDB照合、6から7月に検討会と成果物作成、8月に報告書を完成させる。総事業費は500,000円、助成申請額は500,000円とする。内訳は、インタビュー謝金150,000円、文字起こし・分析補助120,000円、検討会運営費80,000円、資料作成・印刷費50,000円、交通費60,000円、通信・郵送・事務費40,000円である。パソコン等備品、学会参加費、論文投稿料、英文翻訳料は計上しない。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> 所定申込書A4サイズ3枚 +- <input type="checkbox" disabled> 研究部門「B 福祉研究」への丸印 +- <input type="checkbox" disabled> 研究課題「地域保健および福祉に関する研究」への丸印 +- <input type="checkbox" disabled> 研究代表者の応募資格確認 +- <input type="checkbox" disabled> 勤務先・上司の承諾、記名・押印 +- <input type="checkbox" disabled> 共同研究者の分担記載 +- <input type="checkbox" disabled> 研究テーマ40字以内、研究目的200字以内への圧縮 +- <input type="checkbox" disabled> 助成金使途明細、対象外経費の除外 +- <input type="checkbox" disabled> 倫理面への配慮記載 +- <input type="checkbox" disabled> 2026年5月18日当日消印有効で郵送 + +## 7. 推奨アクション +- 研究代表者を保健・医療・福祉の実務従事者から確定する。 +- 研究テーマを40字以内に整え、孤立予防、地域福祉実践知、特定地域の語を残す。 +- 50万円申請を基本に、36万円採択時の縮小予算も準備する。 +- インタビュー候補者10から15名の承諾状況を一覧化する。 +- 5月15日までに押印・郵送可能な状態にする。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NM_大同生命厚生事業団 地域保健福祉研究助成.md</p>
+<p>diff --git a/drafts_v2/NM_大同生命厚生事業団 地域保健福祉研究助成.md b/drafts_v2/NM_大同生命厚生事業団 地域保健福祉研究助成.md new file mode 100644 index 0000000000000000000000000000000000000000..d178f4697302726a881013adb455e72fb4bab6e8 --- /dev/null +++ b/drafts_v2/NM_大同生命厚生事業団 地域保健福祉研究助成.md @@ -0,0 +1,51 @@ +# 大同生命厚生事業団 地域保健福祉研究助成 申請書ドラフト（ミラツク向け） + +<strong>締切</strong>: 2026-05-18 | <strong>上限</strong>: 1件原則36万円、特に優秀な研究は50万円限度（公式確認済） + +## 1. 申請者情報（300字） +特定非営利活動法人ミラツクは、2010年設立、第14期を迎える京都府・東京都拠点のNPOである。専従スタッフ25名により、企業協働20社、コミュニティ参加者350名を基盤に、研究者・企業・行政・市民をつなぐ実践型の知識創造に取り組んできた。2024年度営業収益は87,405,221円で、赤字12.2百万円を計上しつつも繰越正味財産6.2百万円を保持している。学術知識30,288概念、歴史事象91,550件、財団2,140件、採択者2,122件等を含む26のSQLite知識データベースと、合計300話の連載成果は、地域福祉研究における学際的知見の整理と社会接続に適合する。 + +## 2. 助成金概要・応募要件（200字） +本助成は、地域で保健・医療・福祉に従事する者の研究を支援し、わが国の保健・医療・福祉の向上に寄与する制度である。対象は地域保健・福祉、在宅・施設の医療・福祉・介護、住民の健康増進に役立つ研究で、原則として特定地域を対象とする。大学教員・大学院生の単独または主研究者は不可のため、ミラツクは保健・医療・福祉の実務従事者を研究代表者または共同研究者に据える必要がある。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 地域福祉実践知の可視化による孤立予防支援モデルの研究 +京都・東京の地域福祉実践者を対象に、孤立予防の判断、連携、資源接続のパターンを収集し、ミラツクの学際的知見DBと研究者ネットワークを用いて整理する。現場で再利用可能な実践知マップを作成する。 + +<strong>案B（代替）</strong>: 住民参加型コミュニティにおけるウェルビーイング資源の研究 +350名規模のコミュニティ参加者と協働し、住民が健康増進や生活支援に活用している非制度的資源を調査する。暮らしの知恵、関係性、活動拠点を分類し、地域福祉計画やNPO連携に活かす。 + +## 4. 事業/研究計画書本文（推奨案A） + +### 背景・目的（300-400字） +高齢化、単身世帯化、地域コミュニティの希薄化により、生活困窮、介護不安、子育て孤立、メンタルヘルス不調は、制度別の窓口だけでは把握しにくい複合課題として現れている。地域福祉の現場では、専門職やNPOが住民の小さな変化を捉え、医療、介護、行政、地域活動へつなぐ実践を重ねているが、その判断過程は個人経験に依存し、共有可能な研究知として蓄積されにくい。ミラツクは26の知識データベース、学術知識30,288概念、300話の社会実践連載を保有し、研究者の知を社会に接続してきた。本研究は、京都・東京を中心とした地域福祉実践知を可視化し、孤立予防に資する支援モデルとして整理する。 + +### 研究/事業の方法（300-400字） +研究は三段階で実施する。第一に、保健・医療・福祉の実務従事者、地域包括支援センター、NPO、住民活動団体等から10から15名程度を対象に半構造化インタビューを行い、孤立の兆候、初期対応、関係機関への接続、支援継続上の困難を記録する。第二に、得られた語りをミラツクの学際的知見DBと照合し、支援場面、関係資源、判断基準、失敗要因、再現条件の観点からコード化する。第三に、研究者と実務者による検討会を2回開催し、実践知マップと簡易チェックリストを作成する。個人情報は匿名化し、必要に応じて倫理確認を行う。 + +### 期待される成果（200-300字） +成果として、京都・東京の特定地域における孤立予防支援の実践知を、研究報告書、実践知マップ、現場向けチェックリストとしてまとめる。定量面ではインタビュー10から15件、検討会2回、支援場面コード30項目以上、関係資源分類20項目以上を目標とする。定性面では、個人の経験に閉じていた判断や連携の工夫を共有可能な知識に変換し、地域福祉実務者、NPO、研究者が共通言語を持って協働する基盤を形成する。 + +## 5. スケジュールと予算 +実施期間は2026年9月から2027年8月までの1年間とする。9から10月に研究体制確定、協力依頼、倫理確認、調査設計を行い、11月から2027年2月にインタビューを実施する。3から5月にコード化とDB照合、6から7月に検討会と成果物作成、8月に報告書を完成させる。総事業費は500,000円、助成申請額は500,000円とする。内訳は、インタビュー謝金150,000円、文字起こし・分析補助120,000円、検討会運営費80,000円、資料作成・印刷費50,000円、交通費60,000円、通信・郵送・事務費40,000円である。パソコン等備品、学会参加費、論文投稿料、英文翻訳料は計上しない。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> 所定申込書A4サイズ3枚 +- <input type="checkbox" disabled> 研究部門「B 福祉研究」への丸印 +- <input type="checkbox" disabled> 研究課題「地域保健および福祉に関する研究」への丸印 +- <input type="checkbox" disabled> 研究代表者の応募資格確認 +- <input type="checkbox" disabled> 勤務先・上司の承諾、記名・押印 +- <input type="checkbox" disabled> 共同研究者の分担記載 +- <input type="checkbox" disabled> 研究テーマ40字以内、研究目的200字以内への圧縮 +- <input type="checkbox" disabled> 助成金使途明細、対象外経費の除外 +- <input type="checkbox" disabled> 倫理面への配慮記載 +- <input type="checkbox" disabled> 2026年5月18日当日消印有効で郵送 + +## 7. 推奨アクション +- 研究代表者を保健・医療・福祉の実務従事者から確定する。 +- 研究テーマを40字以内に整え、孤立予防、地域福祉実践知、特定地域の語を残す。 +- 50万円申請を基本に、36万円採択時の縮小予算も準備する。 +- インタビュー候補者10から15名の承諾状況を一覧化する。 +- 5月15日までに押印・郵送可能な状態にする。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NM_大同生命厚生事業団 地域保健福祉研究助成.md</p>
+<p>exec /bin/bash -lc "wc -m drafts_v2/NM_大同生命厚生事業団\\ 地域保健福祉研究助成.md" in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms:     2554 drafts_v2/NM_大同生命厚生事業団 地域保健福祉研究助成.md</p>
+<p>exec /bin/bash -lc "tail -n 3 drafts_v2/NM_大同生命厚生事業団\\ 地域保健福祉研究助成.md" in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms:</p>
+<ul>
+<li>5月15日までに押印・郵送可能な状態にする。</li>
+</ul>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

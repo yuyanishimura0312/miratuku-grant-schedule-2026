@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>デジタル化・AI導入補助金 2026 セキュリティ枠</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>デジタル化・AI導入補助金 2026 セキュリティ枠 申請書ドラフト（esse-sense向け）</h1>
+<p><strong>締切</strong>: 2026-05-12 | <strong>上限</strong>: 150万円</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>法人プロフィールを基に、当該助成金との適合性を強調する自然な文章。営業収益・コミュニティ規模・DB数・連載数等の数値を本文に組み込む。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>助成金の目的・要件・評価ポイントを地の文で整理。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 法人の強み（④⑤）と評価軸に最も合致するテーマ <strong>案B（代替）</strong>: 別角度からのアプローチ （各案にタイトルと150字の要旨）</p>
+<h2>4. 事業/研究計画書本文（推奨案A）</h2>
+<h3>背景・目的（300-400字）</h3>
+<p>社会的・学術的意義を地の文で記述。法人の実績・数値を引用。</p>
+<h3>研究/事業の方法（300-400字）</h3>
+<p>具体的アプローチ、段階的実施計画。</p>
+<h3>期待される成果（200-300字）</h3>
+<p>定量・定性の両面で。</p>
+<h2>5. スケジュールと予算</h2>
+<p>年次別の予算内訳・実施計画。総事業費・補助申請額を明示。</p>
+<h2>6. 提出物チェックリスト</h2>
+<p>申請書類のチェックボックスリスト。</p>
+<h2>7. 推奨アクション</h2>
+<p>即時に行うべき次のステップを箇条書き3-5点。</p>
+<p>【重要】</p>
+<ul>
+<li>地の文中心、箇条書きは補助的に</li>
+<li>法人の数値・実績を本文に組み込む</li>
+<li>1,500-2,500字</li>
+<li>出力の最後に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_デジタル化・AI導入補助金 2026 セキュリティ枠.md」と1行で報告</li>
+</ul>
+<p>【ファイル保存】 最終Markdownを完成させたら、以下のパスに保存してください（書き込み権限がない場合はログ末尾に保存対象を明記してください）: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_デジタル化・AI導入補助金 2026 セキュリティ枠.md</p>
+<p>codex 指定パスが現在の書き込み許可範囲の外に見えるため、まず保存先ディレクトリの状態を確認します。保存できる場合はそのままMarkdownを作成し、拒否された場合は指示どおり保存対象パスを明記します。 exec /bin/bash -lc 'pwd && ls -ld /Users/nishimura+/work/miratuku-grants-2026 /Users/nishimura+/work/miratuku-grants-2026/drafts_v2 2>/dev/null || true' in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms: /Users/nishimura+/work/miratuku-grants-2026/site drwxr-xr-x  26 nishimura+  staff   832  5月 10 10:58 /Users/nishimura+/work/miratuku-grants-2026 drwxr-xr-x  40 nishimura+  staff  1280  5月 10 10:57 /Users/nishimura+/work/miratuku-grants-2026/drafts_v2</p>
+<p>codex 保存先ディレクトリは存在しています。これから指定構成どおりのドラフトを作成し、指定パスへの保存を試みます。 2026-05-10T02:09:53.334191Z ERROR codex_core::tools::router: error=patch rejected: writing outside of the project; rejected by user approval settings codex 指定の絶対パスへの書き込みはサンドボックスで拒否されました。作業領域内に同内容のMarkdownを保存し、最終報告で本来の保存対象パスも明記します。 apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/site/drafts_v2/NE_デジタル化・AI導入補助金 2026 セキュリティ枠.md diff --git a/drafts_v2/NE_デジタル化・AI導入補助金 2026 セキュリティ枠.md b/drafts_v2/NE_デジタル化・AI導入補助金 2026 セキュリティ枠.md new file mode 100644 index 0000000000000000000000000000000000000000..e6c64116e1ef6b27d61fbb4d9f87e29e2ec0c2fa --- /dev/null +++ b/drafts_v2/NE_デジタル化・AI導入補助金 2026 セキュリティ枠.md @@ -0,0 +1,63 @@ +# デジタル化・AI導入補助金 2026 セキュリティ枠 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-05-12 | <strong>上限</strong>: 150万円 + +## 1. 申請者情報（300字） + +esse-senseは、研究者の知を社会に届けるメディア事業を主軸とする株式会社であり、学術知の編集、発信、データ化を通じて、産学連携、大学発スタートアップ支援、大学・学術機関のDXを推進してきた。自社で蓄積する記事DBはarticles 154件、general_articles 34件に及び、研究テーマ、研究者、社会課題、企業ニーズを横断的に接続できる学際的知見DBを形成している。営利法人として営業収益を伴う継続的なメディア運営を行いながら、NPO法人ミラツクとの共同応募実績を通じて、公共性の高い研究成果の社会実装にも取り組んできた。esse-sense Future Forum等の国際展開も進めており、本補助金のセキュリティ枠により、AI活用基盤と情報管理体制を強化する意義は大きい。 + +## 2. 助成金概要・応募要件（200字） + +本補助金は、国系のDX支援策として、中小企業等によるデジタル化、AI導入、情報セキュリティ強化を後押しする制度である。セキュリティ枠では、AI・データ活用を進めるうえで不可欠なアクセス管理、脆弱性対策、個人情報・研究情報の保護、運用ルール整備が評価対象となる。単なるツール導入ではなく、事業成長、業務効率化、外部連携時の信頼性向上、継続運用できる管理体制の構築が重視される。 + +## 3. 申請テーマ案 + +<strong>案A（推奨）</strong>: 研究知DBのAI活用に向けたセキュアDX基盤整備 + +articles 154件、general_articles 34件を含む研究知DBを、AI検索、要約、産学連携マッチングに活用するため、権限管理、ログ管理、データ分類、生成AI利用ルールを整備する。esse-senseの強みであるデータ活用・AI・学術機関DXに直結するテーマであり、セキュリティ枠との適合性が高い。 + +<strong>案B（代替）</strong>: 大学発スタートアップ支援における安全な情報共有環境の構築 + +大学発スタートアップ、研究者、企業、支援機関が関与する共同プロジェクトで扱う未公開研究情報、事業計画、面談記録を安全に共有する環境を整える。ミラツクとの共同応募実績を活かし、外部連携時の信頼性と運用効率を高める。 + +## 4. 事業/研究計画書本文（推奨案A） + +### 背景・目的（300-400字） + +研究成果の社会実装には、専門的な知見を一般社会、企業、行政、投資家が理解し、具体的な協働につなげる編集・翻訳機能が不可欠である。esse-senseは、研究者の知を社会に届けるメディアとして、articles 154件、general_articles 34件のコンテンツを蓄積し、学際的な研究テーマと社会課題を接続してきた。一方で、AIによる検索、要約、推薦、テキスト解析を本格導入するには、記事データ、取材記録、研究者情報、連携先情報の取り扱いを明確化し、不正アクセス、誤共有、生成AI利用時の情報漏えいを防ぐ体制が必要である。本事業では、既存DBを安全に活用できるセキュアDX基盤を整備し、研究知の社会実装を加速する。 + +### 研究/事業の方法（300-400字） + +初期段階では、既存の記事DB、取材資料、顧客・連携先情報の棚卸しを行い、公開情報、限定共有情報、機密情報の区分を定義する。次に、クラウド環境のアクセス権限を見直し、多要素認証、管理者権限の分離、操作ログ取得、バックアップ運用を整備する。あわせて、AI検索・要約・分類に利用するデータ範囲を限定し、生成AI利用時の入力禁止情報、確認フロー、出力物の人手確認ルールを策定する。後半では、154件の記事群と34件の一般記事を対象に、タグ設計、メタデータ整備、テキスト解析の試行を行い、研究テーマと社会課題を安全に検索・分析できる業務フローを構築する。 + +### 期待される成果（200-300字） + +定量面では、188件の既存コンテンツに対する分類・権限設定を完了し、AI検索・要約の対象データを明確化する。社内外の共同作業におけるアクセス権限の棚卸しを実施し、重要データの共有範囲とログ取得率を改善する。定性面では、研究者、大学、企業との連携時に、安全な情報管理体制を説明できるようになり、産学連携支援や大学発スタートアップ支援における信頼性が高まる。将来的には、esse-sense Future Forum等の国際展開においても、研究知DBを安全に活用する基盤となる。 + +## 5. スケジュールと予算 + +本事業は2026年度内に実施する。2026年6月から7月にかけて現状調査、データ棚卸し、セキュリティ要件定義を行い、8月から10月にクラウド設定、権限管理、ログ管理、バックアップ環境を整備する。11月から2027年1月にAI検索・要約・分類の試行、タグ設計、運用ルール整備を進め、2月から3月に効果検証と社内運用定着を行う。 + +総事業費は200万円、補助申請額は上限150万円とする。内訳は、セキュリティ診断・設計費40万円、クラウド・認証・ログ管理環境の整備費60万円、AI活用に向けたデータ整備・タグ設計費55万円、運用規程・研修・検証費30万円、予備費15万円を想定する。自己負担50万円により、補助期間後も継続運用できる体制を確保する。 + +## 6. 提出物チェックリスト + +- <input type="checkbox" disabled> 申請書本体 +- <input type="checkbox" disabled> 法人登記簿謄本または履歴事項全部証明書 +- <input type="checkbox" disabled> 直近決算書・事業報告書 +- <input type="checkbox" disabled> 見積書一式 +- <input type="checkbox" disabled> セキュリティ対策計画書 +- <input type="checkbox" disabled> AI・データ利用方針案 +- <input type="checkbox" disabled> 既存DB・記事件数の説明資料 +- <input type="checkbox" disabled> ミラツク等との連携実績資料 +- <input type="checkbox" disabled> 反社会的勢力排除等の誓約書 + +## 7. 推奨アクション + +- 188件の既存コンテンツについて、公開可否、権利関係、機密度の簡易棚卸しを即日開始する。 +- クラウド、CMS、記事DB、共有ドライブの利用状況を一覧化し、管理者権限と外部共有リンクを確認する。 +- セキュリティ診断、クラウド設定、AIデータ整備の見積書を2社以上から取得する。 +- esse-sense Future Forum、大学発SU支援、ミラツクとの共同応募実績を示す添付資料を整理する。 +- 2026年5月12日の締切に向け、5月11日中に代表者確認、押印・電子申請情報、添付書類の最終確認を完了する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_デジタル化・AI導入補助金 2026 セキュリティ枠.md</p>
+<p>diff --git a/drafts_v2/NE_デジタル化・AI導入補助金 2026 セキュリティ枠.md b/drafts_v2/NE_デジタル化・AI導入補助金 2026 セキュリティ枠.md new file mode 100644 index 0000000000000000000000000000000000000000..e6c64116e1ef6b27d61fbb4d9f87e29e2ec0c2fa --- /dev/null +++ b/drafts_v2/NE_デジタル化・AI導入補助金 2026 セキュリティ枠.md @@ -0,0 +1,63 @@ +# デジタル化・AI導入補助金 2026 セキュリティ枠 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-05-12 | <strong>上限</strong>: 150万円 + +## 1. 申請者情報（300字） + +esse-senseは、研究者の知を社会に届けるメディア事業を主軸とする株式会社であり、学術知の編集、発信、データ化を通じて、産学連携、大学発スタートアップ支援、大学・学術機関のDXを推進してきた。自社で蓄積する記事DBはarticles 154件、general_articles 34件に及び、研究テーマ、研究者、社会課題、企業ニーズを横断的に接続できる学際的知見DBを形成している。営利法人として営業収益を伴う継続的なメディア運営を行いながら、NPO法人ミラツクとの共同応募実績を通じて、公共性の高い研究成果の社会実装にも取り組んできた。esse-sense Future Forum等の国際展開も進めており、本補助金のセキュリティ枠により、AI活用基盤と情報管理体制を強化する意義は大きい。 + +## 2. 助成金概要・応募要件（200字） + +本補助金は、国系のDX支援策として、中小企業等によるデジタル化、AI導入、情報セキュリティ強化を後押しする制度である。セキュリティ枠では、AI・データ活用を進めるうえで不可欠なアクセス管理、脆弱性対策、個人情報・研究情報の保護、運用ルール整備が評価対象となる。単なるツール導入ではなく、事業成長、業務効率化、外部連携時の信頼性向上、継続運用できる管理体制の構築が重視される。 + +## 3. 申請テーマ案 + +<strong>案A（推奨）</strong>: 研究知DBのAI活用に向けたセキュアDX基盤整備 + +articles 154件、general_articles 34件を含む研究知DBを、AI検索、要約、産学連携マッチングに活用するため、権限管理、ログ管理、データ分類、生成AI利用ルールを整備する。esse-senseの強みであるデータ活用・AI・学術機関DXに直結するテーマであり、セキュリティ枠との適合性が高い。 + +<strong>案B（代替）</strong>: 大学発スタートアップ支援における安全な情報共有環境の構築 + +大学発スタートアップ、研究者、企業、支援機関が関与する共同プロジェクトで扱う未公開研究情報、事業計画、面談記録を安全に共有する環境を整える。ミラツクとの共同応募実績を活かし、外部連携時の信頼性と運用効率を高める。 + +## 4. 事業/研究計画書本文（推奨案A） + +### 背景・目的（300-400字） + +研究成果の社会実装には、専門的な知見を一般社会、企業、行政、投資家が理解し、具体的な協働につなげる編集・翻訳機能が不可欠である。esse-senseは、研究者の知を社会に届けるメディアとして、articles 154件、general_articles 34件のコンテンツを蓄積し、学際的な研究テーマと社会課題を接続してきた。一方で、AIによる検索、要約、推薦、テキスト解析を本格導入するには、記事データ、取材記録、研究者情報、連携先情報の取り扱いを明確化し、不正アクセス、誤共有、生成AI利用時の情報漏えいを防ぐ体制が必要である。本事業では、既存DBを安全に活用できるセキュアDX基盤を整備し、研究知の社会実装を加速する。 + +### 研究/事業の方法（300-400字） + +初期段階では、既存の記事DB、取材資料、顧客・連携先情報の棚卸しを行い、公開情報、限定共有情報、機密情報の区分を定義する。次に、クラウド環境のアクセス権限を見直し、多要素認証、管理者権限の分離、操作ログ取得、バックアップ運用を整備する。あわせて、AI検索・要約・分類に利用するデータ範囲を限定し、生成AI利用時の入力禁止情報、確認フロー、出力物の人手確認ルールを策定する。後半では、154件の記事群と34件の一般記事を対象に、タグ設計、メタデータ整備、テキスト解析の試行を行い、研究テーマと社会課題を安全に検索・分析できる業務フローを構築する。 + +### 期待される成果（200-300字） + +定量面では、188件の既存コンテンツに対する分類・権限設定を完了し、AI検索・要約の対象データを明確化する。社内外の共同作業におけるアクセス権限の棚卸しを実施し、重要データの共有範囲とログ取得率を改善する。定性面では、研究者、大学、企業との連携時に、安全な情報管理体制を説明できるようになり、産学連携支援や大学発スタートアップ支援における信頼性が高まる。将来的には、esse-sense Future Forum等の国際展開においても、研究知DBを安全に活用する基盤となる。 + +## 5. スケジュールと予算 + +本事業は2026年度内に実施する。2026年6月から7月にかけて現状調査、データ棚卸し、セキュリティ要件定義を行い、8月から10月にクラウド設定、権限管理、ログ管理、バックアップ環境を整備する。11月から2027年1月にAI検索・要約・分類の試行、タグ設計、運用ルール整備を進め、2月から3月に効果検証と社内運用定着を行う。 + +総事業費は200万円、補助申請額は上限150万円とする。内訳は、セキュリティ診断・設計費40万円、クラウド・認証・ログ管理環境の整備費60万円、AI活用に向けたデータ整備・タグ設計費55万円、運用規程・研修・検証費30万円、予備費15万円を想定する。自己負担50万円により、補助期間後も継続運用できる体制を確保する。 + +## 6. 提出物チェックリスト + +- <input type="checkbox" disabled> 申請書本体 +- <input type="checkbox" disabled> 法人登記簿謄本または履歴事項全部証明書 +- <input type="checkbox" disabled> 直近決算書・事業報告書 +- <input type="checkbox" disabled> 見積書一式 +- <input type="checkbox" disabled> セキュリティ対策計画書 +- <input type="checkbox" disabled> AI・データ利用方針案 +- <input type="checkbox" disabled> 既存DB・記事件数の説明資料 +- <input type="checkbox" disabled> ミラツク等との連携実績資料 +- <input type="checkbox" disabled> 反社会的勢力排除等の誓約書 + +## 7. 推奨アクション + +- 188件の既存コンテンツについて、公開可否、権利関係、機密度の簡易棚卸しを即日開始する。 +- クラウド、CMS、記事DB、共有ドライブの利用状況を一覧化し、管理者権限と外部共有リンクを確認する。 +- セキュリティ診断、クラウド設定、AIデータ整備の見積書を2社以上から取得する。 +- esse-sense Future Forum、大学発SU支援、ミラツクとの共同応募実績を示す添付資料を整理する。 +- 2026年5月12日の締切に向け、5月11日中に代表者確認、押印・電子申請情報、添付書類の最終確認を完了する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_デジタル化・AI導入補助金 2026 セキュリティ枠.md</p>
+<p>exec /bin/bash -lc "wc -m 'drafts_v2/NE_デジタル化・AI導入補助金 2026 セキュリティ枠.md' && tail -n 1 'drafts_v2/NE_デジタル化・AI導入補助金 2026 セキュリティ枠.md'" in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms:     2849 drafts_v2/NE_デジタル化・AI導入補助金 2026 セキュリティ枠.md</p>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

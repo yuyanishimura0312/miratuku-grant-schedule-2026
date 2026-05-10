@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>住友電工グループ社会貢献基金 学術研究助成</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>住友電工グループ社会貢献基金 学術研究助成 申請書ドラフト（ミラツク向け）</h1>
+<p><strong>締切</strong>: 2026-05-29 | <strong>上限</strong>: —</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>法人プロフィールを基に、当該助成金との適合性を強調する自然な文章。営業収益・コミュニティ規模・DB数・連載数等の数値を本文に組み込む。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>助成金の目的・要件・評価ポイントを地の文で整理。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 法人の強み（①③）と評価軸に最も合致するテーマ <strong>案B（代替）</strong>: 別角度からのアプローチ （各案にタイトルと150字の要旨）</p>
+<h2>4. 事業/研究計画書本文（推奨案A）</h2>
+<h3>背景・目的（300-400字）</h3>
+<p>社会的・学術的意義を地の文で記述。法人の実績・数値を引用。</p>
+<h3>研究/事業の方法（300-400字）</h3>
+<p>具体的アプローチ、段階的実施計画。</p>
+<h3>期待される成果（200-300字）</h3>
+<p>定量・定性の両面で。</p>
+<h2>5. スケジュールと予算</h2>
+<p>年次別の予算内訳・実施計画。総事業費・補助申請額を明示。</p>
+<h2>6. 提出物チェックリスト</h2>
+<p>申請書類のチェックボックスリスト。</p>
+<h2>7. 推奨アクション</h2>
+<p>即時に行うべき次のステップを箇条書き3-5点。</p>
+<p>【重要】</p>
+<ul>
+<li>地の文中心、箇条書きは補助的に</li>
+<li>法人の数値・実績を本文に組み込む</li>
+<li>1,500-2,500字</li>
+<li>出力の最後に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NM_住友電工グループ社会貢献基金 学術研究助成.md」と1行で報告</li>
+</ul>
+<p>【ファイル保存】 最終Markdownを完成させたら、以下のパスに保存してください（書き込み権限がない場合はログ末尾に保存対象を明記してください）: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NM_住友電工グループ社会貢献基金 学術研究助成.md</p>
+<p>codex 指定先が現在の書き込み許可範囲の外にあるため、まず保存可否を確認します。書けない場合は、同じ内容を許可された範囲に保存し、指定された保存対象パスも明記します。 exec /bin/bash -lc 'mkdir -p /Users/nishimura+/work/miratuku-grants-2026/drafts_v2 && test -w /Users/nishimura+/work/miratuku-grants-2026/drafts_v2 && printf writable || printf not_writable' in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms: not_writable codex 指定先ディレクトリは存在していても、このセッションからは書き込み不可でした。提出用Markdownは許可された作業ディレクトリ内の <code>site/drafts_v2/</code> に保存し、文末に本来の保存対象パスを入れます。 exec /bin/bash -lc 'mkdir -p drafts_v2' in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms: codex これからMarkdown本文を作成して保存します。内容は、学際研究テーマとミラツクの知識基盤・研究者接続力が自然につながる構成に寄せます。 apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/site/drafts_v2/NM_住友電工グループ社会貢献基金 学術研究助成.md diff --git a/drafts_v2/NM_住友電工グループ社会貢献基金 学術研究助成.md b/drafts_v2/NM_住友電工グループ社会貢献基金 学術研究助成.md new file mode 100644 index 0000000000000000000000000000000000000000..536e2b8a50fb81d3dce07c2ba07b4b02a39fae68 --- /dev/null +++ b/drafts_v2/NM_住友電工グループ社会貢献基金 学術研究助成.md @@ -0,0 +1,50 @@ +# 住友電工グループ社会貢献基金 学術研究助成 申請書ドラフト（ミラツク向け） + +<strong>締切</strong>: 2026-05-29 | <strong>上限</strong>: — + +## 1. 申請者情報（300字） +特定非営利活動法人ミラツクは、2010年設立、第14期を迎える京都府・東京都拠点の非営利法人である。専従スタッフ25名により、企業協働20社、コミュニティ参加者350名を基盤に、研究者・企業・行政・市民をつなぐ学際的な知の社会実装に取り組んできた。2024年度営業収益は87,405,221円で、単年度では12.2百万円の赤字を計上したが、繰越正味財産6.2百万円を有し、事業継続と基盤強化を同時に進めている。特に、学術知識30,288概念、歴史事象91,550件、財団2,140件、採択者2,122件等を含む26のSQLite知識データベースと、「事業のかたち」「暮らしのかたち」「変化のかたち」合計300話の連載知見は、本助成が重視する学際研究の土台となる。 + +## 2. 助成金概要・応募要件（200字） +住友電工グループ社会貢献基金 学術研究助成は、社会課題の解決に資する学術研究を支援する制度として位置づけられる。本件ではテーマA「学際研究」との適合性が高く、単一分野に閉じない研究設計、研究成果の社会的波及、研究者の知見を実社会の意思決定や実践へ接続する力が評価上重要になる。ミラツクは、既存の学際的知見DBと研究者ネットワークを活用し、知識の整理にとどまらず、社会実装可能な研究仮説と協働モデルを提示できる点で親和性が高い。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 学際知識データベースを用いた社会課題研究テーマ生成と研究者の社会接続モデルの構築 +26の知識データベースと300話の実践知を横断解析し、環境、地域、教育、産業転換等の社会課題に対して、異分野研究者が協働可能な研究テーマ生成手法を開発する。研究成果は、研究者と実践者を接続する公開可能な方法論として整理する。 + +<strong>案B（代替）</strong>: 企業・地域・研究者の協働による学際研究プロトタイプ形成 +企業協働20社と350名のコミュニティを活用し、社会課題を起点に研究者、企業、地域実践者が共同で研究仮説を形成する場を設計する。対話とデータ分析を組み合わせ、実装可能性の高い研究プロトタイプを複数創出する。 + +## 4. 事業/研究計画書本文（推奨案A） +### 背景・目的（300-400字） +気候変動、地域の持続性、ケア、教育、産業構造の転換といった現代的課題は、個別分野の専門知だけでは十分に捉えきれない。学術研究には、深い専門性を保ちながら、社会の実践現場と接続し、新しい問いを生成する役割が求められている。ミラツクはこれまで、企業協働20社、コミュニティ参加者350名との対話を通じて、研究者の知を社会に接続する場を形成してきた。また、学術知識30,288概念、歴史事象91,550件、産業36,734件等を含む26のSQLite知識データベースを蓄積し、社会課題を多面的に把握する基盤を有している。本研究では、これらの知識基盤を用いて、社会課題から学際研究テーマを生成する方法を体系化し、研究者の知が実践者と出会い、共同研究へ発展する接続モデルを構築する。 + +### 研究/事業の方法（300-400字） +研究は三段階で実施する。第一段階では、26の知識データベースから学術概念、歴史事象、産業動向、財団・採択者情報を抽出し、社会課題別の知識マップを作成する。第二段階では、「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載知見を参照し、実践現場で観察される変化の兆しと学術概念を対応づける。第三段階では、研究者、企業、NPO、地域実践者を交えた検討会を開催し、生成された研究テーマ案の妥当性、社会的必要性、共同研究化の可能性を評価する。成果は、テーマ生成プロセス、評価基準、協働形成の手順を含む実践的な研究方法論として整理する。 + +### 期待される成果（200-300字） +定量成果として、重点社会課題5領域以上の知識マップ、学際研究テーマ案20件以上、研究者・実践者の接続候補リスト30件以上を作成する。定性成果として、専門分野を越えた研究課題の形成手順を明文化し、研究者の知を社会課題の現場へ接続する再現可能なモデルを提示する。これにより、ミラツクの知識基盤を単なる蓄積から、研究テーマの発見、共同研究の設計、社会実装の入口をつくる公共的資源へ発展させる。 + +## 5. スケジュールと予算 +2026年7月から9月は既存DBの整理、対象領域の選定、知識マップの初期設計を行う。10月から12月は連載300話との対応づけ、研究テーマ案の抽出、外部研究者へのヒアリングを実施する。2027年1月から3月は検討会を2回開催し、テーマ案の評価と協働モデルの精緻化を進める。4月から6月は成果報告書、公開用概要、次年度共同研究計画を作成する。総事業費は3,000,000円、補助申請額は2,500,000円を想定する。内訳は、研究調査・DB整理900,000円、研究者謝金・外部協力費700,000円、検討会運営費400,000円、成果物編集・公開費300,000円、管理事務費200,000円とする。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> 申請書本紙 +- <input type="checkbox" disabled> 研究計画書または事業計画書 +- <input type="checkbox" disabled> 法人概要資料 +- <input type="checkbox" disabled> 直近年度の決算書類 +- <input type="checkbox" disabled> 2024年度営業収益87,405,221円および正味財産状況の説明資料 +- <input type="checkbox" disabled> 26の知識データベース概要一覧 +- <input type="checkbox" disabled> 連載300話の概要資料 +- <input type="checkbox" disabled> 研究者・協働先候補リスト +- <input type="checkbox" disabled> 予算書および資金計画 +- <input type="checkbox" disabled> 代表者印または電子提出に必要な確認書類 + +## 7. 推奨アクション +- 公募要領で上限額、対象経費、研究期間、法人応募可否を確認する。 +- 案Aを基軸に、対象社会課題を5領域程度へ絞り込む。 +- 26のSQLite知識データベースの名称、件数、活用可能範囲を一覧化する。 +- 研究者の推薦者または共同検討者を2から3名確保する。 +- 赤字決算について、基盤投資と今後の収支改善見通しを補足説明として準備する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NM_住友電工グループ社会貢献基金 学術研究助成.md</p>
+<p>diff --git a/drafts_v2/NM_住友電工グループ社会貢献基金 学術研究助成.md b/drafts_v2/NM_住友電工グループ社会貢献基金 学術研究助成.md new file mode 100644 index 0000000000000000000000000000000000000000..536e2b8a50fb81d3dce07c2ba07b4b02a39fae68 --- /dev/null +++ b/drafts_v2/NM_住友電工グループ社会貢献基金 学術研究助成.md @@ -0,0 +1,50 @@ +# 住友電工グループ社会貢献基金 学術研究助成 申請書ドラフト（ミラツク向け） + +<strong>締切</strong>: 2026-05-29 | <strong>上限</strong>: — + +## 1. 申請者情報（300字） +特定非営利活動法人ミラツクは、2010年設立、第14期を迎える京都府・東京都拠点の非営利法人である。専従スタッフ25名により、企業協働20社、コミュニティ参加者350名を基盤に、研究者・企業・行政・市民をつなぐ学際的な知の社会実装に取り組んできた。2024年度営業収益は87,405,221円で、単年度では12.2百万円の赤字を計上したが、繰越正味財産6.2百万円を有し、事業継続と基盤強化を同時に進めている。特に、学術知識30,288概念、歴史事象91,550件、財団2,140件、採択者2,122件等を含む26のSQLite知識データベースと、「事業のかたち」「暮らしのかたち」「変化のかたち」合計300話の連載知見は、本助成が重視する学際研究の土台となる。 + +## 2. 助成金概要・応募要件（200字） +住友電工グループ社会貢献基金 学術研究助成は、社会課題の解決に資する学術研究を支援する制度として位置づけられる。本件ではテーマA「学際研究」との適合性が高く、単一分野に閉じない研究設計、研究成果の社会的波及、研究者の知見を実社会の意思決定や実践へ接続する力が評価上重要になる。ミラツクは、既存の学際的知見DBと研究者ネットワークを活用し、知識の整理にとどまらず、社会実装可能な研究仮説と協働モデルを提示できる点で親和性が高い。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 学際知識データベースを用いた社会課題研究テーマ生成と研究者の社会接続モデルの構築 +26の知識データベースと300話の実践知を横断解析し、環境、地域、教育、産業転換等の社会課題に対して、異分野研究者が協働可能な研究テーマ生成手法を開発する。研究成果は、研究者と実践者を接続する公開可能な方法論として整理する。 + +<strong>案B（代替）</strong>: 企業・地域・研究者の協働による学際研究プロトタイプ形成 +企業協働20社と350名のコミュニティを活用し、社会課題を起点に研究者、企業、地域実践者が共同で研究仮説を形成する場を設計する。対話とデータ分析を組み合わせ、実装可能性の高い研究プロトタイプを複数創出する。 + +## 4. 事業/研究計画書本文（推奨案A） +### 背景・目的（300-400字） +気候変動、地域の持続性、ケア、教育、産業構造の転換といった現代的課題は、個別分野の専門知だけでは十分に捉えきれない。学術研究には、深い専門性を保ちながら、社会の実践現場と接続し、新しい問いを生成する役割が求められている。ミラツクはこれまで、企業協働20社、コミュニティ参加者350名との対話を通じて、研究者の知を社会に接続する場を形成してきた。また、学術知識30,288概念、歴史事象91,550件、産業36,734件等を含む26のSQLite知識データベースを蓄積し、社会課題を多面的に把握する基盤を有している。本研究では、これらの知識基盤を用いて、社会課題から学際研究テーマを生成する方法を体系化し、研究者の知が実践者と出会い、共同研究へ発展する接続モデルを構築する。 + +### 研究/事業の方法（300-400字） +研究は三段階で実施する。第一段階では、26の知識データベースから学術概念、歴史事象、産業動向、財団・採択者情報を抽出し、社会課題別の知識マップを作成する。第二段階では、「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載知見を参照し、実践現場で観察される変化の兆しと学術概念を対応づける。第三段階では、研究者、企業、NPO、地域実践者を交えた検討会を開催し、生成された研究テーマ案の妥当性、社会的必要性、共同研究化の可能性を評価する。成果は、テーマ生成プロセス、評価基準、協働形成の手順を含む実践的な研究方法論として整理する。 + +### 期待される成果（200-300字） +定量成果として、重点社会課題5領域以上の知識マップ、学際研究テーマ案20件以上、研究者・実践者の接続候補リスト30件以上を作成する。定性成果として、専門分野を越えた研究課題の形成手順を明文化し、研究者の知を社会課題の現場へ接続する再現可能なモデルを提示する。これにより、ミラツクの知識基盤を単なる蓄積から、研究テーマの発見、共同研究の設計、社会実装の入口をつくる公共的資源へ発展させる。 + +## 5. スケジュールと予算 +2026年7月から9月は既存DBの整理、対象領域の選定、知識マップの初期設計を行う。10月から12月は連載300話との対応づけ、研究テーマ案の抽出、外部研究者へのヒアリングを実施する。2027年1月から3月は検討会を2回開催し、テーマ案の評価と協働モデルの精緻化を進める。4月から6月は成果報告書、公開用概要、次年度共同研究計画を作成する。総事業費は3,000,000円、補助申請額は2,500,000円を想定する。内訳は、研究調査・DB整理900,000円、研究者謝金・外部協力費700,000円、検討会運営費400,000円、成果物編集・公開費300,000円、管理事務費200,000円とする。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> 申請書本紙 +- <input type="checkbox" disabled> 研究計画書または事業計画書 +- <input type="checkbox" disabled> 法人概要資料 +- <input type="checkbox" disabled> 直近年度の決算書類 +- <input type="checkbox" disabled> 2024年度営業収益87,405,221円および正味財産状況の説明資料 +- <input type="checkbox" disabled> 26の知識データベース概要一覧 +- <input type="checkbox" disabled> 連載300話の概要資料 +- <input type="checkbox" disabled> 研究者・協働先候補リスト +- <input type="checkbox" disabled> 予算書および資金計画 +- <input type="checkbox" disabled> 代表者印または電子提出に必要な確認書類 + +## 7. 推奨アクション +- 公募要領で上限額、対象経費、研究期間、法人応募可否を確認する。 +- 案Aを基軸に、対象社会課題を5領域程度へ絞り込む。 +- 26のSQLite知識データベースの名称、件数、活用可能範囲を一覧化する。 +- 研究者の推薦者または共同検討者を2から3名確保する。 +- 赤字決算について、基盤投資と今後の収支改善見通しを補足説明として準備する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NM_住友電工グループ社会貢献基金 学術研究助成.md</p>
+<p>exec /bin/bash -lc "wc -m drafts_v2/NM_住友電工グループ社会貢献基金\\ 学術研究助成.md && tail -n 1 drafts_v2/NM_住友電工グループ社会貢献基金\\ 学術研究助成.md" in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms:     2708 drafts_v2/NM_住友電工グループ社会貢献基金 学術研究助成.md</p>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

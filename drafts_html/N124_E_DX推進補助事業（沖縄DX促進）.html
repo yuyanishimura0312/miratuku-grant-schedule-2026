@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>DX推進補助事業（沖縄DX促進）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>DX推進補助事業（沖縄DX促進） 申請書ドラフト（esse-sense向け）</h1>
+<p><strong>締切</strong>: 2026-05-30 | <strong>上限</strong>: 1,000万円</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>法人プロフィールを基に、当該助成金との適合性を強調する自然な文章。営業収益・コミュニティ規模・DB数・連載数等の数値を本文に組み込む。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>助成金の目的・要件・評価ポイントを地の文で整理。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 法人の強み（①④⑤）と評価軸に最も合致するテーマ <strong>案B（代替）</strong>: 別角度からのアプローチ （各案にタイトルと150字の要旨）</p>
+<h2>4. 事業/研究計画書本文（推奨案A）</h2>
+<h3>背景・目的（300-400字）</h3>
+<p>社会的・学術的意義を地の文で記述。法人の実績・数値を引用。</p>
+<h3>研究/事業の方法（300-400字）</h3>
+<p>具体的アプローチ、段階的実施計画。</p>
+<h3>期待される成果（200-300字）</h3>
+<p>定量・定性の両面で。</p>
+<h2>5. スケジュールと予算</h2>
+<p>年次別の予算内訳・実施計画。総事業費・補助申請額を明示。</p>
+<h2>6. 提出物チェックリスト</h2>
+<p>申請書類のチェックボックスリスト。</p>
+<h2>7. 推奨アクション</h2>
+<p>即時に行うべき次のステップを箇条書き3-5点。</p>
+<p>【重要】</p>
+<ul>
+<li>地の文中心、箇条書きは補助的に</li>
+<li>法人の数値・実績を本文に組み込む</li>
+<li>1,500-2,500字</li>
+<li>出力の最後に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_DX推進補助事業（沖縄DX促進）.md」と1行で報告</li>
+</ul>
+<p>【ファイル保存】 最終Markdownを完成させたら、以下のパスに保存してください（書き込み権限がない場合はログ末尾に保存対象を明記してください）: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_DX推進補助事業（沖縄DX促進）.md</p>
+<p>codex 指定パスは現在の書き込み許可範囲（<code>site</code> 配下）の外にあります。まず保存先ディレクトリの有無と権限を確認し、可能ならそのまま保存します。 exec /bin/bash -lc 'ls -ld /Users/nishimura+/work/miratuku-grants-2026 /Users/nishimura+/work/miratuku-grants-2026/drafts_v2' in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms: drwxr-xr-x  26 nishimura+  staff   832  5月 10 10:58 /Users/nishimura+/work/miratuku-grants-2026 drwxr-xr-x  40 nishimura+  staff  1280  5月 10 10:57 /Users/nishimura+/work/miratuku-grants-2026/drafts_v2</p>
+<p>codex 保存先ディレクトリは存在します。これから指定構成どおりのMarkdownを作成し、指定ファイルへの書き込みを試します。 2026-05-10T02:09:53.926405Z ERROR codex_core::tools::router: error=patch rejected: writing outside of the project; rejected by user approval settings codex 指定パスへの直接書き込みはサンドボックスで拒否されました。提出用Markdown自体は作成済みなので、書き込み可能な <code>site/drafts_v2</code> 配下に同名ファイルとして保存し、最終報告で指定の保存対象パスも明記します。 apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/site/drafts_v2/NE_DX推進補助事業（沖縄DX促進）.md diff --git a/drafts_v2/NE_DX推進補助事業（沖縄DX促進）.md b/drafts_v2/NE_DX推進補助事業（沖縄DX促進）.md new file mode 100644 index 0000000000000000000000000000000000000000..da671356d356b0f96425625ef9581ff7a88e15ed --- /dev/null +++ b/drafts_v2/NE_DX推進補助事業（沖縄DX促進）.md @@ -0,0 +1,47 @@ +# DX推進補助事業（沖縄DX促進） 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-05-30 | <strong>上限</strong>: 1,000万円 + +## 1. 申請者情報（300字） +esse-senseは、研究者の知を社会に届けることを主事業とする株式会社であり、学術知見を企業・自治体・教育機関の実践に接続するメディア事業を展開している。自社の記事DBにはarticles 154件、general_articles 34件を蓄積し、研究成果、社会課題、技術動向を横断的に整理・発信してきた。営業収益はメディア制作、調査・編集、産学連携支援、大学発スタートアップ支援等から構成され、営利法人として継続的な事業化を志向している点が本補助事業と適合する。ミラツクとの密接な共同応募実績を持ち、学際的知見DB、AI、大規模解析・テキスト解析、大学・学術機関DXの経験を、沖縄県内パートナーM+Eと連携したデータ活用型DXに展開できる。 + +## 2. 助成金概要・応募要件（200字） +DX推進補助事業（沖縄DX促進）は、沖縄県内における産業・地域課題の解決に向け、データ活用を軸とした実証、業務変革、新規サービス開発を支援する補助事業である。上限額は1,000万円、締切は2026年5月30日であり、県内パートナーであるM+Eを主体に、県外企業の知見を実装へ結び付ける体制が重要となる。評価では、沖縄固有の課題設定、データの収集・分析・活用方法、県内事業者への波及、実証後の継続性が重視される。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 「沖縄の産学官連携を加速する研究知見データ活用DX基盤」 +沖縄県内の大学、研究機関、企業、自治体が持つ課題と研究知見を、esse-senseの記事DBと学際的知見DBを活用して構造化し、AIによるマッチングとテキスト解析で産学官連携テーマを可視化する。M+Eを県内実装主体とし、地域課題起点の新規事業創出を支援する。 + +<strong>案B（代替）</strong>: 「沖縄観光・地域産業の未来課題を読み解く知見メディアDX」 +観光、離島、環境、教育、人材など沖縄特有の産業課題を対象に、研究者知見と地域事業者の実践情報を収集・編集し、データベース化する。AI分析によりテーマ別レポートや連載企画へ展開し、県内企業の意思決定と情報発信力を高める。 + +## 4. 事業/研究計画書本文（推奨案A） +### 背景・目的（300-400字） +沖縄では観光依存、人材不足、離島間格差、環境保全、地域産業の高付加価値化など、複数領域にまたがる課題が同時に進行している。これらは単独の技術導入だけでは解決しにくく、大学・研究機関の知見、県内企業の現場情報、自治体の政策課題を横断的に結び付ける仕組みが必要である。esse-senseはarticles 154件、general_articles 34件の知見コンテンツを基盤に、研究者の専門知を社会実装へ翻訳してきた。さらにAI、データ活用、産学連携支援、大学発SU支援、大学・学術機関DXに関する経験を持つ。本事業では、M+Eを県内実装主体として、沖縄固有の課題と研究知見をデータとして整理し、産学官連携を生み出すDX基盤を構築することを目的とする。 + +### 研究/事業の方法（300-400字） +事業は三段階で実施する。第一段階では、M+Eと共同で沖縄県内の重点課題を整理し、観光、環境、教育、人材、地域産業、大学発スタートアップ等の領域から実証対象を選定する。第二段階では、esse-senseが保有する記事DBと外部公開情報、県内ヒアリング記録を統合し、テキスト解析により課題、研究領域、技術シーズ、連携候補をタグ化する。第三段階では、AIを用いたテーマ抽出・候補者推薦・連携仮説生成のプロトタイプを構築し、M+E、県内企業、大学関係者による検証会を行う。成果はダッシュボード、マッチング候補リスト、実証テーマ案、知見記事として整理し、esse-sense Future Forum等の国際展開にも接続する。 + +### 期待される成果（200-300字） +定量成果として、沖縄関連課題・研究知見データ300件以上の整理、県内企業・大学・自治体等30主体以上の候補リスト化、産学官連携テーマ10件以上の創出、実証候補3件以上の形成を目標とする。定性成果として、県内パートナーが継続的に活用できる知見データ基盤を整備し、属人的な紹介や単発イベントに依存しない連携創出を可能にする。研究者の知を地域産業へ届けるesse-senseの強みを、沖縄のDX促進と新規事業創出に直結させる。 + +## 5. スケジュールと予算 +2026年度は、6月から7月に要件定義と県内課題ヒアリング、8月から10月にデータ収集・構造化、11月から2027年1月にAI分析プロトタイプ開発、2月から3月に県内検証会と成果報告を行う。総事業費は1,250万円、補助申請額は1,000万円、自己負担額は250万円を想定する。内訳は、調査・ヒアリング費150万円、データ整備・テキスト解析費250万円、AIプロトタイプ開発費350万円、県内検証会・ワークショップ費150万円、記事化・レポート制作費150万円、PM・連携調整費200万円とする。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> 申請書本体 +- <input type="checkbox" disabled> 事業計画書・収支予算書 +- <input type="checkbox" disabled> M+Eとの連携体制説明書または共同実施確認書 +- <input type="checkbox" disabled> esse-senseの会社概要、事業実績、記事DB概要資料 +- <input type="checkbox" disabled> 沖縄県内課題との対応表 +- <input type="checkbox" disabled> 補助対象経費の見積書 +- <input type="checkbox" disabled> 直近決算書・履歴事項全部証明書等の法人確認書類 + +## 7. 推奨アクション +- M+Eと申請主体、役割分担、費用負担、成果物の権利関係を確定する。 +- 沖縄固有課題を3領域に絞り、県内ヒアリング候補を早急に選定する。 +- articles 154件、general_articles 34件から沖縄・地域産業・産学連携に関係する記事を抽出する。 +- 見積書、決算書、会社概要、共同実施確認書を2026年5月20日までに揃える。 +- 申請書では「データ活用」「県内波及」「実証後の継続運用」を一貫した評価軸として強調する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_DX推進補助事業（沖縄DX促進）.md</p>
+<p>diff --git a/drafts_v2/NE_DX推進補助事業（沖縄DX促進）.md b/drafts_v2/NE_DX推進補助事業（沖縄DX促進）.md new file mode 100644 index 0000000000000000000000000000000000000000..da671356d356b0f96425625ef9581ff7a88e15ed --- /dev/null +++ b/drafts_v2/NE_DX推進補助事業（沖縄DX促進）.md @@ -0,0 +1,47 @@ +# DX推進補助事業（沖縄DX促進） 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-05-30 | <strong>上限</strong>: 1,000万円 + +## 1. 申請者情報（300字） +esse-senseは、研究者の知を社会に届けることを主事業とする株式会社であり、学術知見を企業・自治体・教育機関の実践に接続するメディア事業を展開している。自社の記事DBにはarticles 154件、general_articles 34件を蓄積し、研究成果、社会課題、技術動向を横断的に整理・発信してきた。営業収益はメディア制作、調査・編集、産学連携支援、大学発スタートアップ支援等から構成され、営利法人として継続的な事業化を志向している点が本補助事業と適合する。ミラツクとの密接な共同応募実績を持ち、学際的知見DB、AI、大規模解析・テキスト解析、大学・学術機関DXの経験を、沖縄県内パートナーM+Eと連携したデータ活用型DXに展開できる。 + +## 2. 助成金概要・応募要件（200字） +DX推進補助事業（沖縄DX促進）は、沖縄県内における産業・地域課題の解決に向け、データ活用を軸とした実証、業務変革、新規サービス開発を支援する補助事業である。上限額は1,000万円、締切は2026年5月30日であり、県内パートナーであるM+Eを主体に、県外企業の知見を実装へ結び付ける体制が重要となる。評価では、沖縄固有の課題設定、データの収集・分析・活用方法、県内事業者への波及、実証後の継続性が重視される。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 「沖縄の産学官連携を加速する研究知見データ活用DX基盤」 +沖縄県内の大学、研究機関、企業、自治体が持つ課題と研究知見を、esse-senseの記事DBと学際的知見DBを活用して構造化し、AIによるマッチングとテキスト解析で産学官連携テーマを可視化する。M+Eを県内実装主体とし、地域課題起点の新規事業創出を支援する。 + +<strong>案B（代替）</strong>: 「沖縄観光・地域産業の未来課題を読み解く知見メディアDX」 +観光、離島、環境、教育、人材など沖縄特有の産業課題を対象に、研究者知見と地域事業者の実践情報を収集・編集し、データベース化する。AI分析によりテーマ別レポートや連載企画へ展開し、県内企業の意思決定と情報発信力を高める。 + +## 4. 事業/研究計画書本文（推奨案A） +### 背景・目的（300-400字） +沖縄では観光依存、人材不足、離島間格差、環境保全、地域産業の高付加価値化など、複数領域にまたがる課題が同時に進行している。これらは単独の技術導入だけでは解決しにくく、大学・研究機関の知見、県内企業の現場情報、自治体の政策課題を横断的に結び付ける仕組みが必要である。esse-senseはarticles 154件、general_articles 34件の知見コンテンツを基盤に、研究者の専門知を社会実装へ翻訳してきた。さらにAI、データ活用、産学連携支援、大学発SU支援、大学・学術機関DXに関する経験を持つ。本事業では、M+Eを県内実装主体として、沖縄固有の課題と研究知見をデータとして整理し、産学官連携を生み出すDX基盤を構築することを目的とする。 + +### 研究/事業の方法（300-400字） +事業は三段階で実施する。第一段階では、M+Eと共同で沖縄県内の重点課題を整理し、観光、環境、教育、人材、地域産業、大学発スタートアップ等の領域から実証対象を選定する。第二段階では、esse-senseが保有する記事DBと外部公開情報、県内ヒアリング記録を統合し、テキスト解析により課題、研究領域、技術シーズ、連携候補をタグ化する。第三段階では、AIを用いたテーマ抽出・候補者推薦・連携仮説生成のプロトタイプを構築し、M+E、県内企業、大学関係者による検証会を行う。成果はダッシュボード、マッチング候補リスト、実証テーマ案、知見記事として整理し、esse-sense Future Forum等の国際展開にも接続する。 + +### 期待される成果（200-300字） +定量成果として、沖縄関連課題・研究知見データ300件以上の整理、県内企業・大学・自治体等30主体以上の候補リスト化、産学官連携テーマ10件以上の創出、実証候補3件以上の形成を目標とする。定性成果として、県内パートナーが継続的に活用できる知見データ基盤を整備し、属人的な紹介や単発イベントに依存しない連携創出を可能にする。研究者の知を地域産業へ届けるesse-senseの強みを、沖縄のDX促進と新規事業創出に直結させる。 + +## 5. スケジュールと予算 +2026年度は、6月から7月に要件定義と県内課題ヒアリング、8月から10月にデータ収集・構造化、11月から2027年1月にAI分析プロトタイプ開発、2月から3月に県内検証会と成果報告を行う。総事業費は1,250万円、補助申請額は1,000万円、自己負担額は250万円を想定する。内訳は、調査・ヒアリング費150万円、データ整備・テキスト解析費250万円、AIプロトタイプ開発費350万円、県内検証会・ワークショップ費150万円、記事化・レポート制作費150万円、PM・連携調整費200万円とする。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> 申請書本体 +- <input type="checkbox" disabled> 事業計画書・収支予算書 +- <input type="checkbox" disabled> M+Eとの連携体制説明書または共同実施確認書 +- <input type="checkbox" disabled> esse-senseの会社概要、事業実績、記事DB概要資料 +- <input type="checkbox" disabled> 沖縄県内課題との対応表 +- <input type="checkbox" disabled> 補助対象経費の見積書 +- <input type="checkbox" disabled> 直近決算書・履歴事項全部証明書等の法人確認書類 + +## 7. 推奨アクション +- M+Eと申請主体、役割分担、費用負担、成果物の権利関係を確定する。 +- 沖縄固有課題を3領域に絞り、県内ヒアリング候補を早急に選定する。 +- articles 154件、general_articles 34件から沖縄・地域産業・産学連携に関係する記事を抽出する。 +- 見積書、決算書、会社概要、共同実施確認書を2026年5月20日までに揃える。 +- 申請書では「データ活用」「県内波及」「実証後の継続運用」を一貫した評価軸として強調する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_DX推進補助事業（沖縄DX促進）.md</p>
+<p>codex 書き込み可能な場所への保存は完了しました。最後に文字数とファイル末尾の保存対象パスを確認します。 exec /bin/bash -lc "wc -m 'drafts_v2/NE_DX推進補助事業（沖縄DX促進）.md' && tail -n 3 'drafts_v2/NE_DX推進補助事業（沖縄DX促進）.md'" in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms:     2698 drafts_v2/NE_DX推進補助事業（沖縄DX促進）.md</p>
+<ul>
+<li>申請書では「データ活用」「県内波及」「実証後の継続運用」を一貫した評価軸として強調する。</li>
+</ul>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

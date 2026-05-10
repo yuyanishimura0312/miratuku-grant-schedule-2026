@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>サステナブルツーリズム推進事業（沖縄）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>サステナブルツーリズム推進事業（沖縄） 申請書ドラフト（ミラツク向け）</h1>
+<p><strong>締切</strong>: 2026-05-15 | <strong>上限</strong>: 500万円</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>法人プロフィールを基に、当該助成金との適合性を強調する自然な文章。営業収益・コミュニティ規模・DB数・連載数等の数値を本文に組み込む。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>助成金の目的・要件・評価ポイントを地の文で整理。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 法人の強み（②④）と評価軸に最も合致するテーマ <strong>案B（代替）</strong>: 別角度からのアプローチ （各案にタイトルと150字の要旨）</p>
+<h2>4. 事業/研究計画書本文（推奨案A）</h2>
+<h3>背景・目的（300-400字）</h3>
+<p>社会的・学術的意義を地の文で記述。法人の実績・数値を引用。</p>
+<h3>研究/事業の方法（300-400字）</h3>
+<p>具体的アプローチ、段階的実施計画。</p>
+<h3>期待される成果（200-300字）</h3>
+<p>定量・定性の両面で。</p>
+<h2>5. スケジュールと予算</h2>
+<p>年次別の予算内訳・実施計画。総事業費・補助申請額を明示。</p>
+<h2>6. 提出物チェックリスト</h2>
+<p>申請書類のチェックボックスリスト。</p>
+<h2>7. 推奨アクション</h2>
+<p>即時に行うべき次のステップを箇条書き3-5点。</p>
+<p>【重要】</p>
+<ul>
+<li>地の文中心、箇条書きは補助的に</li>
+<li>法人の数値・実績を本文に組み込む</li>
+<li>1,500-2,500字</li>
+<li>出力の最後に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NM_サステナブルツーリズム推進事業（沖縄）.md」と1行で報告</li>
+</ul>
+<p>【ファイル保存】 最終Markdownを完成させたら、以下のパスに保存してください（書き込み権限がない場合はログ末尾に保存対象を明記してください）: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NM_サステナブルツーリズム推進事業（沖縄）.md</p>
+<p>codex 提出用のMarkdownを作成し、まず指定パスへ保存できるか確認します。権限で弾かれる場合は、作業ディレクトリ内に同内容を保存し、指定保存先を末尾で明記します。 exec /bin/bash -lc 'mkdir -p /Users/nishimura+/work/miratuku-grants-2026/drafts_v2 && test -w /Users/nishimura+/work/miratuku-grants-2026/drafts_v2 && printf writable || printf not_writable' in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms: not_writable codex 指定ディレクトリは現在のサンドボックスから書き込み不可でした。これから同じMarkdownを作業ディレクトリ配下の <code>drafts_v2</code> に保存し、文書末尾にも指定の保存対象パスを入れます。 exec /bin/bash -lc 'mkdir -p drafts_v2' in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms: apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/site/drafts_v2/NM_サステナブルツーリズム推進事業（沖縄）.md diff --git a/drafts_v2/NM_サステナブルツーリズム推進事業（沖縄）.md b/drafts_v2/NM_サステナブルツーリズム推進事業（沖縄）.md new file mode 100644 index 0000000000000000000000000000000000000000..1a1894570d7ec47c42d0e310a24dbd74580d4e9e --- /dev/null +++ b/drafts_v2/NM_サステナブルツーリズム推進事業（沖縄）.md @@ -0,0 +1,47 @@ +# サステナブルツーリズム推進事業（沖縄） 申請書ドラフト（ミラツク向け） + +<strong>締切</strong>: 2026-05-15 | <strong>上限</strong>: 500万円 + +## 1. 申請者情報（300字） +特定非営利活動法人ミラツクは、2010年設立、京都府・東京都を拠点に活動する第14期のNPOである。専従スタッフ25名体制で、企業協働20社、コミュニティ参加者350名との実践基盤を有し、2024年度営業収益は87,405,221円であった。直近は12.2百万円の赤字、繰越正味財産6.2百万円という財務課題を抱えるが、26のSQLite知識データベース、学術知識30,288概念、歴史事象91,550件、財団2,140件、採択者2,122件、産業36,734件等を統合的に活用できる点が強みである。また「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載を完結させており、地域社会の変化を言語化し、協働事業へ転換する知見を蓄積している。本事業では、県内パートナーを主体とし、ミラツクはセクター間協働とデータ活用の伴走機能を担う。 + +## 2. 助成金概要・応募要件（200字） +本助成は、沖縄における観光の持続可能性を高め、地域社会・自然環境・文化資源と調和した観光モデルを社会実装する事業を支援するものと位置づけられる。評価上は、県内主体との実施体制、地域住民への便益、観光負荷の可視化、継続可能な運営モデル、沖縄特有の自然・文化・歴史への理解が重要となる。上限500万円の範囲で、調査だけでなく実証、改善、普及までを含む計画が望ましい。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 沖縄型サステナブルツーリズム共創ダッシュボード実装事業 +県内観光事業者、自治体、住民団体、研究者をつなぎ、観光負荷、地域還元、文化継承、来訪者満足を可視化する簡易ダッシュボードを開発する。ミラツクのセクター間協働力と知識DBを活用し、地域で使い続けられる意思決定基盤を実装する。 + +<strong>案B（代替）</strong>: 沖縄の生活文化を起点にした分散型観光プログラム設計 +過度な集中観光から、集落、工芸、食、祈り、海と陸の暮らしへ来訪者の関心を分散させる体験設計を行う。住民参加型の対話と試行ツアーを通じ、地域の尊厳を守りながら観光消費を面的に広げるモデルを構築する。 + +## 4. 事業/研究計画書本文（推奨案A） +### 背景・目的（300-400字） +沖縄観光は、国内外からの強い需要を背景に地域経済を支える一方、交通混雑、自然環境への負荷、生活空間への来訪者集中、文化資源の消費的利用といった課題を抱えている。サステナブルツーリズムを地域社会に実装するには、理念の共有に加え、地域の複数主体が同じ情報を見ながら判断し、改善を重ねる仕組みが必要である。ミラツクは、企業協働20社と350名のコミュニティを通じて異なる立場をつなぎ、26の知識データベースと300話の連載で蓄積した社会変化の編集力を有する。本事業の目的は、県内パートナーを中心に、観光の価値と負荷を可視化し、住民便益を組み込んだ沖縄型の協働意思決定モデルを構築することである。 + +### 研究/事業の方法（300-400字） +初期段階では、県内パートナーとともに対象地域を1から2地域選定し、自治体、観光事業者、住民組織、文化継承者、研究者へのヒアリングを行う。次に、観光客数、滞在時間、混雑感、地域消費、住民満足、環境配慮行動、文化資源への影響など、地域で取得可能な指標を整理し、既存データと現地調査を組み合わせた簡易指標体系を設計する。ミラツクは、学術知識30,288概念、産業36,734件等の知識基盤を参照し、沖縄特有の文脈を損なわない問いの設計とデータ解釈を支援する。その上で、関係者が月次で確認できるダッシュボード試作版を作成し、ワークショップで改善点を抽出しながら、地域側が運用可能な形へ調整する。 + +### 期待される成果（200-300字） +成果として、対象地域ごとの観光負荷・地域還元・文化継承に関する指標セット、関係者向けダッシュボード試作版、住民・事業者参加型ワークショップ3回以上、改善提案書1件を作成する。定量面では、関係者30名以上の参加、地域指標10項目以上の整理、試行データ3か月分の蓄積を目標とする。定性面では、観光を地域外需要への対応としてのみ扱うのではなく、沖縄の生活文化と自然環境を守りながら地域内で合意形成する実装手法を確立する。 + +## 5. スケジュールと予算 +2026年6月から7月は県内パートナーとの実施体制確定、対象地域選定、既存資料調査を行う。8月から10月はヒアリングと指標設計、11月から2027年1月はダッシュボード試作とデータ収集、2月から3月はワークショップ、改善提案、次年度展開計画の作成を行う。総事業費は5,500,000円、補助申請額は上限の5,000,000円、自己負担・協賛等を500,000円とする。予算内訳は、人件費・専門家謝金1,800,000円、現地調査旅費900,000円、データ整理・システム試作1,400,000円、ワークショップ運営700,000円、広報・報告書作成300,000円、管理費400,000円を想定する。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> 申請書本体 +- <input type="checkbox" disabled> 事業計画書・収支予算書 +- <input type="checkbox" disabled> 県内パートナーの実施体制資料 +- <input type="checkbox" disabled> 法人概要、定款、役員名簿 +- <input type="checkbox" disabled> 直近年度の決算書、事業報告書 +- <input type="checkbox" disabled> 対象地域・協力団体の確認書または協力意向書 +- <input type="checkbox" disabled> ダッシュボード試作の仕様概要 + +## 7. 推奨アクション +- 県内パートナーMの正式名称、役割、代表者、過去実績を確定する。 +- 対象地域を1から2地域に絞り、沖縄特有の課題を「混雑」「文化継承」「自然環境」「地域還元」のどれに置くか決める。 +- 申請前に協力予定者3者以上から協力意向を取得する。 +- 500万円内で採択後すぐ開始できるよう、初月の調査項目と面談候補者を整理する。 +- ミラツクの赤字状況については、財務課題ではなく本事業による収益多角化・地域実装力強化として説明する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NM_サステナブルツーリズム推進事業（沖縄）.md</p>
+<p>diff --git a/drafts_v2/NM_サステナブルツーリズム推進事業（沖縄）.md b/drafts_v2/NM_サステナブルツーリズム推進事業（沖縄）.md new file mode 100644 index 0000000000000000000000000000000000000000..1a1894570d7ec47c42d0e310a24dbd74580d4e9e --- /dev/null +++ b/drafts_v2/NM_サステナブルツーリズム推進事業（沖縄）.md @@ -0,0 +1,47 @@ +# サステナブルツーリズム推進事業（沖縄） 申請書ドラフト（ミラツク向け） + +<strong>締切</strong>: 2026-05-15 | <strong>上限</strong>: 500万円 + +## 1. 申請者情報（300字） +特定非営利活動法人ミラツクは、2010年設立、京都府・東京都を拠点に活動する第14期のNPOである。専従スタッフ25名体制で、企業協働20社、コミュニティ参加者350名との実践基盤を有し、2024年度営業収益は87,405,221円であった。直近は12.2百万円の赤字、繰越正味財産6.2百万円という財務課題を抱えるが、26のSQLite知識データベース、学術知識30,288概念、歴史事象91,550件、財団2,140件、採択者2,122件、産業36,734件等を統合的に活用できる点が強みである。また「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載を完結させており、地域社会の変化を言語化し、協働事業へ転換する知見を蓄積している。本事業では、県内パートナーを主体とし、ミラツクはセクター間協働とデータ活用の伴走機能を担う。 + +## 2. 助成金概要・応募要件（200字） +本助成は、沖縄における観光の持続可能性を高め、地域社会・自然環境・文化資源と調和した観光モデルを社会実装する事業を支援するものと位置づけられる。評価上は、県内主体との実施体制、地域住民への便益、観光負荷の可視化、継続可能な運営モデル、沖縄特有の自然・文化・歴史への理解が重要となる。上限500万円の範囲で、調査だけでなく実証、改善、普及までを含む計画が望ましい。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 沖縄型サステナブルツーリズム共創ダッシュボード実装事業 +県内観光事業者、自治体、住民団体、研究者をつなぎ、観光負荷、地域還元、文化継承、来訪者満足を可視化する簡易ダッシュボードを開発する。ミラツクのセクター間協働力と知識DBを活用し、地域で使い続けられる意思決定基盤を実装する。 + +<strong>案B（代替）</strong>: 沖縄の生活文化を起点にした分散型観光プログラム設計 +過度な集中観光から、集落、工芸、食、祈り、海と陸の暮らしへ来訪者の関心を分散させる体験設計を行う。住民参加型の対話と試行ツアーを通じ、地域の尊厳を守りながら観光消費を面的に広げるモデルを構築する。 + +## 4. 事業/研究計画書本文（推奨案A） +### 背景・目的（300-400字） +沖縄観光は、国内外からの強い需要を背景に地域経済を支える一方、交通混雑、自然環境への負荷、生活空間への来訪者集中、文化資源の消費的利用といった課題を抱えている。サステナブルツーリズムを地域社会に実装するには、理念の共有に加え、地域の複数主体が同じ情報を見ながら判断し、改善を重ねる仕組みが必要である。ミラツクは、企業協働20社と350名のコミュニティを通じて異なる立場をつなぎ、26の知識データベースと300話の連載で蓄積した社会変化の編集力を有する。本事業の目的は、県内パートナーを中心に、観光の価値と負荷を可視化し、住民便益を組み込んだ沖縄型の協働意思決定モデルを構築することである。 + +### 研究/事業の方法（300-400字） +初期段階では、県内パートナーとともに対象地域を1から2地域選定し、自治体、観光事業者、住民組織、文化継承者、研究者へのヒアリングを行う。次に、観光客数、滞在時間、混雑感、地域消費、住民満足、環境配慮行動、文化資源への影響など、地域で取得可能な指標を整理し、既存データと現地調査を組み合わせた簡易指標体系を設計する。ミラツクは、学術知識30,288概念、産業36,734件等の知識基盤を参照し、沖縄特有の文脈を損なわない問いの設計とデータ解釈を支援する。その上で、関係者が月次で確認できるダッシュボード試作版を作成し、ワークショップで改善点を抽出しながら、地域側が運用可能な形へ調整する。 + +### 期待される成果（200-300字） +成果として、対象地域ごとの観光負荷・地域還元・文化継承に関する指標セット、関係者向けダッシュボード試作版、住民・事業者参加型ワークショップ3回以上、改善提案書1件を作成する。定量面では、関係者30名以上の参加、地域指標10項目以上の整理、試行データ3か月分の蓄積を目標とする。定性面では、観光を地域外需要への対応としてのみ扱うのではなく、沖縄の生活文化と自然環境を守りながら地域内で合意形成する実装手法を確立する。 + +## 5. スケジュールと予算 +2026年6月から7月は県内パートナーとの実施体制確定、対象地域選定、既存資料調査を行う。8月から10月はヒアリングと指標設計、11月から2027年1月はダッシュボード試作とデータ収集、2月から3月はワークショップ、改善提案、次年度展開計画の作成を行う。総事業費は5,500,000円、補助申請額は上限の5,000,000円、自己負担・協賛等を500,000円とする。予算内訳は、人件費・専門家謝金1,800,000円、現地調査旅費900,000円、データ整理・システム試作1,400,000円、ワークショップ運営700,000円、広報・報告書作成300,000円、管理費400,000円を想定する。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> 申請書本体 +- <input type="checkbox" disabled> 事業計画書・収支予算書 +- <input type="checkbox" disabled> 県内パートナーの実施体制資料 +- <input type="checkbox" disabled> 法人概要、定款、役員名簿 +- <input type="checkbox" disabled> 直近年度の決算書、事業報告書 +- <input type="checkbox" disabled> 対象地域・協力団体の確認書または協力意向書 +- <input type="checkbox" disabled> ダッシュボード試作の仕様概要 + +## 7. 推奨アクション +- 県内パートナーMの正式名称、役割、代表者、過去実績を確定する。 +- 対象地域を1から2地域に絞り、沖縄特有の課題を「混雑」「文化継承」「自然環境」「地域還元」のどれに置くか決める。 +- 申請前に協力予定者3者以上から協力意向を取得する。 +- 500万円内で採択後すぐ開始できるよう、初月の調査項目と面談候補者を整理する。 +- ミラツクの赤字状況については、財務課題ではなく本事業による収益多角化・地域実装力強化として説明する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NM_サステナブルツーリズム推進事業（沖縄）.md</p>
+<p>exec /bin/bash -lc 'wc -m drafts_v2/NM_サステナブルツーリズム推進事業（沖縄）.md && tail -n 1 drafts_v2/NM_サステナブルツーリズム推進事業（沖縄）.md' in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms:     2671 drafts_v2/NM_サステナブルツーリズム推進事業（沖縄）.md</p>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
