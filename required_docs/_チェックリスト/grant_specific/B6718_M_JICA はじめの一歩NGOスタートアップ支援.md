@@ -1,0 +1,526 @@
+# B6718_M_JICA はじめの一歩NGOスタートアップ支援 必要書類チェックリスト
+
+## 6. 提出物チェックリスト
+## 7. 推奨アクション（3-5点）
+末尾に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_M_JICA はじめの一歩NGOスタートアップ支援.md」記載。地の文中心、法人数値組込必須。
+codex
+助成制度の要件まわりは変わり得るので、まず公式情報に近い情報を確認してから、指定パスへドラフトを作成します。
+web search: 
+web search: JICA はじめの一歩 NGOスタートアップ支援 通年 上限100万円 応募要件
+codex
+公式ページでは、JICA基金活用事業として上限100万円、途上国・地域の生活改善や国内の多文化共生・外国人材受入支援が対象であることを確認しました。これを踏まえて、ミラツクの協働・知の社会接続・海外招聘の強みが前面に出る構成で作成します。
+exec
+/bin/bash -lc 'pwd && rg --files | head -80' in /Users/nishimura+/work/miratuku-grants-2026
+ succeeded in 0ms:
+/Users/nishimura+/work/miratuku-grants-2026
+提出スケジュール_2026年5-9月.xlsx
+06_お金をまわそう基金.md
+build_schedule_xlsx.py
+02_野村グループ基金_みらい助成.md
+09b_提出スケジュール_esse-sense.md
+04_企業メセナ協議会_助成認定.md
+08_統合実行計画.md
+site/NM_DX推進補助事業（沖縄DX促進）.md
+site/templates/sample_template.txt
+site/templates/sample_template.md
+site/drafts_html/007_M_JST RISTEX「SDGs達成に向けた共創的研究開発」.html
+site/drafts_html/010_E_総務省 地域社会DX推進パッケージ事業（二次公募）.html
+site/drafts_html/019_M_JST GteX 革新的GX技術創出（推定例年5-7月）.html
+site/drafts_html/N118_M_住友電工グループ社会貢献基金 学術研究助成.html
+site/drafts_html/016_E_ムーンショット型研究開発事業.html
+site/drafts_html/029_M_トヨタ財団 研究助成「未来の社会システム」.html
+site/drafts_html/004_E_NEDO ディープテック・スタートアップ支援(DTSU)第10回.html
+site/drafts_html/N125_M_JST CREST「エクスポソーム」.html
+site/drafts_html/026_M_鹿島学術振興財団 特定テーマ研究助成.html
+site/drafts_html/023_M_トヨタ財団 国際助成プログラム.html
+site/drafts_html/022_M_地域中核大学・特色ある研究大学 総合振興パッケージ（J-PEAKS）.html
+site/drafts_html/010_M_総務省 地域社会DX推進パッケージ事業（二次公募）.html
+site/drafts_html/N100_M_京都府 文化力チャレンジ補助金.html
+site/drafts_html/012_E_JST ASPIRE 2026 国際共同研究.html
+site/drafts_html/N114_M_JST さきがけ／ACT-X 2026年度.html
+site/drafts_html/003_M_JST CREST 戦略的創造研究推進事業.html
+site/drafts_html/008_M_共創の場形成支援プログラム（COI-NEXT）「未来共創分野」.html
+site/drafts_html/018_E_NEDO グリーンイノベーション基金.html
+site/drafts_html/N116_M_内藤記念国際会議開催助成金.html
+site/drafts_html/016_M_ムーンショット型研究開発事業.html
+site/drafts_html/018_M_NEDO グリーンイノベーション基金.html
+site/drafts_html/025_M_住友財団 基礎科学研究助成.html
+site/drafts_html/N117_E_内藤記念国際会議開催助成金.html
+site/drafts_html/N107_M_NEDO 数理科学分野×産学連携の調査.html
+site/drafts_html/_template.html
+site/drafts_html/N120_E_事業承継・M&A補助金.html
+site/drafts_html/014_E_京都市 MICE開催支援助成金（大規模国際・上期4月_下期10月）.html
+site/drafts_html/023_E_トヨタ財団 国際助成プログラム.html
+site/drafts_html/017_M_内閣府 SIP第3期（戦略的イノベーション創造）.html
+site/drafts_html/N128_E_JETRO J-StarX（海外起業家育成）.html
+site/drafts_html/005_E_中小企業成長加速化補助金（推定例年6月）.html
+site/drafts_html/015_M_経済安全保障重要技術育成プログラム（K Program）.html
+site/drafts_html/020_E_JST スタートアップ・エコシステム共創（地域拠点）.html
+site/drafts_html/021_E_第2期スタートアップ・エコシステム拠点形成戦略（内閣府）.html
+site/drafts_html/N122_E_観光庁 オーバーツーリズム対策面的整備（令和8年度）.html
+site/drafts_html/019_E_JST GteX 革新的GX技術創出（推定例年5-7月）.html
+site/drafts_html/N109_M_ロッテ財団 実装型共同研究助成.html
+site/drafts_html/N126_M_京都市 Arts Aid KYOTO.html
+site/drafts_html/N103_E_京都エコノミック・ガーデニング支援.html
+site/drafts_html/N124_E_DX推進補助事業（沖縄DX促進）.html
+site/drafts_html/N113_E_京都産学公の森推進事業.html
+site/drafts_html/030_E_DNP文化振興財団 グラフィック文化研究助成.html
+site/drafts_html/015_E_経済安全保障重要技術育成プログラム（K Program）.html
+site/drafts_html/013_M_JSPS 研究成果公開促進費 データベース部門.html
+site/drafts_html/N127_M_コミュニティ活動促進事業（沖縄）.html
+site/drafts_html/N112_M_京都産学公の森推進事業.html
+site/drafts_html/012_M_JST ASPIRE 2026 国際共同研究.html
+site/drafts_html/006_M_JST RISTEX「ケアが根づく社会システム」.html
+site/drafts_html/024_M_トヨタ財団 国内助成プログラム（自治型社会）.html
+site/drafts_html/N110_E_ロッテ財団 実装型共同研究助成.html
+site/drafts_html/N101_E_デジタル化・AI導入補助金 2026 セキュリティ枠.html
+site/drafts_html/N102_M_JST 創発的研究支援事業.html
+site/drafts_html/N129_M_中国電力技術研究財団 国際会議等開催助成.html
+site/drafts_html/N121_M_観光庁 オーバーツーリズム対策面的整備（令和8年度）.html
+site/drafts_html/030_M_DNP文化振興財団 グラフィック文化研究助成.html
+site/drafts_html/N115_M_松下幸之助記念志財団 出版助成.html
+site/drafts_html/014_M_京都市 MICE開催支援助成金（大規模国際・上期4月_下期10月）.html
+site/drafts_html/N105_E_中小企業省力化投資補助金 一般型 第6回.html
+site/drafts_html/N123_M_DX推進補助事業（沖縄DX促進）.html
+site/drafts_html/index.html
+site/drafts_html/N106_M_大同生命厚生事業団 地域保健福祉研究助成.html
+site/drafts_html/002_M_JSPS科研費_特別推進_基盤S.html
+site/drafts_html/017_E_内閣府 SIP第3期（戦略的イノベーション創造）.html
+site/drafts_html/N104_M_サステナブルツーリズム推進事業（沖縄）.html
+site/drafts_html/001_M_観光庁オーバーツーリズム対策.html
+site/drafts_html/N108_E_NEDO 数理科学分野×産学連携の調査.html
+site/drafts_html/N119_E_京都市デジタル化推進プロジェクト.html
+site/drafts_html/N130_E_中国電力技術研究財団 国際会議等開催助成.html
+site/drafts_html/001_E_観光庁オーバーツーリズム対策.html
+site/drafts_html/008_E_共創の場形成支援プログラム（COI-NEXT）「未来共創分野」.html
+
+exec
+/bin/bash -lc 'ls -la drafts_v2' in /Users/nishimura+/work/miratuku-grants-2026
+ succeeded in 0ms:
+total 12448
+drwxr-xr-x  273 nishimura+  staff    8736  5月 10 11:44 .
+drwxr-xr-x   26 nishimura+  staff     832  5月 10 10:58 ..
+-rw-r--r--    1 nishimura+  staff    6056  5月 10 10:51 001_E_観光庁オーバーツーリズム対策.md
+-rw-r--r--    1 nishimura+  staff    7310  5月 10 10:51 001_M_観光庁オーバーツーリズム対策.md
+-rw-r--r--    1 nishimura+  staff    6594  5月 10 10:52 002_M_JSPS科研費_特別推進_基盤S.md
+-rw-r--r--    1 nishimura+  staff    2574  5月 10 10:57 003_M_JST CREST 戦略的創造研究推進事業.md
+-rw-r--r--    1 nishimura+  staff    1968  5月 10 10:57 004_E_NEDO ディープテック・スタートアップ支援(DTSU)第10回.md
+-rw-r--r--    1 nishimura+  staff    2720  5月 10 10:57 005_E_中小企業成長加速化補助金（推定例年6月）.md
+-rw-r--r--    1 nishimura+  staff    2892  5月 10 10:57 006_M_JST RISTEX「ケアが根づく社会システム」.md
+-rw-r--r--    1 nishimura+  staff    1915  5月 10 10:57 007_M_JST RISTEX「SDGs達成に向けた共創的研究開発」.md
+-rw-r--r--    1 nishimura+  staff    6116  5月 10 10:57 008_E_共創の場形成支援プログラム（COI-NEXT）「未来共創分野」.md
+-rw-r--r--    1 nishimura+  staff    2197  5月 10 10:57 008_M_共創の場形成支援プログラム（COI-NEXT）「未来共創分野」.md
+-rw-r--r--    1 nishimura+  staff    2167  5月 10 10:57 010_E_総務省 地域社会DX推進パッケージ事業（二次公募）.md
+-rw-r--r--    1 nishimura+  staff    2549  5月 10 10:57 010_M_総務省 地域社会DX推進パッケージ事業（二次公募）.md
+-rw-r--r--    1 nishimura+  staff    2517  5月 10 10:57 012_E_JST ASPIRE 2026 国際共同研究.md
+-rw-r--r--    1 nishimura+  staff    5061  5月 10 10:57 012_M_JST ASPIRE 2026 国際共同研究.md
+-rw-r--r--    1 nishimura+  staff    1928  5月 10 10:57 013_M_JSPS 研究成果公開促進費 データベース部門.md
+-rw-r--r--    1 nishimura+  staff    2973  5月 10 10:57 014_E_京都市 MICE開催支援助成金（大規模国際・上期4月_下期10月）.md
+-rw-r--r--    1 nishimura+  staff    2175  5月 10 10:57 014_M_京都市 MICE開催支援助成金（大規模国際・上期4月_下期10月）.md
+-rw-r--r--    1 nishimura+  staff    2131  5月 10 10:57 015_E_経済安全保障重要技術育成プログラム（K Program）.md
+-rw-r--r--    1 nishimura+  staff    3859  5月 10 10:57 015_M_経済安全保障重要技術育成プログラム（K Program）.md
+-rw-r--r--    1 nishimura+  staff    3275  5月 10 10:57 016_E_ムーンショット型研究開発事業.md
+-rw-r--r--    1 nishimura+  staff   15556  5月 10 10:57 016_M_ムーンショット型研究開発事業.md
+-rw-r--r--    1 nishimura+  staff    1992  5月 10 10:57 017_E_内閣府 SIP第3期（戦略的イノベーション創造）.md
+-rw-r--r--    1 nishimura+  staff    2505  5月 10 10:57 017_M_内閣府 SIP第3期（戦略的イノベーション創造）.md
+-rw-r--r--    1 nishimura+  staff    2005  5月 10 10:57 018_E_NEDO グリーンイノベーション基金.md
+-rw-r--r--    1 nishimura+  staff    2954  5月 10 10:57 018_M_NEDO グリーンイノベーション基金.md
+-rw-r--r--    1 nishimura+  staff    3542  5月 10 10:57 019_E_JST GteX 革新的GX技術創出（推定例年5-7月）.md
+-rw-r--r--    1 nishimura+  staff    2085  5月 10 10:57 019_M_JST GteX 革新的GX技術創出（推定例年5-7月）.md
+-rw-r--r--    1 nishimura+  staff    3719  5月 10 10:57 020_E_JST スタートアップ・エコシステム共創（地域拠点）.md
+-rw-r--r--    1 nishimura+  staff    2176  5月 10 10:57 021_E_第2期スタートアップ・エコシステム拠点形成戦略（内閣府）.md
+-rw-r--r--    1 nishimura+  staff    5352  5月 10 10:57 022_M_地域中核大学・特色ある研究大学 総合振興パッケージ（J-PEAKS）.md
+-rw-r--r--    1 nishimura+  staff    3607  5月 10 10:57 023_E_トヨタ財団 国際助成プログラム.md
+-rw-r--r--    1 nishimura+  staff    1893  5月 10 10:57 023_M_トヨタ財団 国際助成プログラム.md
+-rw-r--r--    1 nishimura+  staff    1938  5月 10 10:57 024_M_トヨタ財団 国内助成プログラム（自治型社会）.md
+-rw-r--r--    1 nishimura+  staff    1851  5月 10 10:57 025_M_住友財団 基礎科学研究助成.md
+-rw-r--r--    1 nishimura+  staff    3049  5月 10 10:57 026_M_鹿島学術振興財団 特定テーマ研究助成.md
+-rw-r--r--    1 nishimura+  staff    2429  5月 10 10:57 029_M_トヨタ財団 研究助成「未来の社会システム」.md
+-rw-r--r--    1 nishimura+  staff    3089  5月 10 10:57 030_E_DNP文化振興財団 グラフィック文化研究助成.md
+-rw-r--r--    1 nishimura+  staff    3072  5月 10 10:57 030_M_DNP文化振興財団 グラフィック文化研究助成.md
+-rw-r--r--    1 nishimura+  staff    8271  5月 10 11:24 B3200_M_立石科学技術振興財団 国際交流助成.md
+-rw-r--r--    1 nishimura+  staff    8552  5月 10 11:24 B3201_E_立石科学技術振興財団 国際交流助成.md
+-rw-r--r--    1 nishimura+  staff    8049  5月 10 11:24 B3202_M_立石科学技術振興財団 国際会議開催助成.md
+-rw-r--r--    1 nishimura+  staff    8024  5月 10 11:24 B3203_E_立石科学技術振興財団 国際会議開催助成.md
+-rw-r--r--    1 nishimura+  staff    8159  5月 10 11:24 B3204_M_清水基金 文化芸術活動特別助成事業.md
+-rw-r--r--    1 nishimura+  staff    8660  5月 10 11:24 B3205_M_JFE21世紀財団 アジア歴史研究助成.md
+-rw-r--r--    1 nishimura+  staff    7953  5月 10 11:24 B3206_M_京都市芸術文化協会 伝統芸能文化復元.md
+-rw-r--r--    1 nishimura+  staff    8078  5月 10 11:24 B3207_M_住友財団 環境研究助成.md
+-rw-r--r--    1 nishimura+  staff    8191  5月 10 11:24 B3208_E_新事業進出・ものづくり補助金 第4回.md
+-rw-r--r--    1 nishimura+  staff    8006  5月 10 11:24 B3209_M_丸紅基金 第52回社会福祉助成金.md
+-rw-r--r--    1 nishimura+  staff    8127  5月 10 11:24 B3210_M_三井住友海上福祉財団 研究助成.md
+-rw-r--r--    1 nishimura+  staff    8348  5月 10 11:24 B3211_E_三井住友海上福祉財団 研究助成.md
+-rw-r--r--    1 nishimura+  staff    8256  5月 10 11:24 B3212_E_IMPACT FLOW KYOTO 2025-2026.md
+-rw-r--r--    1 nishimura+  staff    7927  5月 10 11:24 B3213_E_DX等成長分野リスキリング推進事業.md
+-rw-r--r--    1 nishimura+  staff    6206  5月 10 11:25 B4_E_セコム科学技術振興財団 学術集会助成.md
+-rw-r--r--    1 nishimura+  staff    6143  5月 10 11:27 B4_E_テルモ生命科学振興財団 国際交流助成.md
+-rw-r--r--    1 nishimura+  staff    6189  5月 10 11:26 B4_E_島津科学技術振興財団 研究開発助成（先進情報・データサイエンス）.md
+-rw-r--r--    1 nishimura+  staff    6005  5月 10 11:26 B4_E_日本食品化学研究振興財団 シンポジウム開催助成.md
+-rw-r--r--    1 nishimura+  staff    5903  5月 10 11:25 B4_M_JST SICORP EIG CONCERT-Japan AIロボティクス.md
+-rw-r--r--    1 nishimura+  staff    6170  5月 10 11:25 B4_M_セコム科学技術振興財団 学術集会助成.md
+-rw-r--r--    1 nishimura+  staff    6120  5月 10 11:25 B4_M_テルモ生命科学振興財団 国際交流助成.md
+-rw-r--r--    1 nishimura+  staff    6214  5月 10 11:26 B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md
+-rw-r--r--    1 nishimura+  staff    6231  5月 10 11:25 B4_M_稲盛研究助成「たかめる」.md
+-rw-r--r--    1 nishimura+  staff    6360  5月 10 11:25 B4_M_稲盛研究助成「はぐくむ」.md
+-rw-r--r--    1 nishimura+  staff    6228  5月 10 11:25 B4_M_日本食品化学研究振興財団 シンポジウム開催助成.md
+-rw-r--r--    1 nishimura+  staff   32976  5月 10 11:28 B4300_M_稲盛研究助成「はぐくむ」.md
+-rw-r--r--    1 nishimura+  staff   32796  5月 10 11:28 B4301_M_日本食品化学研究振興財団 シンポジウム開催助成.md
+-rw-r--r--    1 nishimura+  staff   23665  5月 10 11:28 B4302_E_日本食品化学研究振興財団 シンポジウム開催助成.md
+-rw-r--r--    1 nishimura+  staff   26668  5月 10 11:28 B4303_M_セコム科学技術振興財団 学術集会助成.md
+-rw-r--r--    1 nishimura+  staff   27520  5月 10 11:28 B4304_E_セコム科学技術振興財団 学術集会助成.md
+-rw-r--r--    1 nishimura+  staff   85787  5月 10 11:28 B4305_E_島津科学技術振興財団 研究開発助成（先進情報・データサイエンス）.md
+-rw-r--r--    1 nishimura+  staff   25799  5月 10 11:28 B4306_M_稲盛研究助成「たかめる」.md
+-rw-r--r--    1 nishimura+  staff   35663  5月 10 11:28 B4307_M_テルモ生命科学振興財団 国際交流助成.md
+-rw-r--r--    1 nishimura+  staff   61759  5月 10 11:28 B4308_E_テルモ生命科学振興財団 国際交流助成.md
+-rw-r--r--    1 nishimura+  staff   11418  5月 10 11:28 B4309_M_JST SICORP EIG CONCERT-Japan AIロボティクス.md
+-rw-r--r--    1 nishimura+  staff    7265  5月 10 11:28 B4310_E_JST SICORP EIG CONCERT-Japan AIロボティクス.md
+-rw-r--r--    1 nishimura+  staff   53254  5月 10 11:28 B4311_M_パナソニック NPO_NGOサポートファンド for SDGs.md
+-rw-r--r--    1 nishimura+  staff    6083  5月 10 11:31 B5_E_JST A-STEP 産学共同（秋募集・推定）.md
+-rw-r--r--    1 nishimura+  staff    6283  5月 10 11:30 B5_E_ものづくり補助金 19次（経産省）.md
+-rw-r--r--    1 nishimura+  staff    6160  5月 10 11:32 B5_E_加藤記念バイオサイエンス振興財団 国際交流助成.md
+-rw-r--r--    1 nishimura+  staff    6160  5月 10 11:31 B5_E_観光庁 ICTサービス利活用促進事業.md
+-rw-r--r--    1 nishimura+  staff    6248  5月 10 11:31 B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md
+-rw-r--r--    1 nishimura+  staff    6339  5月 10 11:30 B5_E_住友財団 アジア諸国における日本関連研究助成.md
+-rw-r--r--    1 nishimura+  staff    6463  5月 10 11:30 B5_M_JSPS 学術図書出版補助金.md
+-rw-r--r--    1 nishimura+  staff    6478  5月 10 11:31 B5_M_JSPS 国際共同研究加速基金（強化B）.md
+-rw-r--r--    1 nishimura+  staff    6526  5月 10 11:31 B5_M_JSPS 二国間交流事業.md
+-rw-r--r--    1 nishimura+  staff    6458  5月 10 11:29 B5_M_ものづくり補助金 19次（経産省）.md
+-rw-r--r--    1 nishimura+  staff    6535  5月 10 11:31 B5_M_加藤記念バイオサイエンス振興財団 研究助成.md
+-rw-r--r--    1 nishimura+  staff    6497  5月 10 11:30 B5_M_加藤記念バイオサイエンス振興財団 国際交流助成.md
+-rw-r--r--    1 nishimura+  staff    6280  5月 10 11:29 B5_M_観光庁 ICTサービス利活用促進事業.md
+-rw-r--r--    1 nishimura+  staff    6424  5月 10 11:32 B5_M_興和生命科学振興財団 国際交流助成・研究会等援助.md
+-rw-r--r--    1 nishimura+  staff    6553  5月 10 11:31 B5_M_住友財団 アジア諸国における日本関連研究助成.md
+-rw-r--r--    1 nishimura+  staff    6433  5月 10 11:31 B5_M_電気通信普及財団 研究調査助成.md
+-rw-r--r--    1 nishimura+  staff    6370  5月 10 11:29 B5_M_放送文化基金 放送文化関連研究開発助成.md
+-rw-r--r--    1 nishimura+  staff    6509  5月 10 11:31 B5_M_立石科学技術振興財団 研究助成(S).md
+-rw-r--r--    1 nishimura+  staff   29885  5月 10 11:33 B5400_M_加藤記念バイオサイエンス振興財団 国際交流助成.md
+-rw-r--r--    1 nishimura+  staff   25620  5月 10 11:33 B5401_E_加藤記念バイオサイエンス振興財団 国際交流助成.md
+-rw-r--r--    1 nishimura+  staff   42421  5月 10 11:33 B5402_M_住友財団 アジア諸国における日本関連研究助成.md
+-rw-r--r--    1 nishimura+  staff   35912  5月 10 11:33 B5403_E_住友財団 アジア諸国における日本関連研究助成.md
+-rw-r--r--    1 nishimura+  staff   48681  5月 10 11:33 B5404_M_興和生命科学振興財団 国際交流助成・研究会等援助.md
+-rw-r--r--    1 nishimura+  staff   67618  5月 10 11:33 B5405_E_興和生命科学振興財団 国際交流助成・研究会等援助.md
+-rw-r--r--    1 nishimura+  staff   24631  5月 10 11:33 B5406_M_電気通信普及財団 研究調査助成.md
+-rw-r--r--    1 nishimura+  staff   28770  5月 10 11:33 B5407_M_放送文化基金 放送文化関連研究開発助成.md
+-rw-r--r--    1 nishimura+  staff   26303  5月 10 11:33 B5408_M_立石科学技術振興財団 研究助成(S).md
+-rw-r--r--    1 nishimura+  staff   35276  5月 10 11:33 B5409_M_ものづくり補助金 19次（経産省）.md
+-rw-r--r--    1 nishimura+  staff   22821  5月 10 11:33 B5410_E_ものづくり補助金 19次（経産省）.md
+-rw-r--r--    1 nishimura+  staff    4256  5月 10 11:33 B5411_M_加藤記念バイオサイエンス振興財団 研究助成.md
+-rw-r--r--    1 nishimura+  staff   28239  5月 10 11:33 B5412_M_観光庁 ICTサービス利活用促進事業.md
+-rw-r--r--    1 nishimura+  staff   17501  5月 10 11:33 B5413_E_観光庁 ICTサービス利活用促進事業.md
+-rw-r--r--    1 nishimura+  staff   13961  5月 10 11:33 B5414_M_JSPS 国際共同研究加速基金（強化B）.md
+-rw-r--r--    1 nishimura+  staff   66186  5月 10 11:33 B5415_M_JSPS 二国間交流事業.md
+-rw-r--r--    1 nishimura+  staff   40150  5月 10 11:33 B5416_E_JST A-STEP 産学共同（秋募集・推定）.md
+-rw-r--r--    1 nishimura+  staff   35863  5月 10 11:33 B5417_M_JSPS 学術図書出版補助金.md
+-rw-r--r--    1 nishimura+  staff    6235  5月 10 11:39 B6_E_ETIC. 社会起業塾イニシアティブ.md
+-rw-r--r--    1 nishimura+  staff    6315  5月 10 11:35 B6_E_IT導入補助金 2026.md
+-rw-r--r--    1 nishimura+  staff    5933  5月 10 11:43 B6_E_J-Startup KANSAI.md
+-rw-r--r--    1 nishimura+  staff    6045  5月 10 11:37 B6_E_JETRO アジアDX等新規事業創造.md
+-rw-r--r--    1 nishimura+  staff    6083  5月 10 11:36 B6_E_JETRO 中堅・中小企業輸出支援エコシステム.md
+-rw-r--r--    1 nishimura+  staff    6089  5月 10 11:40 B6_E_JST SUCCESS（出資型新事業創出）.md
+-rw-r--r--    1 nishimura+  staff    6184  5月 10 11:35 B6_E_NEDO 研究開発型スタートアップ支援(NEP).md
+-rw-r--r--    1 nishimura+  staff    6464  5月 10 11:39 B6_E_SIIF 社会変革推進財団 インパクト投資.md
+-rw-r--r--    1 nishimura+  staff    6179  5月 10 11:36 B6_E_コンベンション開催支援事業（沖縄）.md
+-rw-r--r--    1 nishimura+  staff    6512  5月 10 11:41 B6_E_横浜市スタートアップ支援補助金.md
+-rw-r--r--    1 nishimura+  staff    6321  5月 10 11:41 B6_E_外務省 外交・安全保障調査研究事業費補助金.md
+-rw-r--r--    1 nishimura+  staff    6573  5月 10 11:35 B6_E_環境省 生物多様性保全推進.md
+-rw-r--r--    1 nishimura+  staff    6602  5月 10 11:36 B6_E_環境省 地域脱炭素推進交付金.md
+-rw-r--r--    1 nishimura+  staff    6573  5月 10 11:36 B6_E_関西エネルギー財団 海外研究者招聘助成.md
+-rw-r--r--    1 nishimura+  staff    6299  5月 10 11:34 B6_E_関西エネルギー財団 研究発表会等開催助成.md
+-rw-r--r--    1 nishimura+  staff    6628  5月 10 11:35 B6_E_経産省 地域経済循環創造事業（ローカル10,000）.md
+-rw-r--r--    1 nishimura+  staff    6254  5月 10 11:35 B6_E_厚労省 介護テクノロジー導入支援.md
+-rw-r--r--    1 nishimura+  staff    6321  5月 10 11:42 B6_E_厚労省 人材開発支援助成金 人への投資促進.md
+-rw-r--r--    1 nishimura+  staff    6498  5月 10 11:42 B6_E_国交省 スマートシティ実装化支援事業.md
+-rw-r--r--    1 nishimura+  staff    6508  5月 10 11:40 B6_E_産総研 公募課題（共同研究・春秋）.md
+-rw-r--r--    1 nishimura+  staff    6389  5月 10 11:35 B6_E_事業承継補助金（沖縄県産業振興公社）.md
+-rw-r--r--    1 nishimura+  staff    6165  5月 10 11:39 B6_E_神奈川県中小企業生産性向上補助金.md
+-rw-r--r--    1 nishimura+  staff    6450  5月 10 11:41 B6_E_全国コミュニティ財団協会 各地域財団.md
+-rw-r--r--    1 nishimura+  staff    6448  5月 10 11:43 B6_E_総務省 ICTスタートアップリーグ.md
+-rw-r--r--    1 nishimura+  staff    6296  5月 10 11:43 B6_E_総務省 ローカル10,000プロジェクト.md
+-rw-r--r--    1 nishimura+  staff    6331  5月 10 11:41 B6_E_東京都創業助成事業.md
+-rw-r--r--    1 nishimura+  staff    6287  5月 10 11:36 B6_E_内閣府 BRIDGE（研究開発とSociety5.0橋渡し）.md
+-rw-r--r--    1 nishimura+  staff    6311  5月 10 11:35 B6_E_内閣府 規制サンドボックス制度.md
+-rw-r--r--    1 nishimura+  staff    6493  5月 10 11:40 B6_E_内閣府 新しい地方経済・生活環境創生交付金(第2世代).md
+-rw-r--r--    1 nishimura+  staff    6508  5月 10 11:39 B6_E_日本生命財団 高齢・地域共生社会助成.md
+-rw-r--r--    1 nishimura+  staff    6179  5月 10 11:35 B6_E_農林水産省 スマート農業（データ・AI領域）.md
+-rw-r--r--    1 nishimura+  staff    6392  5月 10 11:40 B6_E_復興庁・福島県 地域復興実用化開発.md
+-rw-r--r--    1 nishimura+  staff    6339  5月 10 11:40 B6_E_福岡市スタートアップ海外展開支援.md
+-rw-r--r--    1 nishimura+  staff    6496  5月 10 11:35 B6_M_JETRO アジアDX等新規事業創造.md
+-rw-r--r--    1 nishimura+  staff    6618  5月 10 11:37 B6_M_JSPS データインフラ強化事業（連携大学経由）.md
+-rw-r--r--    1 nishimura+  staff    6510  5月 10 11:36 B6_M_JSPS 課題設定先導事業（連携大学経由）.md
+-rw-r--r--    1 nishimura+  staff    6364  5月 10 11:35 B6_M_NEDO 研究開発型スタートアップ支援(NEP).md
+-rw-r--r--    1 nishimura+  staff    6492  5月 10 11:36 B6_M_NHK放送技術研究所 共同研究プログラム.md
+-rw-r--r--    1 nishimura+  staff    6600  5月 10 11:34 B6_M_お金をまわそう基金（第8期3回目）.md
+-rw-r--r--    1 nishimura+  staff    6266  5月 10 11:39 B6_M_こども家庭庁 子育て支援補助金.md
+-rw-r--r--    1 nishimura+  staff    6716  5月 10 11:35 B6_M_コンベンション開催支援事業（沖縄）.md
+-rw-r--r--    1 nishimura+  staff    6640  5月 10 11:41 B6_M_ベネッセこども基金 重い病気の子の学び支援.md
+-rw-r--r--    1 nishimura+  staff    6551  5月 10 11:39 B6_M_外務省 外交・安全保障調査研究事業費補助金.md
+-rw-r--r--    1 nishimura+  staff    6415  5月 10 11:39 B6_M_外務省 日本NGO連携無償資金協力.md
+-rw-r--r--    1 nishimura+  staff    6572  5月 10 11:34 B6_M_環境省 生物多様性保全推進.md
+-rw-r--r--    1 nishimura+  staff    6634  5月 10 11:35 B6_M_環境省 地域脱炭素推進交付金.md
+-rw-r--r--    1 nishimura+  staff    6582  5月 10 11:35 B6_M_関西エネルギー財団 海外研究者招聘助成.md
+-rw-r--r--    1 nishimura+  staff    6577  5月 10 11:34 B6_M_関西エネルギー財団 研究発表会等開催助成.md
+-rw-r--r--    1 nishimura+  staff    6435  5月 10 11:35 B6_M_企業メセナ協議会 助成認定（3月_6月_9月_12月）.md
+-rw-r--r--    1 nishimura+  staff    6667  5月 10 11:34 B6_M_京都市国際交流協会 国際交流事業支援.md
+-rw-r--r--    1 nishimura+  staff    6617  5月 10 11:39 B6_M_京都地域創造基金 事業指定助成.md
+-rw-r--r--    1 nishimura+  staff    6490  5月 10 11:36 B6_M_経産省 地域経済循環創造事業（ローカル10,000）.md
+-rw-r--r--    1 nishimura+  staff    6611  5月 10 11:35 B6_M_厚労省 介護テクノロジー導入支援.md
+-rw-r--r--    1 nishimura+  staff    6165  5月 10 11:39 B6_M_国交省 スマートシティ実装化支援事業.md
+-rw-r--r--    1 nishimura+  staff    6644  5月 10 11:42 B6_M_産総研 公募課題（共同研究・春秋）.md
+-rw-r--r--    1 nishimura+  staff    6519  5月 10 11:39 B6_M_住友生命健康財団 コミュニティスポーツ推進助成.md
+-rw-r--r--    1 nishimura+  staff    6741  5月 10 11:39 B6_M_全国コミュニティ財団協会 各地域財団.md
+-rw-r--r--    1 nishimura+  staff    6712  5月 10 11:39 B6_M_総務省 ローカル10,000プロジェクト.md
+-rw-r--r--    1 nishimura+  staff    6376  5月 10 11:39 B6_M_総務省 過疎地域持続的発展支援交付金.md
+-rw-r--r--    1 nishimura+  staff    6479  5月 10 11:35 B6_M_内閣府 BRIDGE（研究開発とSociety5.0橋渡し）.md
+-rw-r--r--    1 nishimura+  staff    6487  5月 10 11:34 B6_M_内閣府 規制サンドボックス制度.md
+-rw-r--r--    1 nishimura+  staff    6649  5月 10 11:40 B6_M_内閣府 新しい地方経済・生活環境創生交付金(第2世代).md
+-rw-r--r--    1 nishimura+  staff    6707  5月 10 11:40 B6_M_日本社会福祉弘済会 社会福祉助成事業.md
+-rw-r--r--    1 nishimura+  staff    6455  5月 10 11:39 B6_M_日本生命財団 高齢・地域共生社会助成.md
+-rw-r--r--    1 nishimura+  staff    6602  5月 10 11:34 B6_M_農林水産省 スマート農業（データ・AI領域）.md
+-rw-r--r--    1 nishimura+  staff    6729  5月 10 11:40 B6_M_復興庁・福島県 地域復興実用化開発.md
+-rw-r--r--    1 nishimura+  staff    6401  5月 10 11:39 B6_M_立正佼成会 一食平和基金.md
+-rw-r--r--    1 nishimura+  staff   11723  5月 10 11:37 B6500_M_関西エネルギー財団 海外研究者招聘助成.md
+-rw-r--r--    1 nishimura+  staff   42660  5月 10 11:37 B6501_E_関西エネルギー財団 海外研究者招聘助成.md
+-rw-r--r--    1 nishimura+  staff   62011  5月 10 11:37 B6502_M_関西エネルギー財団 研究発表会等開催助成.md
+-rw-r--r--    1 nishimura+  staff   40393  5月 10 11:37 B6503_E_関西エネルギー財団 研究発表会等開催助成.md
+-rw-r--r--    1 nishimura+  staff   29039  5月 10 11:37 B6504_M_京都市国際交流協会 国際交流事業支援.md
+-rw-r--r--    1 nishimura+  staff    7579  5月 10 11:37 B6505_E_京都市国際交流協会 国際交流事業支援.md
+-rw-r--r--    1 nishimura+  staff   84426  5月 10 11:37 B6506_M_コンベンション開催支援事業（沖縄）.md
+-rw-r--r--    1 nishimura+  staff   25974  5月 10 11:37 B6507_E_コンベンション開催支援事業（沖縄）.md
+-rw-r--r--    1 nishimura+  staff   40063  5月 10 11:37 B6508_E_事業承継補助金（沖縄県産業振興公社）.md
+-rw-r--r--    1 nishimura+  staff   45476  5月 10 11:37 B6530_M_内閣府 規制サンドボックス制度.md
+-rw-r--r--    1 nishimura+  staff    2169  5月 10 11:37 B6531_E_内閣府 規制サンドボックス制度.md
+-rw-r--r--    1 nishimura+  staff   13741  5月 10 11:37 B6532_M_経産省 地域経済循環創造事業（ローカル10,000）.md
+-rw-r--r--    1 nishimura+  staff   76688  5月 10 11:37 B6533_E_経産省 地域経済循環創造事業（ローカル10,000）.md
+-rw-r--r--    1 nishimura+  staff   40139  5月 10 11:37 B6534_M_農林水産省 スマート農業（データ・AI領域）.md
+-rw-r--r--    1 nishimura+  staff   10060  5月 10 11:37 B6535_E_農林水産省 スマート農業（データ・AI領域）.md
+-rw-r--r--    1 nishimura+  staff   11371  5月 10 11:37 B6536_M_NHK放送技術研究所 共同研究プログラム.md
+-rw-r--r--    1 nishimura+  staff   17717  5月 10 11:37 B6537_M_企業メセナ協議会 助成認定（3月_6月_9月_12月）.md
+-rw-r--r--    1 nishimura+  staff   32224  5月 10 11:37 B6538_M_お金をまわそう基金（第8期3回目）.md
+-rw-r--r--    1 nishimura+  staff   11975  5月 10 11:37 B6539_M_JSPS 課題設定先導事業（連携大学経由）.md
+-rw-r--r--    1 nishimura+  staff   44186  5月 10 11:37 B6560_M_JSPS データインフラ強化事業（連携大学経由）.md
+-rw-r--r--    1 nishimura+  staff   39735  5月 10 11:37 B6561_E_IT導入補助金 2026.md
+-rw-r--r--    1 nishimura+  staff   41131  5月 10 11:37 B6562_M_内閣府 BRIDGE（研究開発とSociety5.0橋渡し）.md
+-rw-r--r--    1 nishimura+  staff  171777  5月 10 11:37 B6563_E_内閣府 BRIDGE（研究開発とSociety5.0橋渡し）.md
+-rw-r--r--    1 nishimura+  staff   30915  5月 10 11:37 B6564_M_NEDO 研究開発型スタートアップ支援(NEP).md
+-rw-r--r--    1 nishimura+  staff   40946  5月 10 11:37 B6565_E_NEDO 研究開発型スタートアップ支援(NEP).md
+-rw-r--r--    1 nishimura+  staff   41709  5月 10 11:37 B6566_E_JETRO 中堅・中小企業輸出支援エコシステム.md
+-rw-r--r--    1 nishimura+  staff   37523  5月 10 11:37 B6567_M_JETRO アジアDX等新規事業創造.md
+-rw-r--r--    1 nishimura+  staff   74457  5月 10 11:37 B6568_E_JETRO アジアDX等新規事業創造.md
+-rw-r--r--    1 nishimura+  staff   10375  5月 10 11:37 B6569_M_環境省 地域脱炭素推進交付金.md
+-rw-r--r--    1 nishimura+  staff   26326  5月 10 11:37 B6590_E_環境省 地域脱炭素推進交付金.md
+-rw-r--r--    1 nishimura+  staff   39774  5月 10 11:37 B6591_M_環境省 生物多様性保全推進.md
+-rw-r--r--    1 nishimura+  staff    2071  5月 10 11:37 B6592_E_環境省 生物多様性保全推進.md
+-rw-r--r--    1 nishimura+  staff   30932  5月 10 11:37 B6593_E_厚労省 介護テクノロジー導入支援.md
+-rw-r--r--    1 nishimura+  staff   50076  5月 10 11:44 B6620_M_総務省 ローカル10,000プロジェクト.md
+-rw-r--r--    1 nishimura+  staff   12351  5月 10 11:44 B6621_E_総務省 ローカル10,000プロジェクト.md
+-rw-r--r--    1 nishimura+  staff   47270  5月 10 11:44 B6622_M_内閣府 新しい地方経済・生活環境創生交付金(第2世代).md
+-rw-r--r--    1 nishimura+  staff   52477  5月 10 11:44 B6623_E_内閣府 新しい地方経済・生活環境創生交付金(第2世代).md
+-rw-r--r--    1 nishimura+  staff   47021  5月 10 11:44 B6624_M_こども家庭庁 子育て支援補助金.md
+-rw-r--r--    1 nishimura+  staff   23815  5月 10 11:44 B6625_M_外務省 外交・安全保障調査研究事業費補助金.md
+-rw-r--r--    1 nishimura+  staff   26031  5月 10 11:44 B6626_E_外務省 外交・安全保障調査研究事業費補助金.md
+-rw-r--r--    1 nishimura+  staff   23928  5月 10 11:44 B6627_M_復興庁・福島県 地域復興実用化開発.md
+-rw-r--r--    1 nishimura+  staff   24471  5月 10 11:44 B6628_E_復興庁・福島県 地域復興実用化開発.md
+-rw-r--r--    1 nishimura+  staff   50846  5月 10 11:44 B6629_M_産総研 公募課題（共同研究・春秋）.md
+-rw-r--r--    1 nishimura+  staff   14003  5月 10 11:44 B6650_E_産総研 公募課題（共同研究・春秋）.md
+-rw-r--r--    1 nishimura+  staff   22702  5月 10 11:44 B6651_M_日本社会福祉弘済会 社会福祉助成事業.md
+-rw-r--r--    1 nishimura+  staff   28026  5月 10 11:44 B6652_M_日本生命財団 高齢・地域共生社会助成.md
+-rw-r--r--    1 nishimura+  staff   26100  5月 10 11:44 B6653_E_日本生命財団 高齢・地域共生社会助成.md
+-rw-r--r--    1 nishimura+  staff    1817  5月 10 11:44 B6654_M_立正佼成会 一食平和基金.md
+-rw-r--r--    1 nishimura+  staff   26036  5月 10 11:44 B6655_M_住友生命健康財団 コミュニティスポーツ推進助成.md
+-rw-r--r--    1 nishimura+  staff   72803  5月 10 11:44 B6656_M_ベネッセこども基金 重い病気の子の学び支援.md
+-rw-r--r--    1 nishimura+  staff   26087  5月 10 11:44 B6657_M_京都地域創造基金 事業指定助成.md
+-rw-r--r--    1 nishimura+  staff   48969  5月 10 11:44 B6658_M_全国コミュニティ財団協会 各地域財団.md
+-rw-r--r--    1 nishimura+  staff  102388  5月 10 11:44 B6659_E_全国コミュニティ財団協会 各地域財団.md
+-rw-r--r--    1 nishimura+  staff   24544  5月 10 11:44 B6680_M_外務省 日本NGO連携無償資金協力.md
+-rw-r--r--    1 nishimura+  staff   25454  5月 10 11:44 B6681_E_東京都創業助成事業.md
+-rw-r--r--    1 nishimura+  staff   32471  5月 10 11:44 B6682_E_JST SUCCESS（出資型新事業創出）.md
+-rw-r--r--    1 nishimura+  staff   46546  5月 10 11:44 B6683_E_ETIC. 社会起業塾イニシアティブ.md
+-rw-r--r--    1 nishimura+  staff   68005  5月 10 11:44 B6684_E_J-Startup KANSAI.md
+-rw-r--r--    1 nishimura+  staff   35335  5月 10 11:44 B6685_E_福岡市スタートアップ海外展開支援.md
+-rw-r--r--    1 nishimura+  staff   53954  5月 10 11:44 B6686_E_横浜市スタートアップ支援補助金.md
+-rw-r--r--    1 nishimura+  staff   13413  5月 10 11:44 B6687_E_神奈川県中小企業生産性向上補助金.md
+-rw-r--r--    1 nishimura+  staff   24769  5月 10 11:44 B6688_E_SIIF 社会変革推進財団 インパクト投資.md
+-rw-r--r--    1 nishimura+  staff   20010  5月 10 11:20 N100_M_京都府 文化力チャレンジ補助金.md
+-rw-r--r--    1 nishimura+  staff   19189  5月 10 11:20 N101_E_デジタル化・AI導入補助金 2026 セキュリティ枠.md
+-rw-r--r--    1 nishimura+  staff   19818  5月 10 11:20 N102_M_JST 創発的研究支援事業.md
+-rw-r--r--    1 nishimura+  staff  102810  5月 10 11:20 N103_E_京都エコノミック・ガーデニング支援.md
+-rw-r--r--    1 nishimura+  staff   18245  5月 10 11:20 N104_M_サステナブルツーリズム推進事業（沖縄）.md
+-rw-r--r--    1 nishimura+  staff   46777  5月 10 11:20 N105_E_中小企業省力化投資補助金 一般型 第6回.md
+-rw-r--r--    1 nishimura+  staff   43633  5月 10 11:20 N106_M_大同生命厚生事業団 地域保健福祉研究助成.md
+-rw-r--r--    1 nishimura+  staff   28269  5月 10 11:20 N107_M_NEDO 数理科学分野×産学連携の調査.md
+-rw-r--r--    1 nishimura+  staff   17908  5月 10 11:20 N108_E_NEDO 数理科学分野×産学連携の調査.md
+-rw-r--r--    1 nishimura+  staff   19786  5月 10 11:20 N109_M_ロッテ財団 実装型共同研究助成.md
+-rw-r--r--    1 nishimura+  staff   48240  5月 10 11:20 N110_E_ロッテ財団 実装型共同研究助成.md
+-rw-r--r--    1 nishimura+  staff   69473  5月 10 11:20 N111_E_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md
+-rw-r--r--    1 nishimura+  staff   18697  5月 10 11:20 N112_M_京都産学公の森推進事業.md
+-rw-r--r--    1 nishimura+  staff   30121  5月 10 11:20 N113_E_京都産学公の森推進事業.md
+-rw-r--r--    1 nishimura+  staff   73185  5月 10 11:20 N114_M_JST さきがけ／ACT-X 2026年度.md
+-rw-r--r--    1 nishimura+  staff   19762  5月 10 11:20 N115_M_松下幸之助記念志財団 出版助成.md
+-rw-r--r--    1 nishimura+  staff   42187  5月 10 11:20 N116_M_内藤記念国際会議開催助成金.md
+-rw-r--r--    1 nishimura+  staff   19555  5月 10 11:20 N117_E_内藤記念国際会議開催助成金.md
+-rw-r--r--    1 nishimura+  staff   18567  5月 10 11:20 N118_M_住友電工グループ社会貢献基金 学術研究助成.md
+-rw-r--r--    1 nishimura+  staff  131069  5月 10 11:20 N119_E_京都市デジタル化推進プロジェクト.md
+-rw-r--r--    1 nishimura+  staff   78090  5月 10 11:20 N120_E_事業承継・M&A補助金.md
+-rw-r--r--    1 nishimura+  staff   55710  5月 10 11:20 N121_M_観光庁 オーバーツーリズム対策面的整備（令和8年度）.md
+-rw-r--r--    1 nishimura+  staff  258406  5月 10 11:20 N122_E_観光庁 オーバーツーリズム対策面的整備（令和8年度）.md
+-rw-r--r--    1 nishimura+  staff  136410  5月 10 11:20 N123_M_DX推進補助事業（沖縄DX促進）.md
+-rw-r--r--    1 nishimura+  staff   18311  5月 10 11:20 N124_E_DX推進補助事業（沖縄DX促進）.md
+-rw-r--r--    1 nishimura+  staff   19313  5月 10 11:20 N125_M_JST CREST「エクスポソーム」.md
+-rw-r--r--    1 nishimura+  staff   44225  5月 10 11:20 N126_M_京都市 Arts Aid KYOTO.md
+-rw-r--r--    1 nishimura+  staff   40849  5月 10 11:20 N127_M_コミュニティ活動促進事業（沖縄）.md
+-rw-r--r--    1 nishimura+  staff   67670  5月 10 11:20 N128_E_JETRO J-StarX（海外起業家育成）.md
+-rw-r--r--    1 nishimura+  staff  172931  5月 10 11:20 N129_M_中国電力技術研究財団 国際会議等開催助成.md
+-rw-r--r--    1 nishimura+  staff   20040  5月 10 11:20 N130_E_中国電力技術研究財団 国際会議等開催助成.md
+
+exec
+/bin/bash -lc "test -e 'drafts_v2/B6_M_JICA はじめの一歩NGOスタートアップ支援.md'; echo "'$?' in /Users/nishimura+/work/miratuku-grants-2026
+ succeeded in 0ms:
+1
+
+codex
+対象ファイルは未作成でした。これから指定フォーマットで新規作成し、過度に長くならないよう申請書の骨子として使える密度に整えます。
+apply patch
+patch: completed
+/Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_M_JICA はじめの一歩NGOスタートアップ支援.md
+diff --git a/miratuku-grants-2026/drafts_v2/B6_M_JICA はじめの一歩NGOスタートアップ支援.md b/miratuku-grants-2026/drafts_v2/B6_M_JICA はじめの一歩NGOスタートアップ支援.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..23b78111cb43a13a1a4a240c065c12b96058225f
+--- /dev/null
++++ b/miratuku-grants-2026/drafts_v2/B6_M_JICA はじめの一歩NGOスタートアップ支援.md
+@@ -0,0 +1,41 @@
++# JICA はじめの一歩NGOスタートアップ支援 申請書ドラフト（ミラツク向け）
++**締切**: 通年 | **上限**: 100万円
++
++## 1. 申請者情報（300字・数値組込）
++特定非営利活動法人ミラツクは、2010年設立、第14期を迎える京都府・東京都拠点のNPOである。専従25名体制で、2024年度営業収益は87.4M円。企業協働20社、コミュニティ参加者350名との共創を通じ、社会課題に関する知を事業・政策・地域実践へ接続してきた。知識基盤として26のSQLite知識データベースを保有し、学術知識30,288概念を含む体系化を進めている。また「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載を通じ、専門知と現場知を社会に開く発信力を有する。
++
++## 2. 助成金概要・応募要件（200字・地の文）
++本助成は、国際協力活動を始める、または拡大しようとする日本国内のNGO・NPO等を対象に、途上国・地域の貧困削減、生活改善、または日本国内の多文化共生・外国人材受入支援につながる活動を支援する制度である。上限100万円の小規模助成であるため、既存事業の全面展開よりも、現地・国内関係者との信頼形成、課題仮説の検証、次段階のJICA事業や民間協働へつなぐ初期実装が適する。
++
++## 3. 申請テーマ案（A推奨/B代替・各150字）
++A推奨：アジアの社会起業家・NPOと日本企業・研究者をつなぐ「知の翻訳」型国際協力スタートアップ事業。海外招聘とオンライン対話を組み合わせ、教育、ケア、地域経済等の課題に対し、現地実践知と日本側の技術・事業知を接続する。
++
++B代替：日本国内の外国人材・留学生コミュニティと企業・自治体をつなぐ多文化共生の共創プログラム。ミラツクの対話設計と知識DBを用い、生活課題、就労課題、地域参加の論点を整理し、小規模な実証活動を形成する。
++
++## 4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字）
++背景目的：国際協力の現場では、資金や技術だけでなく、異なる地域・文化・セクターの知を翻訳し、協働可能な課題設定へ組み替える機能が不足している。特に初期段階のNGO活動では、現地ニーズ、企業資源、研究知、社会実装の接点を丁寧に設計することが、継続的な協力関係の前提となる。ミラツクは企業協働20社、350名規模のコミュニティ、26のSQLite知識データベース、300話の社会発信を通じて、知を社会へ接続する実践を重ねてきた。本事業では、アジアの社会課題実践者を対象に、海外招聘・オンライン対話・知識整理を組み合わせ、JICA事業への発展可能性を持つ国際協力の初期モデルを構築する。
++
++方法：対象国・領域は、教育、ケア、地域産業、環境・生活改善のいずれかから、既存ネットワークとJICA国内機関への事前相談を踏まえて選定する。第1段階では、現地NPO、社会起業家、研究者等5-8名にヒアリングを行い、課題構造、当事者、既存支援、協働余地を整理する。第2段階では、ミラツクの企業協働先・研究者・コミュニティ参加者を交えたオンライン対話を2回実施し、現地課題を日本側の技術、事業開発、制度知と接続する。第3段階では、1-2名の海外実践者を招聘し、京都・東京で公開対話と個別ワークショップを行う。得られた知見はSQLite知識DBに構造化し、次年度以降の実証計画、連携候補、必要資源を明確化する。
++
++成果：成果物は、対象国・領域の課題マップ、協働仮説3件、次年度実証計画1件、公開レポート1本、国内外関係者10-20名の協働リストとする。短期的には、国際協力に関心を持つ企業・研究者・市民が、現地課題を具体的な協働テーマとして理解する状態をつくる。中期的には、JICA草の根技術協力、企業寄付、共同研究等へ接続可能な小規模実証案件を形成し、ミラツクの「知の社会接続」を国際協力領域へ拡張する。
++
++## 5. スケジュールと予算（年次別）
++1年目上半期は、JICA国内機関への事前相談、対象国・領域の選定、現地候補者の探索、ヒアリング設計を行う。下半期は、オンライン対話、海外招聘、京都・東京でのワークショップ、成果整理、次年度実証計画の作成を進める。予算は、海外招聘旅費・滞在費40万円、通訳・翻訳15万円、ワークショップ運営15万円、調査・ヒアリング謝金15万円、記録・編集・公開レポート10万円、管理費5万円を想定し、合計100万円以内に収める。
++
++## 6. 提出物チェックリスト
++- 申請書・事業計画書
++- 法人登記事項証明書または団体概要資料
++- 定款、役員名簿、直近年度の事業報告書・決算書
++- 2024年度営業収益87.4M円、専従25名等を確認できる組織資料
++- 対象国・連携候補者・招聘候補者の概要
++- 予算書、見積書、旅費根拠、通訳・会場費根拠
++- JICA国内機関への事前相談記録
++
++## 7. 推奨アクション（3-5点）
++- JICA国内機関に、対象国選定と海外招聘の可否、相手国側手続きの要否を事前確認する。
++- A案を本命とし、招聘候補者を1-2名まで絞り、招聘目的を「視察」ではなく「次年度実証形成」に置く。
++- 企業協働20社のうち、国際協力・人材・教育・ケア領域に関心のある企業を早期に巻き込む。
++- 26のSQLite知識DBと300話連載を、成果公開と波及の根拠として申請書に明記する。
++- 採択後すぐ動けるよう、ヒアリング候補、通訳、会場、公開レポート編集体制を仮押さえする。
++
++保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_M_JICA はじめの一歩NGOスタートアップ支援.md
+
+diff --git a/miratuku-grants-2026/drafts_v2/B6_M_JICA はじめの一歩NGOスタートアップ支援.md b/miratuku-grants-2026/drafts_v2/B6_M_JICA はじめの一歩NGOスタートアップ支援.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..23b78111cb43a13a1a4a240c065c12b96058225f
+--- /dev/null
++++ b/miratuku-grants-2026/drafts_v2/B6_M_JICA はじめの一歩NGOスタートアップ支援.md
+@@ -0,0 +1,41 @@
++# JICA はじめの一歩NGOスタートアップ支援 申請書ドラフト（ミラツク向け）
++**締切**: 通年 | **上限**: 100万円
++
++## 1. 申請者情報（300字・数値組込）
++特定非営利活動法人ミラツクは、2010年設立、第14期を迎える京都府・東京都拠点のNPOである。専従25名体制で、2024年度営業収益は87.4M円。企業協働20社、コミュニティ参加者350名との共創を通じ、社会課題に関する知を事業・政策・地域実践へ接続してきた。知識基盤として26のSQLite知識データベースを保有し、学術知識30,288概念を含む体系化を進めている。また「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載を通じ、専門知と現場知を社会に開く発信力を有する。
++
++## 2. 助成金概要・応募要件（200字・地の文）
++本助成は、国際協力活動を始める、または拡大しようとする日本国内のNGO・NPO等を対象に、途上国・地域の貧困削減、生活改善、または日本国内の多文化共生・外国人材受入支援につながる活動を支援する制度である。上限100万円の小規模助成であるため、既存事業の全面展開よりも、現地・国内関係者との信頼形成、課題仮説の検証、次段階のJICA事業や民間協働へつなぐ初期実装が適する。
++
++## 3. 申請テーマ案（A推奨/B代替・各150字）
++A推奨：アジアの社会起業家・NPOと日本企業・研究者をつなぐ「知の翻訳」型国際協力スタートアップ事業。海外招聘とオンライン対話を組み合わせ、教育、ケア、地域経済等の課題に対し、現地実践知と日本側の技術・事業知を接続する。
++
++B代替：日本国内の外国人材・留学生コミュニティと企業・自治体をつなぐ多文化共生の共創プログラム。ミラツクの対話設計と知識DBを用い、生活課題、就労課題、地域参加の論点を整理し、小規模な実証活動を形成する。
++
++## 4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字）
++背景目的：国際協力の現場では、資金や技術だけでなく、異なる地域・文化・セクターの知を翻訳し、協働可能な課題設定へ組み替える機能が不足している。特に初期段階のNGO活動では、現地ニーズ、企業資源、研究知、社会実装の接点を丁寧に設計することが、継続的な協力関係の前提となる。ミラツクは企業協働20社、350名規模のコミュニティ、26のSQLite知識データベース、300話の社会発信を通じて、知を社会へ接続する実践を重ねてきた。本事業では、アジアの社会課題実践者を対象に、海外招聘・オンライン対話・知識整理を組み合わせ、JICA事業への発展可能性を持つ国際協力の初期モデルを構築する。
++
++方法：対象国・領域は、教育、ケア、地域産業、環境・生活改善のいずれかから、既存ネットワークとJICA国内機関への事前相談を踏まえて選定する。第1段階では、現地NPO、社会起業家、研究者等5-8名にヒアリングを行い、課題構造、当事者、既存支援、協働余地を整理する。第2段階では、ミラツクの企業協働先・研究者・コミュニティ参加者を交えたオンライン対話を2回実施し、現地課題を日本側の技術、事業開発、制度知と接続する。第3段階では、1-2名の海外実践者を招聘し、京都・東京で公開対話と個別ワークショップを行う。得られた知見はSQLite知識DBに構造化し、次年度以降の実証計画、連携候補、必要資源を明確化する。
++
++成果：成果物は、対象国・領域の課題マップ、協働仮説3件、次年度実証計画1件、公開レポート1本、国内外関係者10-20名の協働リストとする。短期的には、国際協力に関心を持つ企業・研究者・市民が、現地課題を具体的な協働テーマとして理解する状態をつくる。中期的には、JICA草の根技術協力、企業寄付、共同研究等へ接続可能な小規模実証案件を形成し、ミラツクの「知の社会接続」を国際協力領域へ拡張する。
++
++## 5. スケジュールと予算（年次別）
++1年目上半期は、JICA国内機関への事前相談、対象国・領域の選定、現地候補者の探索、ヒアリング設計を行う。下半期は、オンライン対話、海外招聘、京都・東京でのワークショップ、成果整理、次年度実証計画の作成を進める。予算は、海外招聘旅費・滞在費40万円、通訳・翻訳15万円、ワークショップ運営15万円、調査・ヒアリング謝金15万円、記録・編集・公開レポート10万円、管理費5万円を想定し、合計100万円以内に収める。
++
++## 6. 提出物チェックリスト
++- 申請書・事業計画書
++- 法人登記事項証明書または団体概要資料
++- 定款、役員名簿、直近年度の事業報告書・決算書
++- 2024年度営業収益87.4M円、専従25名等を確認できる組織資料
++- 対象国・連携候補者・招聘候補者の概要
++- 予算書、見積書、旅費根拠、通訳・会場費根拠
++- JICA国内機関への事前相談記録
++
++## 7. 推奨アクション（3-5点）
++- JICA国内機関に、対象国選定と海外招聘の可否、相手国側手続きの要否を事前確認する。
++- A案を本命とし、招聘候補者を1-2名まで絞り、招聘目的を「視察」ではなく「次年度実証形成」に置く。
++- 企業協働20社のうち、国際協力・人材・教育・ケア領域に関心のある企業を早期に巻き込む。
++- 26のSQLite知識DBと300話連載を、成果公開と波及の根拠として申請書に明記する。
++- 採択後すぐ動けるよう、ヒアリング候補、通訳、会場、公開レポート編集体制を仮押さえする。
++
++保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_M_JICA はじめの一歩NGOスタートアップ支援.md
+
+exec
+/bin/bash -lc "wc -m 'drafts_v2/B6_M_JICA はじめの一歩NGOスタートアップ支援.md'" in /Users/nishimura+/work/miratuku-grants-2026
+exec
+/bin/bash -lc "sed -n '1,220p' 'drafts_v2/B6_M_JICA はじめの一歩NGOスタートアップ支援.md'" in /Users/nishimura+/work/miratuku-grants-2026
+ succeeded in 0ms:
+    2409 drafts_v2/B6_M_JICA はじめの一歩NGOスタートアップ支援.md
+
+ succeeded in 0ms:
+# JICA はじめの一歩NGOスタートアップ支援 申請書ドラフト（ミラツク向け）
+**締切**: 通年 | **上限**: 100万円
+
+## 1. 申請者情報（300字・数値組込）
+特定非営利活動法人ミラツクは、2010年設立、第14期を迎える京都府・東京都拠点のNPOである。専従25名体制で、2024年度営業収益は87.4M円。企業協働20社、コミュニティ参加者350名との共創を通じ、社会課題に関する知を事業・政策・地域実践へ接続してきた。知識基盤として26のSQLite知識データベースを保有し、学術知識30,288概念を含む体系化を進めている。また「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載を通じ、専門知と現場知を社会に開く発信力を有する。
+
+## 2. 助成金概要・応募要件（200字・地の文）
+本助成は、国際協力活動を始める、または拡大しようとする日本国内のNGO・NPO等を対象に、途上国・地域の貧困削減、生活改善、または日本国内の多文化共生・外国人材受入支援につながる活動を支援する制度である。上限100万円の小規模助成であるため、既存事業の全面展開よりも、現地・国内関係者との信頼形成、課題仮説の検証、次段階のJICA事業や民間協働へつなぐ初期実装が適する。
+
+## 3. 申請テーマ案（A推奨/B代替・各150字）
+A推奨：アジアの社会起業家・NPOと日本企業・研究者をつなぐ「知の翻訳」型国際協力スタートアップ事業。海外招聘とオンライン対話を組み合わせ、教育、ケア、地域経済等の課題に対し、現地実践知と日本側の技術・事業知を接続する。
+
+B代替：日本国内の外国人材・留学生コミュニティと企業・自治体をつなぐ多文化共生の共創プログラム。ミラツクの対話設計と知識DBを用い、生活課題、就労課題、地域参加の論点を整理し、小規模な実証活動を形成する。
+
+## 4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字）
+背景目的：国際協力の現場では、資金や技術だけでなく、異なる地域・文化・セクターの知を翻訳し、協働可能な課題設定へ組み替える機能が不足している。特に初期段階のNGO活動では、現地ニーズ、企業資源、研究知、社会実装の接点を丁寧に設計することが、継続的な協力関係の前提となる。ミラツクは企業協働20社、350名規模のコミュニティ、26のSQLite知識データベース、300話の社会発信を通じて、知を社会へ接続する実践を重ねてきた。本事業では、アジアの社会課題実践者を対象に、海外招聘・オンライン対話・知識整理を組み合わせ、JICA事業への発展可能性を持つ国際協力の初期モデルを構築する。
+
+方法：対象国・領域は、教育、ケア、地域産業、環境・生活改善のいずれかから、既存ネットワークとJICA国内機関への事前相談を踏まえて選定する。第1段階では、現地NPO、社会起業家、研究者等5-8名にヒアリングを行い、課題構造、当事者、既存支援、協働余地を整理する。第2段階では、ミラツクの企業協働先・研究者・コミュニティ参加者を交えたオンライン対話を2回実施し、現地課題を日本側の技術、事業開発、制度知と接続する。第3段階では、1-2名の海外実践者を招聘し、京都・東京で公開対話と個別ワークショップを行う。得られた知見はSQLite知識DBに構造化し、次年度以降の実証計画、連携候補、必要資源を明確化する。
+
+成果：成果物は、対象国・領域の課題マップ、協働仮説3件、次年度実証計画1件、公開レポート1本、国内外関係者10-20名の協働リストとする。短期的には、国際協力に関心を持つ企業・研究者・市民が、現地課題を具体的な協働テーマとして理解する状態をつくる。中期的には、JICA草の根技術協力、企業寄付、共同研究等へ接続可能な小規模実証案件を形成し、ミラツクの「知の社会接続」を国際協力領域へ拡張する。
+
+## 5. スケジュールと予算（年次別）
+1年目上半期は、JICA国内機関への事前相談、対象国・領域の選定、現地候補者の探索、ヒアリング設計を行う。下半期は、オンライン対話、海外招聘、京都・東京でのワークショップ、成果整理、次年度実証計画の作成を進める。予算は、海外招聘旅費・滞在費40万円、通訳・翻訳15万円、ワークショップ運営15万円、調査・ヒアリング謝金15万円、記録・編集・公開レポート10万円、管理費5万円を想定し、合計100万円以内に収める。
+
+## 6. 提出物チェックリスト
+- 申請書・事業計画書
+- 法人登記事項証明書または団体概要資料
+- 定款、役員名簿、直近年度の事業報告書・決算書
+- 2024年度営業収益87.4M円、専従25名等を確認できる組織資料
+- 対象国・連携候補者・招聘候補者の概要
+- 予算書、見積書、旅費根拠、通訳・会場費根拠
+- JICA国内機関への事前相談記録
+
+---
+## 共通書類は以下を参照
+- マスターチェックリスト: `../master_checklist.md`
+- ミラツク共通: `../../_ミラツク_共通書類/INDEX.md`
+- esse-sense共通: `../../_esse-sense_共通書類/INDEX.md`

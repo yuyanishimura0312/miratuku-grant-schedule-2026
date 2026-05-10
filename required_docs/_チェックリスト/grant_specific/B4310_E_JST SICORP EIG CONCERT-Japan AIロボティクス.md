@@ -1,0 +1,10 @@
+# B4310_E_JST SICORP EIG CONCERT-Japan AIロボティクス 必要書類チェックリスト
+
+## 6. 提出物チェックリスト
+申請書類のチェックボックス。
+
+---
+## 共通書類は以下を参照
+- マスターチェックリスト: `../master_checklist.md`
+- ミラツク共通: `../../_ミラツク_共通書類/INDEX.md`
+- esse-sense共通: `../../_esse-sense_共通書類/INDEX.md`
