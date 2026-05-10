@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>経産省 地域中核企業創出・支援事業</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>経産省 地域中核企業創出・支援事業 申請書ドラフト（esse-sense向け）</h1>
+<p><strong>締切</strong>: 通年 | <strong>上限</strong>: 数千万円</p>
+<h2>1. 申請者情報（300字・数値組込）</h2>
+<h2>2. 助成金概要・応募要件（200字・地の文）</h2>
+<h2>3. 申請テーマ案（A推奨/B代替・各150字）</h2>
+<h2>4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字）</h2>
+<h2>5. スケジュールと予算（年次別）</h2>
+<h2>6. 提出物チェックリスト</h2>
+<h2>7. 推奨アクション（3-5点）</h2>
+<p>末尾に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_E_経産省 地域中核企業創出・支援事業.md」記載。地の文中心、法人数値組込必須。 codex 助成金名と要件は年度で変わり得るので、まず公式情報に当たり、ユーザー指定の構成に合わせてドラフト化します。作成後、指定パスへ保存します。 web search: web search: 経産省 地域中核企業創出・支援事業 通年 上限 数千万円 codex 公式情報では、地域の中堅・中核企業の新事業展開、ネットワーク構築、ハンズオン支援、地域未来牽引企業等との接続が重要な文脈です。これを踏まえ、esse-senseは「申請主体単独の成長」よりも「地域中核企業を支える知識・DXプラットフォーム」として組み立てます。 exec /bin/bash -lc 'mkdir -p drafts_v2 && pwd && ls drafts_v2 | head' in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms: /Users/nishimura+/work/miratuku-grants-2026 001_E_観光庁オーバーツーリズム対策.md 001_M_観光庁オーバーツーリズム対策.md 002_M_JSPS科研費_特別推進_基盤S.md 003_M_JST CREST 戦略的創造研究推進事業.md 004_E_NEDO ディープテック・スタートアップ支援(DTSU)第10回.md 005_E_中小企業成長加速化補助金（推定例年6月）.md 006_M_JST RISTEX「ケアが根づく社会システム」.md 007_M_JST RISTEX「SDGs達成に向けた共創的研究開発」.md 008_E_共創の場形成支援プログラム（COI-NEXT）「未来共創分野」.md 008_M_共創の場形成支援プログラム（COI-NEXT）「未来共創分野」.md</p>
+<p>codex これから指定ファイルを新規作成します。既存の <code>drafts_v2</code> 配下の命名規則に合わせつつ、指定された保存対象パスをそのまま末尾へ入れます。 apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_E_経産省 地域中核企業創出・支援事業.md diff --git a/miratuku-grants-2026/drafts_v2/B6_E_経産省 地域中核企業創出・支援事業.md b/miratuku-grants-2026/drafts_v2/B6_E_経産省 地域中核企業創出・支援事業.md new file mode 100644 index 0000000000000000000000000000000000000000..91d14c74ba6229a2b8d3b15cb8ae9b6a3cf850ec --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B6_E_経産省 地域中核企業創出・支援事業.md @@ -0,0 +1,43 @@ +# 経産省 地域中核企業創出・支援事業 申請書ドラフト（esse-sense向け） +<strong>締切</strong>: 通年 | <strong>上限</strong>: 数千万円 + +## 1. 申請者情報（300字・数値組込） +esse-senseは、研究者の知を社会に届けるメディア事業を中核とする株式会社である。自社で運営・蓄積する記事データベースは、専門記事 <code>articles</code> 154件、一般向け記事 <code>general_articles</code> 34件、合計188件に達し、学際的な研究成果、大学発スタートアップ、産学連携、大学DX、AI活用事例を横断的に整理している。営利法人として、研究知の発信にとどまらず、地域企業・大学・支援機関をつなぐ編集力、データ活用力、事業化支援力を有する点が強みである。国際展開面では esse-sense Future Forum を通じ、国内外の研究者・企業・行政関係者を結ぶ対話基盤を形成している。 + +## 2. 助成金概要・応募要件（200字・地の文） +本事業は、地域経済を牽引する中堅・中核企業の新事業展開、経営力強化、地域内外の支援機関との連携形成を促す政府系の広域支援施策である。対象は、地域未来牽引企業や成長志向の地域企業を支える取組であり、ノウハウ獲得、課題発掘、ネットワーキング、マッチング、ハンズオン支援、事業報告の設計が重視される。esse-senseは直接の製造投資ではなく、知識流通とDX支援基盤として応募適合性を高める。 + +## 3. 申請テーマ案（A推奨/B代替・各150字） +A推奨案は「地域中核企業の研究知活用・大学連携DXプラットフォーム構築事業」とする。188件の記事DBとAI分析を活用し、地域中堅企業の技術課題を研究者知見、大学発スタートアップ、産学連携案件へ接続し、新事業テーマ創出と事業化伴走を行う。 + +B代替案は「地域企業の越境共創を促す研究メディア型イノベーション支援事業」とする。esse-sense Future Forum と連動し、国内地域企業の課題を国際的な研究・事業化知見へ接続し、販路開拓、人材獲得、大学DXの発信機会を創出する。 + +## 4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字） +地域中堅・中核企業は、独自技術や顧客基盤を持ちながら、大学研究、AI、データ活用、海外展開を新事業へ結び付ける編集機能と伴走人材が不足しがちである。一方、大学・研究機関には社会実装可能な知見が蓄積されているが、地域企業の経営課題や市場仮説に翻訳されないまま散在している。esse-senseは、研究者の知を社会へ届けるメディア事業者として、188件の自社記事DB、学際的な取材網、産学連携支援の経験を有する。本申請では、地域企業の新事業展開を促すため、研究知・企業課題・支援機関を結ぶデータ駆動型プラットフォームを構築し、地域経済の持続的成長と良質な雇用創出に資する事業化案件を生み出すことを目的とする。 + +方法として、第一に、既存記事DBを研究分野、技術キーワード、社会課題、想定産業、大学・研究者属性で再分類し、AIによる検索・推薦機能を整備する。第二に、地域金融機関、自治体、大学産連本部、地域未来牽引企業候補と連携し、対象企業の技術課題・人材課題・市場課題をヒアリングする。第三に、企業課題と研究知を照合し、共同研究候補、大学発スタートアップ連携、PoCテーマ、DX導入テーマを抽出する。第四に、esse-sense Future Forum やオンライン記事企画を活用し、地域内外の専門家、投資家、支援機関を交えた事業化検討会を開催する。最後に、各案件について事業仮説、実証計画、広報・販路開拓方針を整理し、次年度以降の補助金・共同研究・民間投資につなげる。 + +成果として、地域企業10社程度の課題整理、研究者・大学発スタートアップ候補30件程度のマッチングリスト、PoC候補5件、公開記事・事例レポート10本を創出する。メディア発信により、地域企業の技術力を可視化し、大学・支援機関・海外関係者との接点を増やす。これにより、単発のイベントではなく、地域企業が継続的に研究知へアクセスできる事業化支援基盤を形成する。 + +## 5. スケジュールと予算（年次別） +1年目は、記事DB188件の再分類、AI検索・推薦の要件定義、地域支援機関との連携協定、対象企業の募集と課題ヒアリングを行う。予算は人件費、DB整備費、AIツール利用料、専門家謝金、旅費、広報制作費を中心に1,500万から2,000万円規模を想定する。 + +2年目は、企業課題と研究知のマッチング、事業化検討会、PoC設計、記事・レポート発信、Forum連動企画を実施する。予算は伴走支援人件費、イベント運営費、外部専門家費、PoC調査費、海外発信費を中心に2,000万から3,000万円規模を想定する。 + +3年目は、PoC案件の共同研究・補助金申請・投資接続、支援モデルの標準化、地域展開パッケージの販売準備を行う。予算は事業化支援費、成果報告書作成費、営業・連携開拓費、システム改善費を中心に1,500万から2,500万円規模を想定する。 + +## 6. 提出物チェックリスト +- 申請書本文、事業計画書、収支予算書、会社概要、履歴事項全部証明書、直近決算書を準備する。 +- 記事DB188件の概要、分類軸、代表記事、活用方法を別紙化する。 +- 地域支援機関、大学、金融機関、企業候補からの連携意向書を取得する。 +- AI活用範囲、個人情報・著作権・研究倫理への対応方針を明記する。 +- 成果指標として、支援企業数、マッチング件数、PoC件数、記事・レポート本数、次年度資金接続件数を設定する。 + +## 7. 推奨アクション（3-5点） +- 申請主体を「地域中核企業そのもの」ではなく「地域中核企業を創出・支援するプラットフォーム事業者」として明確化する。 +- 地域金融機関または経済産業局管内の支援機関と早期に相談し、対象地域と支援企業群を具体化する。 +- 記事DB188件を、AI・大学DX・産学連携・大学発SU・地域産業課題の5分類で棚卸しする。 +- esse-sense Future Forum を単独イベントではなく、事業化案件を発掘・発表する場として再設計する。 +- 営利法人としての自走化計画を示すため、2年目以降の会員課金、企業伴走契約、レポート販売、共催収入を収益モデルに入れる。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_E_経産省 地域中核企業創出・支援事業.md</p>
+<p>diff --git a/miratuku-grants-2026/drafts_v2/B6_E_経産省 地域中核企業創出・支援事業.md b/miratuku-grants-2026/drafts_v2/B6_E_経産省 地域中核企業創出・支援事業.md new file mode 100644 index 0000000000000000000000000000000000000000..91d14c74ba6229a2b8d3b15cb8ae9b6a3cf850ec --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B6_E_経産省 地域中核企業創出・支援事業.md @@ -0,0 +1,43 @@ +# 経産省 地域中核企業創出・支援事業 申請書ドラフト（esse-sense向け） +<strong>締切</strong>: 通年 | <strong>上限</strong>: 数千万円 + +## 1. 申請者情報（300字・数値組込） +esse-senseは、研究者の知を社会に届けるメディア事業を中核とする株式会社である。自社で運営・蓄積する記事データベースは、専門記事 <code>articles</code> 154件、一般向け記事 <code>general_articles</code> 34件、合計188件に達し、学際的な研究成果、大学発スタートアップ、産学連携、大学DX、AI活用事例を横断的に整理している。営利法人として、研究知の発信にとどまらず、地域企業・大学・支援機関をつなぐ編集力、データ活用力、事業化支援力を有する点が強みである。国際展開面では esse-sense Future Forum を通じ、国内外の研究者・企業・行政関係者を結ぶ対話基盤を形成している。 + +## 2. 助成金概要・応募要件（200字・地の文） +本事業は、地域経済を牽引する中堅・中核企業の新事業展開、経営力強化、地域内外の支援機関との連携形成を促す政府系の広域支援施策である。対象は、地域未来牽引企業や成長志向の地域企業を支える取組であり、ノウハウ獲得、課題発掘、ネットワーキング、マッチング、ハンズオン支援、事業報告の設計が重視される。esse-senseは直接の製造投資ではなく、知識流通とDX支援基盤として応募適合性を高める。 + +## 3. 申請テーマ案（A推奨/B代替・各150字） +A推奨案は「地域中核企業の研究知活用・大学連携DXプラットフォーム構築事業」とする。188件の記事DBとAI分析を活用し、地域中堅企業の技術課題を研究者知見、大学発スタートアップ、産学連携案件へ接続し、新事業テーマ創出と事業化伴走を行う。 + +B代替案は「地域企業の越境共創を促す研究メディア型イノベーション支援事業」とする。esse-sense Future Forum と連動し、国内地域企業の課題を国際的な研究・事業化知見へ接続し、販路開拓、人材獲得、大学DXの発信機会を創出する。 + +## 4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字） +地域中堅・中核企業は、独自技術や顧客基盤を持ちながら、大学研究、AI、データ活用、海外展開を新事業へ結び付ける編集機能と伴走人材が不足しがちである。一方、大学・研究機関には社会実装可能な知見が蓄積されているが、地域企業の経営課題や市場仮説に翻訳されないまま散在している。esse-senseは、研究者の知を社会へ届けるメディア事業者として、188件の自社記事DB、学際的な取材網、産学連携支援の経験を有する。本申請では、地域企業の新事業展開を促すため、研究知・企業課題・支援機関を結ぶデータ駆動型プラットフォームを構築し、地域経済の持続的成長と良質な雇用創出に資する事業化案件を生み出すことを目的とする。 + +方法として、第一に、既存記事DBを研究分野、技術キーワード、社会課題、想定産業、大学・研究者属性で再分類し、AIによる検索・推薦機能を整備する。第二に、地域金融機関、自治体、大学産連本部、地域未来牽引企業候補と連携し、対象企業の技術課題・人材課題・市場課題をヒアリングする。第三に、企業課題と研究知を照合し、共同研究候補、大学発スタートアップ連携、PoCテーマ、DX導入テーマを抽出する。第四に、esse-sense Future Forum やオンライン記事企画を活用し、地域内外の専門家、投資家、支援機関を交えた事業化検討会を開催する。最後に、各案件について事業仮説、実証計画、広報・販路開拓方針を整理し、次年度以降の補助金・共同研究・民間投資につなげる。 + +成果として、地域企業10社程度の課題整理、研究者・大学発スタートアップ候補30件程度のマッチングリスト、PoC候補5件、公開記事・事例レポート10本を創出する。メディア発信により、地域企業の技術力を可視化し、大学・支援機関・海外関係者との接点を増やす。これにより、単発のイベントではなく、地域企業が継続的に研究知へアクセスできる事業化支援基盤を形成する。 + +## 5. スケジュールと予算（年次別） +1年目は、記事DB188件の再分類、AI検索・推薦の要件定義、地域支援機関との連携協定、対象企業の募集と課題ヒアリングを行う。予算は人件費、DB整備費、AIツール利用料、専門家謝金、旅費、広報制作費を中心に1,500万から2,000万円規模を想定する。 + +2年目は、企業課題と研究知のマッチング、事業化検討会、PoC設計、記事・レポート発信、Forum連動企画を実施する。予算は伴走支援人件費、イベント運営費、外部専門家費、PoC調査費、海外発信費を中心に2,000万から3,000万円規模を想定する。 + +3年目は、PoC案件の共同研究・補助金申請・投資接続、支援モデルの標準化、地域展開パッケージの販売準備を行う。予算は事業化支援費、成果報告書作成費、営業・連携開拓費、システム改善費を中心に1,500万から2,500万円規模を想定する。 + +## 6. 提出物チェックリスト +- 申請書本文、事業計画書、収支予算書、会社概要、履歴事項全部証明書、直近決算書を準備する。 +- 記事DB188件の概要、分類軸、代表記事、活用方法を別紙化する。 +- 地域支援機関、大学、金融機関、企業候補からの連携意向書を取得する。 +- AI活用範囲、個人情報・著作権・研究倫理への対応方針を明記する。 +- 成果指標として、支援企業数、マッチング件数、PoC件数、記事・レポート本数、次年度資金接続件数を設定する。 + +## 7. 推奨アクション（3-5点） +- 申請主体を「地域中核企業そのもの」ではなく「地域中核企業を創出・支援するプラットフォーム事業者」として明確化する。 +- 地域金融機関または経済産業局管内の支援機関と早期に相談し、対象地域と支援企業群を具体化する。 +- 記事DB188件を、AI・大学DX・産学連携・大学発SU・地域産業課題の5分類で棚卸しする。 +- esse-sense Future Forum を単独イベントではなく、事業化案件を発掘・発表する場として再設計する。 +- 営利法人としての自走化計画を示すため、2年目以降の会員課金、企業伴走契約、レポート販売、共催収入を収益モデルに入れる。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_E_経産省 地域中核企業創出・支援事業.md</p>
+<p>codex ドラフトを保存しました。最後に文字量とファイル内容の先頭・末尾を確認し、指定条件から外れていないか見ます。 exec /bin/bash -lc "wc -m drafts_v2/B6_E_経産省\\ 地域中核企業創出・支援事業.md" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms:     2775 drafts_v2/B6_E_経産省 地域中核企業創出・支援事業.md</p>
+<p>exec /bin/bash -lc "tail -n 12 drafts_v2/B6_E_経産省\\ 地域中核企業創出・支援事業.md" in /Users/nishimura+/work/miratuku-grants-2026 exec /bin/bash -lc "sed -n '1,40p' drafts_v2/B6_E_経産省\\ 地域中核企業創出・支援事業.md" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms:</p>
+<ul>
+<li>地域支援機関、大学、金融機関、企業候補からの連携意向書を取得する。</li>
+<li>AI活用範囲、個人情報・著作権・研究倫理への対応方針を明記する。</li>
+<li>成果指標として、支援企業数、マッチング件数、PoC件数、記事・レポート本数、次年度資金接続件数を設定する。</li>
+</ul>
+<h2>7. 推奨アクション（3-5点）</h2>
+<ul>
+<li>申請主体を「地域中核企業そのもの」ではなく「地域中核企業を創出・支援するプラットフォーム事業者」として明確化する。</li>
+<li>地域金融機関または経済産業局管内の支援機関と早期に相談し、対象地域と支援企業群を具体化する。</li>
+<li>記事DB188件を、AI・大学DX・産学連携・大学発SU・地域産業課題の5分類で棚卸しする。</li>
+<li>esse-sense Future Forum を単独イベントではなく、事業化案件を発掘・発表する場として再設計する。</li>
+<li>営利法人としての自走化計画を示すため、2年目以降の会員課金、企業伴走契約、レポート販売、共催収入を収益モデルに入れる。</li>
+</ul>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

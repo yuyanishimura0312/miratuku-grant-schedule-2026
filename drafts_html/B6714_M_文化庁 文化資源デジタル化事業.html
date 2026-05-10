@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>文化庁 文化資源デジタル化事業</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>文化庁 文化資源デジタル化事業 申請書ドラフト（ミラツク向け）</h1>
+<p><strong>締切</strong>: 通年 | <strong>上限</strong>: 事業規模による</p>
+<h2>1. 申請者情報（300字・数値組込）</h2>
+<h2>2. 助成金概要・応募要件（200字・地の文）</h2>
+<h2>3. 申請テーマ案（A推奨/B代替・各150字）</h2>
+<h2>4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字）</h2>
+<h2>5. スケジュールと予算（年次別）</h2>
+<h2>6. 提出物チェックリスト</h2>
+<h2>7. 推奨アクション（3-5点）</h2>
+<p>末尾に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_M_文化庁 文化資源デジタル化事業.md」記載。地の文中心、法人数値組込必須。 codex 指定情報をもとにドラフト本文を作成し、保存対象パスにも同じ内容を配置します。助成制度の細部は公募年度で変わる可能性があるため、本文では断定しすぎず、提出前確認が必要な形で扱います。 exec /bin/bash -lc "pwd && ls -la && find . -maxdepth 3 -type d | sort | sed -n '1,80p'" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms: /Users/nishimura+/work/miratuku-grants-2026 total 632 drwxr-xr-x   26 nishimura+  staff    832  5月 10 10:58 . drwxr-xr-x   66 nishimura+  staff   2112  5月 10 10:21 .. -rw-r--r--@   1 nishimura+  staff   6148  5月  9 21:12 .DS_Store -rw-r--r--    1 nishimura+  staff   3745  5月  9 18:57 00_summary.md -rw-r--r--@   1 nishimura+  staff   7550  5月  9 19:08 01_松下幸之助記念志財団_研究助成.md -rw-r--r--@   1 nishimura+  staff   9082  5月  9 19:09 02_野村グループ基金_みらい助成.md -rw-r--r--@   1 nishimura+  staff   9601  5月  9 19:09 03_ものづくり補助金_19次.md -rw-r--r--    1 nishimura+  staff   8283  5月  9 19:10 04_企業メセナ協議会_助成認定.md -rw-r--r--    1 nishimura+  staff   8973  5月  9 19:11 05_JSPS_人文社会研究.md -rw-r--r--    1 nishimura+  staff   7034  5月  9 19:12 06_お金をまわそう基金.md -rw-r--r--    1 nishimura+  staff   4394  5月  9 19:12 07_esse-sense_補助金候補.md -rw-r--r--    1 nishimura+  staff   7702  5月  9 19:13 08_統合実行計画.md -rw-r--r--    1 nishimura+  staff  18962  5月  9 19:29 09_提出スケジュール_5月-9月.md -rw-r--r--    1 nishimura+  staff  16109  5月  9 19:55 09a_提出スケジュール_ミラツク.md -rw-r--r--    1 nishimura+  staff  16481  5月  9 19:55 09b_提出スケジュール_esse-sense.md -rw-r--r--    1 nishimura+  staff  12301  5月  9 19:38 10_沖縄県特有助成金.md -rw-r--r--    1 nishimura+  staff  17202  5月  9 19:40 11_京都府特有助成金.md -rw-r--r--    1 nishimura+  staff  21360  5月  9 19:55 12_国・NEDO・総務省系助成金.md -rw-r--r--    1 nishimura+  staff  17707  5月  9 21:12 build_schedule_csv.py -rw-r--r--    1 nishimura+  staff  22382  5月  9 21:07 build_schedule_xlsx.py drwxr-xr-x    8 nishimura+  staff    256  5月  9 21:12 csv drwxr-xr-x  276 nishimura+  staff   8832  5月 10 11:44 drafts_html drwxr-xr-x  273 nishimura+  staff   8736  5月 10 11:44 drafts_v2 drwxr-xr-x   14 nishimura+  staff    448  5月 10 11:11 site -rw-r--r--@   1 nishimura+  staff  27367  5月  9 21:07 提出スケジュール_2026年5-9月.xlsx -rw-r--r--@   1 nishimura+  staff  33191  5月  9 21:18 提出スケジュール.html . ./csv ./drafts_html ./drafts_v2 ./site ./site/.git ./site/.git/hooks ./site/.git/info ./site/.git/logs ./site/.git/objects ./site/.git/refs ./site/drafts ./site/drafts_html ./site/drafts_v2 ./site/templates</p>
+<p>codex 既存の <code>drafts_v2</code> が大量にあるため、同じMarkdownの粒度に合わせて新規ファイルとして追加します。文字数は指定範囲に収まるよう、地の文を中心にしつつチェックリストだけ実務形式にします。 exec /bin/bash -lc "find drafts_v2 -maxdepth 1 -type f -name 'B6_M*' -print" in /Users/nishimura+/work/miratuku-grants-2026 exec /bin/bash -lc "ls drafts_v2 | sed -n '1,40p'" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms: 001_E_観光庁オーバーツーリズム対策.md 001_M_観光庁オーバーツーリズム対策.md 002_M_JSPS科研費_特別推進_基盤S.md 003_M_JST CREST 戦略的創造研究推進事業.md 004_E_NEDO ディープテック・スタートアップ支援(DTSU)第10回.md 005_E_中小企業成長加速化補助金（推定例年6月）.md 006_M_JST RISTEX「ケアが根づく社会システム」.md 007_M_JST RISTEX「SDGs達成に向けた共創的研究開発」.md 008_E_共創の場形成支援プログラム（COI-NEXT）「未来共創分野」.md 008_M_共創の場形成支援プログラム（COI-NEXT）「未来共創分野」.md 010_E_総務省 地域社会DX推進パッケージ事業（二次公募）.md 010_M_総務省 地域社会DX推進パッケージ事業（二次公募）.md 012_E_JST ASPIRE 2026 国際共同研究.md 012_M_JST ASPIRE 2026 国際共同研究.md 013_M_JSPS 研究成果公開促進費 データベース部門.md 014_E_京都市 MICE開催支援助成金（大規模国際・上期4月_下期10月）.md 014_M_京都市 MICE開催支援助成金（大規模国際・上期4月_下期10月）.md 015_E_経済安全保障重要技術育成プログラム（K Program）.md 015_M_経済安全保障重要技術育成プログラム（K Program）.md 016_E_ムーンショット型研究開発事業.md 016_M_ムーンショット型研究開発事業.md 017_E_内閣府 SIP第3期（戦略的イノベーション創造）.md 017_M_内閣府 SIP第3期（戦略的イノベーション創造）.md 018_E_NEDO グリーンイノベーション基金.md 018_M_NEDO グリーンイノベーション基金.md 019_E_JST GteX 革新的GX技術創出（推定例年5-7月）.md 019_M_JST GteX 革新的GX技術創出（推定例年5-7月）.md 020_E_JST スタートアップ・エコシステム共創（地域拠点）.md 021_E_第2期スタートアップ・エコシステム拠点形成戦略（内閣府）.md 022_M_地域中核大学・特色ある研究大学 総合振興パッケージ（J-PEAKS）.md 023_E_トヨタ財団 国際助成プログラム.md 023_M_トヨタ財団 国際助成プログラム.md 024_M_トヨタ財団 国内助成プログラム（自治型社会）.md 025_M_住友財団 基礎科学研究助成.md 026_M_鹿島学術振興財団 特定テーマ研究助成.md 029_M_トヨタ財団 研究助成「未来の社会システム」.md 030_E_DNP文化振興財団 グラフィック文化研究助成.md 030_M_DNP文化振興財団 グラフィック文化研究助成.md B3200_M_立石科学技術振興財団 国際交流助成.md B3201_E_立石科学技術振興財団 国際交流助成.md</p>
+<p>succeeded in 0ms: drafts_v2/B6_M_日本生命財団 高齢・地域共生社会助成.md drafts_v2/B6_M_JETRO アジアDX等新規事業創造.md drafts_v2/B6_M_総務省 ローカル10,000プロジェクト.md drafts_v2/B6_M_お金をまわそう基金（第8期3回目）.md drafts_v2/B6_M_内閣府 新しい地方経済・生活環境創生交付金(第2世代).md drafts_v2/B6_M_厚労省 介護テクノロジー導入支援.md drafts_v2/B6_M_外務省 日本NGO連携無償資金協力.md drafts_v2/B6_M_NEDO 研究開発型スタートアップ支援(NEP).md drafts_v2/B6_M_総務省 過疎地域持続的発展支援交付金.md drafts_v2/B6_M_NHK放送技術研究所 共同研究プログラム.md drafts_v2/B6_M_環境省 地域脱炭素推進交付金.md drafts_v2/B6_M_立正佼成会 一食平和基金.md drafts_v2/B6_M_復興庁・福島県 地域復興実用化開発.md drafts_v2/B6_M_京都市国際交流協会 国際交流事業支援.md drafts_v2/B6_M_JSPS データインフラ強化事業（連携大学経由）.md drafts_v2/B6_M_外務省 外交・安全保障調査研究事業費補助金.md drafts_v2/B6_M_全国コミュニティ財団協会 各地域財団.md drafts_v2/B6_M_経産省 地域経済循環創造事業（ローカル10,000）.md drafts_v2/B6_M_コンベンション開催支援事業（沖縄）.md drafts_v2/B6_M_内閣府 規制サンドボックス制度.md drafts_v2/B6_M_JSPS 課題設定先導事業（連携大学経由）.md drafts_v2/B6_M_住友生命健康財団 コミュニティスポーツ推進助成.md drafts_v2/B6_M_京都地域創造基金 事業指定助成.md drafts_v2/B6_M_ベネッセこども基金 重い病気の子の学び支援.md drafts_v2/B6_M_環境省 生物多様性保全推進.md drafts_v2/B6_M_国交省 スマートシティ実装化支援事業.md drafts_v2/B6_M_内閣府 BRIDGE（研究開発とSociety5.0橋渡し）.md drafts_v2/B6_M_企業メセナ協議会 助成認定（3月_6月_9月_12月）.md drafts_v2/B6_M_こども家庭庁 子育て支援補助金.md drafts_v2/B6_M_産総研 公募課題（共同研究・春秋）.md drafts_v2/B6_M_農林水産省 スマート農業（データ・AI領域）.md drafts_v2/B6_M_関西エネルギー財団 海外研究者招聘助成.md drafts_v2/B6_M_関西エネルギー財団 研究発表会等開催助成.md drafts_v2/B6_M_日本社会福祉弘済会 社会福祉助成事業.md</p>
+<p>exec /bin/bash -lc "sed -n '1,120p' drafts_v2/"'$(ls drafts_v2 | sed -n '"'1p')" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms:</p>
+<h1>観光庁 オーバーツーリズム対策面的整備（令和8年度） 申請書ドラフト（esse-sense向け）</h1>
+<p><strong>締切</strong>: 2026-05-29 12:00必着 | <strong>上限</strong>: 補助上限2億円（2/3）／5,000万円（1/2） URL: <a href="https://www.mlit.go.jp/kankocho/kobo_2026_00003.html">https://www.mlit.go.jp/kankocho/kobo_2026_00003.html</a></p>
+<h2>1. 申請者情報</h2>
+<p>株式会社esse-senseは、研究者の知を社会に届けることを主軸とするメディア・データ事業者である。articles 154件、general_articles 34件の研究者発信記事データベースを保有し、学術知識のテキスト解析・大規模データ処理・AI連携を強みとする。これまでミラツク（NPO法人）と密接な共同事業を推進し、esse-sense Future Forumをはじめとする国際フォーラム運営、産学連携支援、大学発スタートアップ伴走、大学・学術機関のDX推進を手がけてきた。観光地のオーバーツーリズム対策においては、観光客行動データの大規模解析、研究知識を組み込んだ多言語AIサービス、観光事業者向けDXプラットフォームの開発・実装を提供する技術パートナーとして関与可能である。</p>
+<h2>2. 助成金概要・応募要件</h2>
+<p>観光庁令和8年度オーバーツーリズム対策事業は、予算100億円配当・補助率2/3または1/2の大型補助金である。対象は観光地の自治体および連携法人で、esse-senseは観光地連携法人として、または自治体・観光協会のシステム開発・データ解析パートナーとして参画する。評価ポイントは対策の実効性、データに基づく定量的効果測定、住民・事業者・行政の連携設計、国際標準への対応性である。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 「研究知駆動型観光地DXプラットフォーム」の開発と京都・沖縄での実装 研究者発信記事DBの分析手法を観光地データに応用し、観光客行動・住民影響・地域経済の三軸を統合解析するDXプラットフォームを構築する。多言語AI、混雑予測、リコメンドエンジンを核に、観光地ごとにカスタマイズ可能なSaaSとして横展開する。</p>
+<p><strong>案B（代替）</strong>: 観光地向け国際メディア発信×インバウンド需要平準化 esse-sense Future Forumの国際運営実績を活かし、海外向け多言語メディア発信を通じて訪問時期・地域の分散を促進する。研究知識を含むコンテンツで、混雑観光地以外の魅力を訴求する。</p>
+<h2>4. 事業計画書本文（推奨案A）</h2>
+<h3>背景・目的（350字）</h3>
+<p>オーバーツーリズム対策において、施設整備や物理的混雑緩和に注力する従来の手法には限界がある。観光客の行動データと住民の生活データを大規模解析し、両者の利害を統合的に再設計する技術基盤が不足していた。esse-senseは研究者発信記事DBの構築・分析実績を基盤に、研究知識を組み込んだ観光地DXプラットフォームを開発する。京都・沖縄をはじめとする主要観光地に対して、観光客行動の予測モデル、住民影響の可視化ダッシュボード、地域経済還元の最適化エンジンを統合提供する。事業終了後は、SaaSモデルとして全国の観光地に展開し、持続可能な事業基盤として運営する計画である。</p>
+<h3>事業の方法（380字)</h3>
+<p>第一に、京都市観光協会および沖縄県観光部局と連携し、観光客行動データ（決済・移動・滞在時間）と住民生活データ（騒音・通行量・苦情件数）を統合する基盤を構築する。第二に、esse-senseの記事DB処理技術を応用し、観光人類学・地域経済学等の研究知見を機械可読フォーマットで組み込む。第三に、多言語AIサービスを開発し、観光客に対して混雑回避ルート・地域消費還元情報・文化体験を提案する。第四に、住民向けダッシュボードを公開し、観光影響の可視化と意見提出機能を提供する。第五に、ミラツクと連携し、研究者ネットワークから事業評価のための学術アドバイザリーボードを編成する。半年ごとの効果測定と継続改善を実施する。</p>
+<h3>期待される成果（230字）</h3>
+<p>実装地域での観光客の混雑回避ルート利用率40%以上、住民満足度15%向上、地域経済還元率5%向上を達成する。プラットフォーム自体は事業終了後にSaaSモデルへ移行し、全国10地域への横展開を3年以内に実現する。技術成果として、研究知識統合型観光AIの基盤技術論文1本、オープンソース化されたAPI仕様書、自治体向け導入マニュアルを公開する。</p>
+<h2>5. スケジュールと予算</h2>
+<p>事業期間は2026年7月から2027年3月の9ヶ月間。総事業費1.5億円のうち、補助申請額1.0億円（補助率2/3）。費目内訳は、システム開発費6,000万円、データ解析費2,500万円、多言語AI開発費2,500万円、住民・観光客調査費2,000万円、運営費2,000万円。スケジュールは7月キックオフ、9月β版運用、12月本格運用、3月成果評価とする。</p>
+<h2>6. 提出物チェックリスト</h2>
+<ul>
+<li><input type="checkbox" disabled> 事前着手届（2026-04-17 12:00期限）</li>
+<li><input type="checkbox" disabled> 申請書（観光庁指定様式）</li>
+<li><input type="checkbox" disabled> 事業計画書</li>
+<li><input type="checkbox" disabled> 予算書</li>
+<li><input type="checkbox" disabled> 自治体・観光協会合意書</li>
+<li><input type="checkbox" disabled> 直近3期の決算書</li>
+<li><input type="checkbox" disabled> 法人登記簿</li>
+<li><input type="checkbox" disabled> 連携先合意書（ミラツクとの共同実施合意を含む）</li>
+<li><input type="checkbox" disabled> システム要件定義書</li>
+</ul>
+<h2>7. 推奨アクション</h2>
+<p>京都市観光協会・沖縄県観光部局に4月15日までに事前協議。技術仕様書を4月20日までに完成。事前着手届を4月17日に提出。ミラツクとの共同実施合意書を5月初旬に締結。5月29日までに本申請完了。</p>
+<p>codex これから新規Markdownを追加します。申請者情報には設立年、期、拠点、専従数、収益、協働社数、DB数、連載数を入れ、計画本文は「文化DB」を中核に据えます。 apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_M_文化庁 文化資源デジタル化事業.md diff --git a/miratuku-grants-2026/drafts_v2/B6_M_文化庁 文化資源デジタル化事業.md b/miratuku-grants-2026/drafts_v2/B6_M_文化庁 文化資源デジタル化事業.md new file mode 100644 index 0000000000000000000000000000000000000000..0603d703595a84dd72be44863d46ed4f17ea76b4 --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B6_M_文化庁 文化資源デジタル化事業.md @@ -0,0 +1,54 @@ +# 文化庁 文化資源デジタル化事業 申請書ドラフト（ミラツク向け） + +<strong>締切</strong>: 通年 | <strong>上限</strong>: 事業規模による + +## 1. 申請者情報（300字・数値組込） + +特定非営利活動法人ミラツクは、2010年設立、現在第14期を迎える京都府・東京都拠点の非営利法人である。専従25名体制で、2024年度営業収益は87.4百万円。企業協働20社、コミュニティ参加者350名との共創を通じ、学術知と社会実装をつなぐ事業を継続してきた。知識基盤として26のSQLite知識データベースを保有し、学術知識30,288概念を含む横断的データを整備している。また「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載資産を有し、文化・生活・産業の変化を社会に接続する編集力とデータ活用力を備える。 + +## 2. 助成金概要・応募要件（200字・地の文） + +文化庁の文化資源デジタル化事業は、地域や分野に蓄積された文化資源をデジタル化し、保存、公開、活用、継承へつなげる取組を支援する制度として位置づけられる。申請にあたっては、対象資源の公共性、権利処理、メタデータ設計、長期保存、利活用計画、事業終了後の運用体制が重視される。ミラツクは単独実施に加え、esse-sense等とのM+E連携により、文化DB構築、編集、解析、社会接続を一体で提案できる。 + +## 3. 申請テーマ案（A推奨/B代替・各150字） + +<strong>案A（推奨）</strong>: 文化資源を「変化のかたち」として読み解くE+A文化DB構築事業。ミラツクの26知識DBと300話の連載資産を基盤に、地域文化、生活文化、産業文化の語彙・事例・関係性を構造化し、検索、教育、展示、政策形成に活用できる公開型データベースを整備する。 + +<strong>案B（代替）</strong>: 学術知と市民実践を接続する文化資源アーカイブ事業。研究者、企業、地域実践者の語りを収集し、文化資源の背景知識、継承課題、活用可能性を編集データとして蓄積する。まず京都・東京の協働先から着手し、将来の全国展開を見据える。 + +## 4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字） + +### 背景・目的 + +日本各地の文化資源は、建造物、工芸、祭礼、食、暮らし、産業技術、地域の語りなど多層的に存在する一方、保存単位が分野別・地域別に分断され、社会の変化と結びつけて理解されにくい課題がある。特に生活文化や産業文化は、制度的な文化財指定の外側にある実践も多く、担い手の高齢化、記録不足、活用機会の限定によって、次世代への継承が難しくなっている。ミラツクは、学際データベース、セクター協働、知の社会接続、データ活用を強みとして、文化資源を静的な収蔵物ではなく、社会の変化を読み解く知識基盤として再構成する。本事業では、E+A文化DBを構築し、文化資源の保存と公開に加え、教育、地域共創、企業協働、政策形成に使えるデジタル基盤を整えることを目的とする。 + +### 方法 + +事業は三段階で実施する。第一に、ミラツクが保有する26のSQLite知識データベースと、合計300話の連載資産を棚卸しし、文化資源に関わる概念、事例、人物、地域、時代、課題、実装事例を抽出する。学術知識30,288概念のうち、文化・生活・事業・変化に関係する語彙を選定し、文化庁事業に適したメタデータ項目へ再設計する。第二に、研究者、地域実践者、企業協働先への確認を行い、権利処理、出典管理、公開範囲、二次利用条件を整理する。第三に、検索可能な文化DB、可視化ページ、利活用ガイド、APIまたはデータ出力仕様を整備し、教育機関、自治体、企業、NPOが利用できる形で公開する。esse-sense等との連携により、編集、解析、公開設計、利用者検証を分担し、事業終了後も更新可能な運用体制を構築する。 + +### 成果 + +成果物として、E+A文化DB、メタデータ仕様書、権利処理台帳、公開用ウェブページ、利活用ガイド、事業報告書を作成する。初年度は300話の連載資産と既存DBから文化資源関連データを抽出し、検索・閲覧可能な最小実装を公開する。これにより、文化資源を保存するだけでなく、地域課題、生活変化、企業協働、教育実践へ接続する基盤が生まれる。中長期的には、京都・東京から全国の実践へ拡張し、文化資源を社会実装に結びつけるモデルとして展開する。 + +## 5. スケジュールと予算（年次別） + +1年目は、対象データの棚卸し、メタデータ設計、権利確認、DB試作、公開画面の最小実装を行う。主な費目は人件費、データ整理費、システム設計費、権利確認費、外部有識者謝金である。2年目は、連携先を広げ、追加資料のデジタル化、検索機能と可視化機能の拡張、利用者検証、教育・地域向け活用プログラムを実施する。主な費目は開発費、編集費、調査費、ワークショップ運営費、広報費である。3年目以降は、公開DBの更新体制を整え、自治体・文化機関・企業との共同活用を進める。予算は事業規模に応じて、基盤整備型では800万-1,500万円、広域展開型では2,000万-4,000万円を目安に設計する。 + +## 6. 提出物チェックリスト + +- <input type="checkbox" disabled> 申請書本体 +- <input type="checkbox" disabled> 事業計画書 +- <input type="checkbox" disabled> 収支予算書 +- <input type="checkbox" disabled> 法人概要資料 +- <input type="checkbox" disabled> 2024年度決算資料または直近事業報告書 +- <input type="checkbox" disabled> 文化資源リストおよび既存DB概要 +- <input type="checkbox" disabled> メタデータ設計案 +- <input type="checkbox" disabled> 権利処理・公開範囲整理表 +- <input type="checkbox" disabled> 連携先確認書または協力意向書 +- <input type="checkbox" disabled> 事業終了後の運用計画 + +## 7. 推奨アクション（3-5点） + +まず、26のSQLite知識DBと300話の連載資産から、文化資源デジタル化の対象範囲を30-50件程度に絞り込む。次に、公開可否、権利者、出典、二次利用条件を確認し、申請前に権利処理リスクを下げる。第三に、M+E連携の役割分担を明文化し、ミラツクは知識設計と社会接続、esse-senseはデータ処理と公開実装を担う体制にする。第四に、文化庁向けには「保存」だけでなく「公開後の利活用」と「広域展開」を前面に出す。最後に、通年申請であっても、事前相談、要件確認、見積取得、協力書回収の4工程を2か月以内に完了させる。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_M_文化庁 文化資源デジタル化事業.md</p>
+<p>diff --git a/miratuku-grants-2026/drafts_v2/B6_M_文化庁 文化資源デジタル化事業.md b/miratuku-grants-2026/drafts_v2/B6_M_文化庁 文化資源デジタル化事業.md new file mode 100644 index 0000000000000000000000000000000000000000..0603d703595a84dd72be44863d46ed4f17ea76b4 --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B6_M_文化庁 文化資源デジタル化事業.md @@ -0,0 +1,54 @@ +# 文化庁 文化資源デジタル化事業 申請書ドラフト（ミラツク向け） + +<strong>締切</strong>: 通年 | <strong>上限</strong>: 事業規模による + +## 1. 申請者情報（300字・数値組込） + +特定非営利活動法人ミラツクは、2010年設立、現在第14期を迎える京都府・東京都拠点の非営利法人である。専従25名体制で、2024年度営業収益は87.4百万円。企業協働20社、コミュニティ参加者350名との共創を通じ、学術知と社会実装をつなぐ事業を継続してきた。知識基盤として26のSQLite知識データベースを保有し、学術知識30,288概念を含む横断的データを整備している。また「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載資産を有し、文化・生活・産業の変化を社会に接続する編集力とデータ活用力を備える。 + +## 2. 助成金概要・応募要件（200字・地の文） + +文化庁の文化資源デジタル化事業は、地域や分野に蓄積された文化資源をデジタル化し、保存、公開、活用、継承へつなげる取組を支援する制度として位置づけられる。申請にあたっては、対象資源の公共性、権利処理、メタデータ設計、長期保存、利活用計画、事業終了後の運用体制が重視される。ミラツクは単独実施に加え、esse-sense等とのM+E連携により、文化DB構築、編集、解析、社会接続を一体で提案できる。 + +## 3. 申請テーマ案（A推奨/B代替・各150字） + +<strong>案A（推奨）</strong>: 文化資源を「変化のかたち」として読み解くE+A文化DB構築事業。ミラツクの26知識DBと300話の連載資産を基盤に、地域文化、生活文化、産業文化の語彙・事例・関係性を構造化し、検索、教育、展示、政策形成に活用できる公開型データベースを整備する。 + +<strong>案B（代替）</strong>: 学術知と市民実践を接続する文化資源アーカイブ事業。研究者、企業、地域実践者の語りを収集し、文化資源の背景知識、継承課題、活用可能性を編集データとして蓄積する。まず京都・東京の協働先から着手し、将来の全国展開を見据える。 + +## 4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字） + +### 背景・目的 + +日本各地の文化資源は、建造物、工芸、祭礼、食、暮らし、産業技術、地域の語りなど多層的に存在する一方、保存単位が分野別・地域別に分断され、社会の変化と結びつけて理解されにくい課題がある。特に生活文化や産業文化は、制度的な文化財指定の外側にある実践も多く、担い手の高齢化、記録不足、活用機会の限定によって、次世代への継承が難しくなっている。ミラツクは、学際データベース、セクター協働、知の社会接続、データ活用を強みとして、文化資源を静的な収蔵物ではなく、社会の変化を読み解く知識基盤として再構成する。本事業では、E+A文化DBを構築し、文化資源の保存と公開に加え、教育、地域共創、企業協働、政策形成に使えるデジタル基盤を整えることを目的とする。 + +### 方法 + +事業は三段階で実施する。第一に、ミラツクが保有する26のSQLite知識データベースと、合計300話の連載資産を棚卸しし、文化資源に関わる概念、事例、人物、地域、時代、課題、実装事例を抽出する。学術知識30,288概念のうち、文化・生活・事業・変化に関係する語彙を選定し、文化庁事業に適したメタデータ項目へ再設計する。第二に、研究者、地域実践者、企業協働先への確認を行い、権利処理、出典管理、公開範囲、二次利用条件を整理する。第三に、検索可能な文化DB、可視化ページ、利活用ガイド、APIまたはデータ出力仕様を整備し、教育機関、自治体、企業、NPOが利用できる形で公開する。esse-sense等との連携により、編集、解析、公開設計、利用者検証を分担し、事業終了後も更新可能な運用体制を構築する。 + +### 成果 + +成果物として、E+A文化DB、メタデータ仕様書、権利処理台帳、公開用ウェブページ、利活用ガイド、事業報告書を作成する。初年度は300話の連載資産と既存DBから文化資源関連データを抽出し、検索・閲覧可能な最小実装を公開する。これにより、文化資源を保存するだけでなく、地域課題、生活変化、企業協働、教育実践へ接続する基盤が生まれる。中長期的には、京都・東京から全国の実践へ拡張し、文化資源を社会実装に結びつけるモデルとして展開する。 + +## 5. スケジュールと予算（年次別） + +1年目は、対象データの棚卸し、メタデータ設計、権利確認、DB試作、公開画面の最小実装を行う。主な費目は人件費、データ整理費、システム設計費、権利確認費、外部有識者謝金である。2年目は、連携先を広げ、追加資料のデジタル化、検索機能と可視化機能の拡張、利用者検証、教育・地域向け活用プログラムを実施する。主な費目は開発費、編集費、調査費、ワークショップ運営費、広報費である。3年目以降は、公開DBの更新体制を整え、自治体・文化機関・企業との共同活用を進める。予算は事業規模に応じて、基盤整備型では800万-1,500万円、広域展開型では2,000万-4,000万円を目安に設計する。 + +## 6. 提出物チェックリスト + +- <input type="checkbox" disabled> 申請書本体 +- <input type="checkbox" disabled> 事業計画書 +- <input type="checkbox" disabled> 収支予算書 +- <input type="checkbox" disabled> 法人概要資料 +- <input type="checkbox" disabled> 2024年度決算資料または直近事業報告書 +- <input type="checkbox" disabled> 文化資源リストおよび既存DB概要 +- <input type="checkbox" disabled> メタデータ設計案 +- <input type="checkbox" disabled> 権利処理・公開範囲整理表 +- <input type="checkbox" disabled> 連携先確認書または協力意向書 +- <input type="checkbox" disabled> 事業終了後の運用計画 + +## 7. 推奨アクション（3-5点） + +まず、26のSQLite知識DBと300話の連載資産から、文化資源デジタル化の対象範囲を30-50件程度に絞り込む。次に、公開可否、権利者、出典、二次利用条件を確認し、申請前に権利処理リスクを下げる。第三に、M+E連携の役割分担を明文化し、ミラツクは知識設計と社会接続、esse-senseはデータ処理と公開実装を担う体制にする。第四に、文化庁向けには「保存」だけでなく「公開後の利活用」と「広域展開」を前面に出す。最後に、通年申請であっても、事前相談、要件確認、見積取得、協力書回収の4工程を2か月以内に完了させる。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_M_文化庁 文化資源デジタル化事業.md</p>
+<p>codex ファイルを追加しました。指定の1,500-2,500字に入っているか、見出し・末尾パス・Markdownの崩れを確認します。 exec /bin/bash -lc "wc -m 'drafts_v2/B6_M_文化庁 文化資源デジタル化事業.md'" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms:     2717 drafts_v2/B6_M_文化庁 文化資源デジタル化事業.md</p>
+<p>exec /bin/bash -lc "sed -n '1,220p' 'drafts_v2/B6_M_文化庁 文化資源デジタル化事業.md'" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms:</p>
+<h1>文化庁 文化資源デジタル化事業 申請書ドラフト（ミラツク向け）</h1>
+<p><strong>締切</strong>: 通年 | <strong>上限</strong>: 事業規模による</p>
+<h2>1. 申請者情報（300字・数値組込）</h2>
+<p>特定非営利活動法人ミラツクは、2010年設立、現在第14期を迎える京都府・東京都拠点の非営利法人である。専従25名体制で、2024年度営業収益は87.4百万円。企業協働20社、コミュニティ参加者350名との共創を通じ、学術知と社会実装をつなぐ事業を継続してきた。知識基盤として26のSQLite知識データベースを保有し、学術知識30,288概念を含む横断的データを整備している。また「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載資産を有し、文化・生活・産業の変化を社会に接続する編集力とデータ活用力を備える。</p>
+<h2>2. 助成金概要・応募要件（200字・地の文）</h2>
+<p>文化庁の文化資源デジタル化事業は、地域や分野に蓄積された文化資源をデジタル化し、保存、公開、活用、継承へつなげる取組を支援する制度として位置づけられる。申請にあたっては、対象資源の公共性、権利処理、メタデータ設計、長期保存、利活用計画、事業終了後の運用体制が重視される。ミラツクは単独実施に加え、esse-sense等とのM+E連携により、文化DB構築、編集、解析、社会接続を一体で提案できる。</p>
+<h2>3. 申請テーマ案（A推奨/B代替・各150字）</h2>
+<p><strong>案A（推奨）</strong>: 文化資源を「変化のかたち」として読み解くE+A文化DB構築事業。ミラツクの26知識DBと300話の連載資産を基盤に、地域文化、生活文化、産業文化の語彙・事例・関係性を構造化し、検索、教育、展示、政策形成に活用できる公開型データベースを整備する。</p>
+<p><strong>案B（代替）</strong>: 学術知と市民実践を接続する文化資源アーカイブ事業。研究者、企業、地域実践者の語りを収集し、文化資源の背景知識、継承課題、活用可能性を編集データとして蓄積する。まず京都・東京の協働先から着手し、将来の全国展開を見据える。</p>
+<h2>4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字）</h2>
+<h3>背景・目的</h3>
+<p>日本各地の文化資源は、建造物、工芸、祭礼、食、暮らし、産業技術、地域の語りなど多層的に存在する一方、保存単位が分野別・地域別に分断され、社会の変化と結びつけて理解されにくい課題がある。特に生活文化や産業文化は、制度的な文化財指定の外側にある実践も多く、担い手の高齢化、記録不足、活用機会の限定によって、次世代への継承が難しくなっている。ミラツクは、学際データベース、セクター協働、知の社会接続、データ活用を強みとして、文化資源を静的な収蔵物ではなく、社会の変化を読み解く知識基盤として再構成する。本事業では、E+A文化DBを構築し、文化資源の保存と公開に加え、教育、地域共創、企業協働、政策形成に使えるデジタル基盤を整えることを目的とする。</p>
+<h3>方法</h3>
+<p>事業は三段階で実施する。第一に、ミラツクが保有する26のSQLite知識データベースと、合計300話の連載資産を棚卸しし、文化資源に関わる概念、事例、人物、地域、時代、課題、実装事例を抽出する。学術知識30,288概念のうち、文化・生活・事業・変化に関係する語彙を選定し、文化庁事業に適したメタデータ項目へ再設計する。第二に、研究者、地域実践者、企業協働先への確認を行い、権利処理、出典管理、公開範囲、二次利用条件を整理する。第三に、検索可能な文化DB、可視化ページ、利活用ガイド、APIまたはデータ出力仕様を整備し、教育機関、自治体、企業、NPOが利用できる形で公開する。esse-sense等との連携により、編集、解析、公開設計、利用者検証を分担し、事業終了後も更新可能な運用体制を構築する。</p>
+<h3>成果</h3>
+<p>成果物として、E+A文化DB、メタデータ仕様書、権利処理台帳、公開用ウェブページ、利活用ガイド、事業報告書を作成する。初年度は300話の連載資産と既存DBから文化資源関連データを抽出し、検索・閲覧可能な最小実装を公開する。これにより、文化資源を保存するだけでなく、地域課題、生活変化、企業協働、教育実践へ接続する基盤が生まれる。中長期的には、京都・東京から全国の実践へ拡張し、文化資源を社会実装に結びつけるモデルとして展開する。</p>
+<h2>5. スケジュールと予算（年次別）</h2>
+<p>1年目は、対象データの棚卸し、メタデータ設計、権利確認、DB試作、公開画面の最小実装を行う。主な費目は人件費、データ整理費、システム設計費、権利確認費、外部有識者謝金である。2年目は、連携先を広げ、追加資料のデジタル化、検索機能と可視化機能の拡張、利用者検証、教育・地域向け活用プログラムを実施する。主な費目は開発費、編集費、調査費、ワークショップ運営費、広報費である。3年目以降は、公開DBの更新体制を整え、自治体・文化機関・企業との共同活用を進める。予算は事業規模に応じて、基盤整備型では800万-1,500万円、広域展開型では2,000万-4,000万円を目安に設計する。</p>
+<h2>6. 提出物チェックリスト</h2>
+<ul>
+<li><input type="checkbox" disabled> 申請書本体</li>
+<li><input type="checkbox" disabled> 事業計画書</li>
+<li><input type="checkbox" disabled> 収支予算書</li>
+<li><input type="checkbox" disabled> 法人概要資料</li>
+<li><input type="checkbox" disabled> 2024年度決算資料または直近事業報告書</li>
+<li><input type="checkbox" disabled> 文化資源リストおよび既存DB概要</li>
+<li><input type="checkbox" disabled> メタデータ設計案</li>
+<li><input type="checkbox" disabled> 権利処理・公開範囲整理表</li>
+<li><input type="checkbox" disabled> 連携先確認書または協力意向書</li>
+<li><input type="checkbox" disabled> 事業終了後の運用計画</li>
+</ul>
+<h2>7. 推奨アクション（3-5点）</h2>
+<p>まず、26のSQLite知識DBと300話の連載資産から、文化資源デジタル化の対象範囲を30-50件程度に絞り込む。次に、公開可否、権利者、出典、二次利用条件を確認し、申請前に権利処理リスクを下げる。第三に、M+E連携の役割分担を明文化し、ミラツクは知識設計と社会接続、esse-senseはデータ処理と公開実装を担う体制にする。第四に、文化庁向けには「保存」だけでなく「公開後の利活用」と「広域展開」を前面に出す。最後に、通年申請であっても、事前相談、要件確認、見積取得、協力書回収の4工程を2か月以内に完了させる。</p>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

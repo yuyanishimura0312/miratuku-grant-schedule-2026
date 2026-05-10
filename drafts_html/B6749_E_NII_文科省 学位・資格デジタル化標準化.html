@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>NII/文科省 学位・資格デジタル化標準化</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>NII/文科省 学位・資格デジタル化標準化 申請書ドラフト（esse-sense向け）</h1>
+<p><strong>締切</strong>: 通年 | <strong>上限</strong>: 数百万円</p>
+<h2>1. 申請者情報（300字・数値組込）</h2>
+<h2>2. 助成金概要・応募要件（200字・地の文）</h2>
+<h2>3. 申請テーマ案（A推奨/B代替・各150字）</h2>
+<h2>4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字）</h2>
+<h2>5. スケジュールと予算（年次別）</h2>
+<h2>6. 提出物チェックリスト</h2>
+<h2>7. 推奨アクション（3-5点）</h2>
+<p>末尾に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_E_NII_文科省 学位・資格デジタル化標準化.md」記載。地の文中心、法人数値組込必須。 codex 助成金名と要件は時点差が出やすいので、まず公開情報で確認しつつ、いただいた条件に沿ってドラフト化します。内容が固まったら指定パスへ保存します。 web search: web search: NII 文部科学省 学位 資格 デジタル化 標準化 助成金 通年 数百万円 codex 公開情報では、NIIが2024年から学術機関のデジタル資格証明標準化、2026年2月から学位・資格情報の生涯管理モデルやLMS接続検証に関する共同研究を進めていることを確認しました。この前提を使い、助成金というより「共同研究・学術連携提案」に寄せた申請書調でまとめます。 exec /bin/bash -lc 'pwd && ls -la && find drafts_v2 -maxdepth 1 -type d -o -type f | sort | head -50' in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms: /Users/nishimura+/work/miratuku-grants-2026 total 632 drwxr-xr-x   26 nishimura+  staff    832  5月 10 10:58 . drwxr-xr-x   66 nishimura+  staff   2112  5月 10 10:21 .. -rw-r--r--@   1 nishimura+  staff   6148  5月  9 21:12 .DS_Store -rw-r--r--    1 nishimura+  staff   3745  5月  9 18:57 00_summary.md -rw-r--r--@   1 nishimura+  staff   7550  5月  9 19:08 01_松下幸之助記念志財団_研究助成.md -rw-r--r--@   1 nishimura+  staff   9082  5月  9 19:09 02_野村グループ基金_みらい助成.md -rw-r--r--@   1 nishimura+  staff   9601  5月  9 19:09 03_ものづくり補助金_19次.md -rw-r--r--    1 nishimura+  staff   8283  5月  9 19:10 04_企業メセナ協議会_助成認定.md -rw-r--r--    1 nishimura+  staff   8973  5月  9 19:11 05_JSPS_人文社会研究.md -rw-r--r--    1 nishimura+  staff   7034  5月  9 19:12 06_お金をまわそう基金.md -rw-r--r--    1 nishimura+  staff   4394  5月  9 19:12 07_esse-sense_補助金候補.md -rw-r--r--    1 nishimura+  staff   7702  5月  9 19:13 08_統合実行計画.md -rw-r--r--    1 nishimura+  staff  18962  5月  9 19:29 09_提出スケジュール_5月-9月.md -rw-r--r--    1 nishimura+  staff  16109  5月  9 19:55 09a_提出スケジュール_ミラツク.md -rw-r--r--    1 nishimura+  staff  16481  5月  9 19:55 09b_提出スケジュール_esse-sense.md -rw-r--r--    1 nishimura+  staff  12301  5月  9 19:38 10_沖縄県特有助成金.md -rw-r--r--    1 nishimura+  staff  17202  5月  9 19:40 11_京都府特有助成金.md -rw-r--r--    1 nishimura+  staff  21360  5月  9 19:55 12_国・NEDO・総務省系助成金.md -rw-r--r--    1 nishimura+  staff  17707  5月  9 21:12 build_schedule_csv.py -rw-r--r--    1 nishimura+  staff  22382  5月  9 21:07 build_schedule_xlsx.py drwxr-xr-x    8 nishimura+  staff    256  5月  9 21:12 csv drwxr-xr-x  276 nishimura+  staff   8832  5月 10 11:44 drafts_html drwxr-xr-x  273 nishimura+  staff   8736  5月 10 11:44 drafts_v2 drwxr-xr-x   14 nishimura+  staff    448  5月 10 11:11 site -rw-r--r--@   1 nishimura+  staff  27367  5月  9 21:07 提出スケジュール_2026年5-9月.xlsx -rw-r--r--@   1 nishimura+  staff  33191  5月  9 21:18 提出スケジュール.html drafts_v2 drafts_v2/001_E_観光庁オーバーツーリズム対策.md drafts_v2/001_M_観光庁オーバーツーリズム対策.md drafts_v2/002_M_JSPS科研費_特別推進_基盤S.md drafts_v2/003_M_JST CREST 戦略的創造研究推進事業.md drafts_v2/004_E_NEDO ディープテック・スタートアップ支援(DTSU)第10回.md drafts_v2/005_E_中小企業成長加速化補助金（推定例年6月）.md drafts_v2/006_M_JST RISTEX「ケアが根づく社会システム」.md drafts_v2/007_M_JST RISTEX「SDGs達成に向けた共創的研究開発」.md drafts_v2/008_E_共創の場形成支援プログラム（COI-NEXT）「未来共創分野」.md drafts_v2/008_M_共創の場形成支援プログラム（COI-NEXT）「未来共創分野」.md drafts_v2/010_E_総務省 地域社会DX推進パッケージ事業（二次公募）.md drafts_v2/010_M_総務省 地域社会DX推進パッケージ事業（二次公募）.md drafts_v2/012_E_JST ASPIRE 2026 国際共同研究.md drafts_v2/012_M_JST ASPIRE 2026 国際共同研究.md drafts_v2/013_M_JSPS 研究成果公開促進費 データベース部門.md drafts_v2/014_E_京都市 MICE開催支援助成金（大規模国際・上期4月_下期10月）.md drafts_v2/014_M_京都市 MICE開催支援助成金（大規模国際・上期4月_下期10月）.md drafts_v2/015_E_経済安全保障重要技術育成プログラム（K Program）.md drafts_v2/015_M_経済安全保障重要技術育成プログラム（K Program）.md drafts_v2/016_E_ムーンショット型研究開発事業.md drafts_v2/016_M_ムーンショット型研究開発事業.md drafts_v2/017_E_内閣府 SIP第3期（戦略的イノベーション創造）.md drafts_v2/017_M_内閣府 SIP第3期（戦略的イノベーション創造）.md drafts_v2/018_E_NEDO グリーンイノベーション基金.md drafts_v2/018_M_NEDO グリーンイノベーション基金.md drafts_v2/019_E_JST GteX 革新的GX技術創出（推定例年5-7月）.md drafts_v2/019_M_JST GteX 革新的GX技術創出（推定例年5-7月）.md drafts_v2/020_E_JST スタートアップ・エコシステム共創（地域拠点）.md drafts_v2/021_E_第2期スタートアップ・エコシステム拠点形成戦略（内閣府）.md drafts_v2/022_M_地域中核大学・特色ある研究大学 総合振興パッケージ（J-PEAKS）.md drafts_v2/023_E_トヨタ財団 国際助成プログラム.md drafts_v2/023_M_トヨタ財団 国際助成プログラム.md drafts_v2/024_M_トヨタ財団 国内助成プログラム（自治型社会）.md drafts_v2/025_M_住友財団 基礎科学研究助成.md drafts_v2/026_M_鹿島学術振興財団 特定テーマ研究助成.md drafts_v2/029_M_トヨタ財団 研究助成「未来の社会システム」.md drafts_v2/030_E_DNP文化振興財団 グラフィック文化研究助成.md drafts_v2/030_M_DNP文化振興財団 グラフィック文化研究助成.md drafts_v2/B3200_M_立石科学技術振興財団 国際交流助成.md drafts_v2/B3201_E_立石科学技術振興財団 国際交流助成.md drafts_v2/B3202_M_立石科学技術振興財団 国際会議開催助成.md drafts_v2/B3203_E_立石科学技術振興財団 国際会議開催助成.md drafts_v2/B3204_M_清水基金 文化芸術活動特別助成事業.md drafts_v2/B3205_M_JFE21世紀財団 アジア歴史研究助成.md drafts_v2/B3206_M_京都市芸術文化協会 伝統芸能文化復元.md drafts_v2/B3207_M_住友財団 環境研究助成.md drafts_v2/B3208_E_新事業進出・ものづくり補助金 第4回.md drafts_v2/B3209_M_丸紅基金 第52回社会福祉助成金.md drafts_v2/B3210_M_三井住友海上福祉財団 研究助成.md</p>
+<p>exec /bin/bash -lc "sed -n '1,220p' 'drafts_v2/013_M_JSPS 研究成果公開促進費 データベース部門.md'" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms:</p>
+<h1>JSPS 研究成果公開促進費 データベース部門 申請書ドラフト（ミラツク向け）</h1>
+<p><strong>締切</strong>: 2026-09-17頃 | <strong>上限</strong>: 200-1,000万円</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>法人プロフィールを基に、当該助成金との適合性を強調する自然な文章。営業収益・コミュニティ規模・DB数・連載数等の具体的な数値を本文に組み込む。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>助成金の目的・要件・評価ポイントを地の文で整理。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 法人の強み（①④）に最も合致するテーマと150字の要旨 <strong>案B（代替）</strong>: 別角度からのアプローチ</p>
+<h2>4. 事業/研究計画書本文（推奨案A）</h2>
+<h3>背景・目的（300-400字）</h3>
+<p>社会的・学術的意義を地の文で記述、法人の実績と数値を引用。</p>
+<h3>研究/事業の方法（300-400字）</h3>
+<p>具体的アプローチ、段階的実施計画。</p>
+<h3>期待される成果（200-300字）</h3>
+<p>定量・定性両面で成果物を明示。</p>
+<h2>5. スケジュールと予算</h2>
+<p>年次別の予算内訳と実施計画。総事業費・補助申請額を明示。</p>
+<h2>6. 提出物チェックリスト</h2>
+<p>申請書類のチェックボックスリスト。</p>
+<h2>7. 推奨アクション</h2>
+<p>即時行動項目を箇条書き3-5点。</p>
+<p>【絶対遵守】</p>
+<ol>
+<li>必ず/Users/nishimura+/work/miratuku-grants-2026/drafts_v2/013_M_JSPS 研究成果公開促進費 データベース部門.mdにファイルを保存</li>
+<li>法人の数値・実績を本文に組み込む</li>
+<li>地の文中心、箇条書きは補助的に</li>
+<li>1,500-2,500字</li>
+<li>保存後、<code>保存完了: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/013_M_JSPS 研究成果公開促進費 データベース部門.md</code> の1行のみ報告</li>
+</ol>
+<p>codex 保存失敗: sandbox制限により指定パスへの書き込みが許可されませんでした。 exec /bin/bash -lc "ls -1 drafts_v2 | rg 'NII|文科省|学位|資格|B6'" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms: B6_E_ETIC. 社会起業塾イニシアティブ.md B6_E_IT導入補助金 2026.md B6_E_J-Startup KANSAI.md B6_E_JETRO アジアDX等新規事業創造.md B6_E_JETRO 中堅・中小企業輸出支援エコシステム.md B6_E_JST SUCCESS（出資型新事業創出）.md B6_E_NEDO 研究開発型スタートアップ支援(NEP).md B6_E_SIIF 社会変革推進財団 インパクト投資.md B6_E_コンベンション開催支援事業（沖縄）.md B6_E_横浜市スタートアップ支援補助金.md B6_E_外務省 外交・安全保障調査研究事業費補助金.md B6_E_環境省 生物多様性保全推進.md B6_E_環境省 地域脱炭素推進交付金.md B6_E_関西エネルギー財団 海外研究者招聘助成.md B6_E_関西エネルギー財団 研究発表会等開催助成.md B6_E_経産省 地域経済循環創造事業（ローカル10,000）.md B6_E_厚労省 介護テクノロジー導入支援.md B6_E_厚労省 人材開発支援助成金 人への投資促進.md B6_E_国交省 スマートシティ実装化支援事業.md B6_E_産総研 公募課題（共同研究・春秋）.md B6_E_事業承継補助金（沖縄県産業振興公社）.md B6_E_神奈川県中小企業生産性向上補助金.md B6_E_全国コミュニティ財団協会 各地域財団.md B6_E_総務省 ICTスタートアップリーグ.md B6_E_総務省 ローカル10,000プロジェクト.md B6_E_東京都創業助成事業.md B6_E_内閣府 BRIDGE（研究開発とSociety5.0橋渡し）.md B6_E_内閣府 規制サンドボックス制度.md B6_E_内閣府 新しい地方経済・生活環境創生交付金(第2世代).md B6_E_日本生命財団 高齢・地域共生社会助成.md B6_E_農林水産省 スマート農業（データ・AI領域）.md B6_E_復興庁・福島県 地域復興実用化開発.md B6_E_福岡市スタートアップ海外展開支援.md B6_M_JETRO アジアDX等新規事業創造.md B6_M_JSPS データインフラ強化事業（連携大学経由）.md B6_M_JSPS 課題設定先導事業（連携大学経由）.md B6_M_NEDO 研究開発型スタートアップ支援(NEP).md B6_M_NHK放送技術研究所 共同研究プログラム.md B6_M_お金をまわそう基金（第8期3回目）.md B6_M_こども家庭庁 子育て支援補助金.md B6_M_コンベンション開催支援事業（沖縄）.md B6_M_ベネッセこども基金 重い病気の子の学び支援.md B6_M_外務省 外交・安全保障調査研究事業費補助金.md B6_M_外務省 日本NGO連携無償資金協力.md B6_M_環境省 生物多様性保全推進.md B6_M_環境省 地域脱炭素推進交付金.md B6_M_関西エネルギー財団 海外研究者招聘助成.md B6_M_関西エネルギー財団 研究発表会等開催助成.md B6_M_企業メセナ協議会 助成認定（3月_6月_9月_12月）.md B6_M_京都市国際交流協会 国際交流事業支援.md B6_M_京都地域創造基金 事業指定助成.md B6_M_経産省 地域経済循環創造事業（ローカル10,000）.md B6_M_厚労省 介護テクノロジー導入支援.md B6_M_国交省 スマートシティ実装化支援事業.md B6_M_産総研 公募課題（共同研究・春秋）.md B6_M_住友生命健康財団 コミュニティスポーツ推進助成.md B6_M_全国コミュニティ財団協会 各地域財団.md B6_M_総務省 ローカル10,000プロジェクト.md B6_M_総務省 過疎地域持続的発展支援交付金.md B6_M_内閣府 BRIDGE（研究開発とSociety5.0橋渡し）.md B6_M_内閣府 規制サンドボックス制度.md B6_M_内閣府 新しい地方経済・生活環境創生交付金(第2世代).md B6_M_日本社会福祉弘済会 社会福祉助成事業.md B6_M_日本生命財団 高齢・地域共生社会助成.md B6_M_農林水産省 スマート農業（データ・AI領域）.md B6_M_復興庁・福島県 地域復興実用化開発.md B6_M_立正佼成会 一食平和基金.md B6500_M_関西エネルギー財団 海外研究者招聘助成.md B6501_E_関西エネルギー財団 海外研究者招聘助成.md B6502_M_関西エネルギー財団 研究発表会等開催助成.md B6503_E_関西エネルギー財団 研究発表会等開催助成.md B6504_M_京都市国際交流協会 国際交流事業支援.md B6505_E_京都市国際交流協会 国際交流事業支援.md B6506_M_コンベンション開催支援事業（沖縄）.md B6507_E_コンベンション開催支援事業（沖縄）.md B6508_E_事業承継補助金（沖縄県産業振興公社）.md B6530_M_内閣府 規制サンドボックス制度.md B6531_E_内閣府 規制サンドボックス制度.md B6532_M_経産省 地域経済循環創造事業（ローカル10,000）.md B6533_E_経産省 地域経済循環創造事業（ローカル10,000）.md B6534_M_農林水産省 スマート農業（データ・AI領域）.md B6535_E_農林水産省 スマート農業（データ・AI領域）.md B6536_M_NHK放送技術研究所 共同研究プログラム.md B6537_M_企業メセナ協議会 助成認定（3月_6月_9月_12月）.md B6538_M_お金をまわそう基金（第8期3回目）.md B6539_M_JSPS 課題設定先導事業（連携大学経由）.md B6560_M_JSPS データインフラ強化事業（連携大学経由）.md B6561_E_IT導入補助金 2026.md B6562_M_内閣府 BRIDGE（研究開発とSociety5.0橋渡し）.md B6563_E_内閣府 BRIDGE（研究開発とSociety5.0橋渡し）.md B6564_M_NEDO 研究開発型スタートアップ支援(NEP).md B6565_E_NEDO 研究開発型スタートアップ支援(NEP).md B6566_E_JETRO 中堅・中小企業輸出支援エコシステム.md B6567_M_JETRO アジアDX等新規事業創造.md B6568_E_JETRO アジアDX等新規事業創造.md B6569_M_環境省 地域脱炭素推進交付金.md B6590_E_環境省 地域脱炭素推進交付金.md B6591_M_環境省 生物多様性保全推進.md B6592_E_環境省 生物多様性保全推進.md B6593_E_厚労省 介護テクノロジー導入支援.md B6620_M_総務省 ローカル10,000プロジェクト.md B6621_E_総務省 ローカル10,000プロジェクト.md B6622_M_内閣府 新しい地方経済・生活環境創生交付金(第2世代).md B6623_E_内閣府 新しい地方経済・生活環境創生交付金(第2世代).md B6624_M_こども家庭庁 子育て支援補助金.md B6625_M_外務省 外交・安全保障調査研究事業費補助金.md B6626_E_外務省 外交・安全保障調査研究事業費補助金.md B6627_M_復興庁・福島県 地域復興実用化開発.md B6628_E_復興庁・福島県 地域復興実用化開発.md B6629_M_産総研 公募課題（共同研究・春秋）.md B6650_E_産総研 公募課題（共同研究・春秋）.md B6651_M_日本社会福祉弘済会 社会福祉助成事業.md B6652_M_日本生命財団 高齢・地域共生社会助成.md B6653_E_日本生命財団 高齢・地域共生社会助成.md B6654_M_立正佼成会 一食平和基金.md B6655_M_住友生命健康財団 コミュニティスポーツ推進助成.md B6656_M_ベネッセこども基金 重い病気の子の学び支援.md B6657_M_京都地域創造基金 事業指定助成.md B6658_M_全国コミュニティ財団協会 各地域財団.md B6659_E_全国コミュニティ財団協会 各地域財団.md B6680_M_外務省 日本NGO連携無償資金協力.md B6681_E_東京都創業助成事業.md B6682_E_JST SUCCESS（出資型新事業創出）.md B6683_E_ETIC. 社会起業塾イニシアティブ.md B6684_E_J-Startup KANSAI.md B6685_E_福岡市スタートアップ海外展開支援.md B6686_E_横浜市スタートアップ支援補助金.md B6687_E_神奈川県中小企業生産性向上補助金.md B6688_E_SIIF 社会変革推進財団 インパクト投資.md</p>
+<p>codex これから指定ファイルを新規作成します。既存の <code>drafts_v2</code> の構成に合わせ、本文は申請書のたたき台としてそのまま転記しやすい見出しと分量にします。 apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_E_NII_文科省 学位・資格デジタル化標準化.md diff --git a/miratuku-grants-2026/drafts_v2/B6_E_NII_文科省 学位・資格デジタル化標準化.md b/miratuku-grants-2026/drafts_v2/B6_E_NII_文科省 学位・資格デジタル化標準化.md new file mode 100644 index 0000000000000000000000000000000000000000..0769c0590cd9f0f0bd8be62c49203f788f5771f0 --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B6_E_NII_文科省 学位・資格デジタル化標準化.md @@ -0,0 +1,44 @@ +# NII/文科省 学位・資格デジタル化標準化 申請書ドラフト（esse-sense向け） +<strong>締切</strong>: 通年 | <strong>上限</strong>: 数百万円 + +## 1. 申請者情報（300字・数値組込） +esse-senseは、研究者の知を社会に届けることを主目的とする株式会社であり、研究成果の編集、発信、社会実装支援を一体で行うメディア事業者である。自社で運用する記事データベースには、研究者・大学・企業・社会課題を横断するarticles 154件、general_articles 34件の計188件を蓄積しており、学際的な知見を構造化して発信する基盤を有する。大学発スタートアップ支援、産学連携支援、大学DX、AIを用いたデータ活用に関する実務経験を持ち、esse-sense Future Forumを通じた国際的な研究者・実務家ネットワーク形成にも取り組んでいる。本申請では営利法人として単独で、学位・資格デジタル化の標準化に向けた利用者理解、普及設計、ユースケース形成を担う。 + +## 2. 助成金概要・応募要件（200字・地の文） +本件は、NIIおよび文部科学省が進める学術DX、教育データ連携、学位・資格情報のデジタル化標準化の流れに接続し、学術機関が発行する学位、学修歴、資格証明、マイクロクレデンシャル等を社会で安全に活用するための実証・標準化検討に資する提案である。応募にあたっては、学術機関との連携可能性、技術標準への理解、社会実装に向けた普及導線、成果物の公開性が重視される。esse-sense単独申請の場合も、大学・研究者・企業をつなぐ中間支援機能を明確に示すことが要件適合の鍵となる。 + +## 3. 申請テーマ案（A推奨/B代替・各150字） +<strong>案A（推奨）</strong>: 学位・資格デジタル証明の社会実装に向けた学術DXユースケースDB構築。大学、研究者、企業、学生・社会人がデジタル証明をどの場面で必要とするかを可視化し、標準化議論に資する利用シナリオ、属性項目、普及課題を整理する。 + +<strong>案B（代替）</strong>: マイクロクレデンシャルと大学発スタートアップ人材の接続実証。研究人材の学修歴、研究経験、起業支援履歴をデジタル証明として提示する想定で、採用、共同研究、投資判断に使える情報設計と広報モデルを検討する。 + +## 4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字） +### 背景・目的 +大学教育、社会人のリスキリング、研究人材の流動化が進む中で、学位・資格・学修歴を紙の証明書や個別照会に依存して確認する仕組みは限界を迎えている。NIIは学術認証フェデレーション、SINET、研究データ基盤等を通じて大学DXを支えており、近年はデジタル資格証明、オープンバッジ、Verifiable Credentials等を含む標準化・社会実装の検討が進んでいる。一方、標準仕様が整っても、大学、学生、企業、研究者、行政がどのような利用価値を感じるかが明確でなければ、制度は普及しにくい。esse-senseはarticles 154件、general_articles 34件の学際DBと研究者ネットワークを活用し、学位・資格デジタル化の社会的意義を利用者視点で翻訳し、学術DXの実装に必要なユースケースと普及課題を明らかにする。 + +### 方法 +本事業では、第一に、既存記事DB計188件を対象に、大学DX、産学連携、大学発スタートアップ、AI、研究人材育成に関する記事を抽出し、学位・資格情報が必要となる接点を分類する。第二に、研究者、大学URA、大学発スタートアップ関係者、企業の採用・共同研究担当者にヒアリングを行い、証明すべき属性、本人同意、発行主体、検証主体、国際展開時の多言語課題を整理する。第三に、NII等が検討するデジタル資格証明の標準化動向を踏まえ、技術仕様そのものを開発対象とせず、社会実装側の要件定義書、ユースケースマップ、普及コンテンツ案を作成する。第四に、esse-sense Future Forum等の場を活用し、国内外の研究者・実務家に向けて試行的に発信し、反応を分析して改訂する。 + +### 期待される成果 +成果として、学位・資格デジタル証明の社会実装ユースケース集、属性・利用場面マトリクス、大学・企業向け説明資料、国際発信を見据えた英語要約を整備する。これにより、標準化議論が技術仕様に閉じず、利用者が理解し導入を判断できる形へ翻訳される。esse-senseにとっては、既存の188件DBを学術DX領域の知識基盤へ拡張し、大学・研究機関・企業との連携案件を創出する効果が見込まれる。 + +## 5. スケジュールと予算（年次別） +1年目は、公開情報調査、記事DBの再分類、関係者ヒアリング10件、ユースケース仮説の作成を行う。予算は人件費120万円、調査・編集費80万円、ヒアリング謝金・旅費40万円、AI分析環境・データ整理費30万円、管理費30万円の計300万円を想定する。2年目を設定する場合は、大学・企業との試行発信、esse-sense Future Forumでの検証、英語要約作成、成果報告書公開を行い、追加で200万円程度を見込む。単年度申請では、初年度内にユースケース集と説明資料を完成させ、次年度以降の共同研究・実証事業へ接続する。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> 申請書本文、事業目的、実施体制、成果物一覧 +- <input type="checkbox" disabled> 法人概要、登記事項、決算書または事業実績資料 +- <input type="checkbox" disabled> articles 154件、general_articles 34件のDB概要資料 +- <input type="checkbox" disabled> 学術DX、産学連携、大学発SU支援、AI活用の実績説明 +- <input type="checkbox" disabled> ヒアリング候補者リストと協力依頼文案 +- <input type="checkbox" disabled> 予算書、経費積算根拠、実施スケジュール +- <input type="checkbox" disabled> 成果公開方針、個人情報・研究倫理・データ管理方針 + +## 7. 推奨アクション（3-5点） +- NIIのデジタル資格証明、学認、オープンバッジ、研究データエコシステム関連の最新公開資料を確認し、提案書内の用語を統一する。 +- articles 154件、general_articles 34件を「大学DX」「産学連携」「研究人材」「起業支援」「国際展開」の5分類で棚卸しする。 +- 共同研究先候補となる大学URA、学務DX担当、大学発SU支援部門を3件以上リストアップする。 +- 技術開発を主張しすぎず、esse-senseの強みである社会実装、編集、発信、ユースケース形成に焦点を置く。 +- 営利法人単独申請の妥当性を補強するため、成果物の公開性と学術機関への還元方法を明記する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_E_NII_文科省 学位・資格デジタル化標準化.md</p>
+<p>diff --git a/miratuku-grants-2026/drafts_v2/B6_E_NII_文科省 学位・資格デジタル化標準化.md b/miratuku-grants-2026/drafts_v2/B6_E_NII_文科省 学位・資格デジタル化標準化.md new file mode 100644 index 0000000000000000000000000000000000000000..0769c0590cd9f0f0bd8be62c49203f788f5771f0 --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B6_E_NII_文科省 学位・資格デジタル化標準化.md @@ -0,0 +1,44 @@ +# NII/文科省 学位・資格デジタル化標準化 申請書ドラフト（esse-sense向け） +<strong>締切</strong>: 通年 | <strong>上限</strong>: 数百万円 + +## 1. 申請者情報（300字・数値組込） +esse-senseは、研究者の知を社会に届けることを主目的とする株式会社であり、研究成果の編集、発信、社会実装支援を一体で行うメディア事業者である。自社で運用する記事データベースには、研究者・大学・企業・社会課題を横断するarticles 154件、general_articles 34件の計188件を蓄積しており、学際的な知見を構造化して発信する基盤を有する。大学発スタートアップ支援、産学連携支援、大学DX、AIを用いたデータ活用に関する実務経験を持ち、esse-sense Future Forumを通じた国際的な研究者・実務家ネットワーク形成にも取り組んでいる。本申請では営利法人として単独で、学位・資格デジタル化の標準化に向けた利用者理解、普及設計、ユースケース形成を担う。 + +## 2. 助成金概要・応募要件（200字・地の文） +本件は、NIIおよび文部科学省が進める学術DX、教育データ連携、学位・資格情報のデジタル化標準化の流れに接続し、学術機関が発行する学位、学修歴、資格証明、マイクロクレデンシャル等を社会で安全に活用するための実証・標準化検討に資する提案である。応募にあたっては、学術機関との連携可能性、技術標準への理解、社会実装に向けた普及導線、成果物の公開性が重視される。esse-sense単独申請の場合も、大学・研究者・企業をつなぐ中間支援機能を明確に示すことが要件適合の鍵となる。 + +## 3. 申請テーマ案（A推奨/B代替・各150字） +<strong>案A（推奨）</strong>: 学位・資格デジタル証明の社会実装に向けた学術DXユースケースDB構築。大学、研究者、企業、学生・社会人がデジタル証明をどの場面で必要とするかを可視化し、標準化議論に資する利用シナリオ、属性項目、普及課題を整理する。 + +<strong>案B（代替）</strong>: マイクロクレデンシャルと大学発スタートアップ人材の接続実証。研究人材の学修歴、研究経験、起業支援履歴をデジタル証明として提示する想定で、採用、共同研究、投資判断に使える情報設計と広報モデルを検討する。 + +## 4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字） +### 背景・目的 +大学教育、社会人のリスキリング、研究人材の流動化が進む中で、学位・資格・学修歴を紙の証明書や個別照会に依存して確認する仕組みは限界を迎えている。NIIは学術認証フェデレーション、SINET、研究データ基盤等を通じて大学DXを支えており、近年はデジタル資格証明、オープンバッジ、Verifiable Credentials等を含む標準化・社会実装の検討が進んでいる。一方、標準仕様が整っても、大学、学生、企業、研究者、行政がどのような利用価値を感じるかが明確でなければ、制度は普及しにくい。esse-senseはarticles 154件、general_articles 34件の学際DBと研究者ネットワークを活用し、学位・資格デジタル化の社会的意義を利用者視点で翻訳し、学術DXの実装に必要なユースケースと普及課題を明らかにする。 + +### 方法 +本事業では、第一に、既存記事DB計188件を対象に、大学DX、産学連携、大学発スタートアップ、AI、研究人材育成に関する記事を抽出し、学位・資格情報が必要となる接点を分類する。第二に、研究者、大学URA、大学発スタートアップ関係者、企業の採用・共同研究担当者にヒアリングを行い、証明すべき属性、本人同意、発行主体、検証主体、国際展開時の多言語課題を整理する。第三に、NII等が検討するデジタル資格証明の標準化動向を踏まえ、技術仕様そのものを開発対象とせず、社会実装側の要件定義書、ユースケースマップ、普及コンテンツ案を作成する。第四に、esse-sense Future Forum等の場を活用し、国内外の研究者・実務家に向けて試行的に発信し、反応を分析して改訂する。 + +### 期待される成果 +成果として、学位・資格デジタル証明の社会実装ユースケース集、属性・利用場面マトリクス、大学・企業向け説明資料、国際発信を見据えた英語要約を整備する。これにより、標準化議論が技術仕様に閉じず、利用者が理解し導入を判断できる形へ翻訳される。esse-senseにとっては、既存の188件DBを学術DX領域の知識基盤へ拡張し、大学・研究機関・企業との連携案件を創出する効果が見込まれる。 + +## 5. スケジュールと予算（年次別） +1年目は、公開情報調査、記事DBの再分類、関係者ヒアリング10件、ユースケース仮説の作成を行う。予算は人件費120万円、調査・編集費80万円、ヒアリング謝金・旅費40万円、AI分析環境・データ整理費30万円、管理費30万円の計300万円を想定する。2年目を設定する場合は、大学・企業との試行発信、esse-sense Future Forumでの検証、英語要約作成、成果報告書公開を行い、追加で200万円程度を見込む。単年度申請では、初年度内にユースケース集と説明資料を完成させ、次年度以降の共同研究・実証事業へ接続する。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> 申請書本文、事業目的、実施体制、成果物一覧 +- <input type="checkbox" disabled> 法人概要、登記事項、決算書または事業実績資料 +- <input type="checkbox" disabled> articles 154件、general_articles 34件のDB概要資料 +- <input type="checkbox" disabled> 学術DX、産学連携、大学発SU支援、AI活用の実績説明 +- <input type="checkbox" disabled> ヒアリング候補者リストと協力依頼文案 +- <input type="checkbox" disabled> 予算書、経費積算根拠、実施スケジュール +- <input type="checkbox" disabled> 成果公開方針、個人情報・研究倫理・データ管理方針 + +## 7. 推奨アクション（3-5点） +- NIIのデジタル資格証明、学認、オープンバッジ、研究データエコシステム関連の最新公開資料を確認し、提案書内の用語を統一する。 +- articles 154件、general_articles 34件を「大学DX」「産学連携」「研究人材」「起業支援」「国際展開」の5分類で棚卸しする。 +- 共同研究先候補となる大学URA、学務DX担当、大学発SU支援部門を3件以上リストアップする。 +- 技術開発を主張しすぎず、esse-senseの強みである社会実装、編集、発信、ユースケース形成に焦点を置く。 +- 営利法人単独申請の妥当性を補強するため、成果物の公開性と学術機関への還元方法を明記する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_E_NII_文科省 学位・資格デジタル化標準化.md</p>
+<p>codex 指定パスへの保存は完了しました。念のため分量とファイル内容を確認し、1,500-2,500字の範囲に収まっているかを見ます。 exec /bin/bash -lc "wc -m 'drafts_v2/B6_E_NII_文科省 学位・資格デジタル化標準化.md'" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms:     2880 drafts_v2/B6_E_NII_文科省 学位・資格デジタル化標準化.md</p>
+<p>exec /bin/bash -lc "sed -n '1,260p' 'drafts_v2/B6_E_NII_文科省 学位・資格デジタル化標準化.md'" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms:</p>
+<h1>NII/文科省 学位・資格デジタル化標準化 申請書ドラフト（esse-sense向け）</h1>
+<p><strong>締切</strong>: 通年 | <strong>上限</strong>: 数百万円</p>
+<h2>1. 申請者情報（300字・数値組込）</h2>
+<p>esse-senseは、研究者の知を社会に届けることを主目的とする株式会社であり、研究成果の編集、発信、社会実装支援を一体で行うメディア事業者である。自社で運用する記事データベースには、研究者・大学・企業・社会課題を横断するarticles 154件、general_articles 34件の計188件を蓄積しており、学際的な知見を構造化して発信する基盤を有する。大学発スタートアップ支援、産学連携支援、大学DX、AIを用いたデータ活用に関する実務経験を持ち、esse-sense Future Forumを通じた国際的な研究者・実務家ネットワーク形成にも取り組んでいる。本申請では営利法人として単独で、学位・資格デジタル化の標準化に向けた利用者理解、普及設計、ユースケース形成を担う。</p>
+<h2>2. 助成金概要・応募要件（200字・地の文）</h2>
+<p>本件は、NIIおよび文部科学省が進める学術DX、教育データ連携、学位・資格情報のデジタル化標準化の流れに接続し、学術機関が発行する学位、学修歴、資格証明、マイクロクレデンシャル等を社会で安全に活用するための実証・標準化検討に資する提案である。応募にあたっては、学術機関との連携可能性、技術標準への理解、社会実装に向けた普及導線、成果物の公開性が重視される。esse-sense単独申請の場合も、大学・研究者・企業をつなぐ中間支援機能を明確に示すことが要件適合の鍵となる。</p>
+<h2>3. 申請テーマ案（A推奨/B代替・各150字）</h2>
+<p><strong>案A（推奨）</strong>: 学位・資格デジタル証明の社会実装に向けた学術DXユースケースDB構築。大学、研究者、企業、学生・社会人がデジタル証明をどの場面で必要とするかを可視化し、標準化議論に資する利用シナリオ、属性項目、普及課題を整理する。</p>
+<p><strong>案B（代替）</strong>: マイクロクレデンシャルと大学発スタートアップ人材の接続実証。研究人材の学修歴、研究経験、起業支援履歴をデジタル証明として提示する想定で、採用、共同研究、投資判断に使える情報設計と広報モデルを検討する。</p>
+<h2>4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字）</h2>
+<h3>背景・目的</h3>
+<p>大学教育、社会人のリスキリング、研究人材の流動化が進む中で、学位・資格・学修歴を紙の証明書や個別照会に依存して確認する仕組みは限界を迎えている。NIIは学術認証フェデレーション、SINET、研究データ基盤等を通じて大学DXを支えており、近年はデジタル資格証明、オープンバッジ、Verifiable Credentials等を含む標準化・社会実装の検討が進んでいる。一方、標準仕様が整っても、大学、学生、企業、研究者、行政がどのような利用価値を感じるかが明確でなければ、制度は普及しにくい。esse-senseはarticles 154件、general_articles 34件の学際DBと研究者ネットワークを活用し、学位・資格デジタル化の社会的意義を利用者視点で翻訳し、学術DXの実装に必要なユースケースと普及課題を明らかにする。</p>
+<h3>方法</h3>
+<p>本事業では、第一に、既存記事DB計188件を対象に、大学DX、産学連携、大学発スタートアップ、AI、研究人材育成に関する記事を抽出し、学位・資格情報が必要となる接点を分類する。第二に、研究者、大学URA、大学発スタートアップ関係者、企業の採用・共同研究担当者にヒアリングを行い、証明すべき属性、本人同意、発行主体、検証主体、国際展開時の多言語課題を整理する。第三に、NII等が検討するデジタル資格証明の標準化動向を踏まえ、技術仕様そのものを開発対象とせず、社会実装側の要件定義書、ユースケースマップ、普及コンテンツ案を作成する。第四に、esse-sense Future Forum等の場を活用し、国内外の研究者・実務家に向けて試行的に発信し、反応を分析して改訂する。</p>
+<h3>期待される成果</h3>
+<p>成果として、学位・資格デジタル証明の社会実装ユースケース集、属性・利用場面マトリクス、大学・企業向け説明資料、国際発信を見据えた英語要約を整備する。これにより、標準化議論が技術仕様に閉じず、利用者が理解し導入を判断できる形へ翻訳される。esse-senseにとっては、既存の188件DBを学術DX領域の知識基盤へ拡張し、大学・研究機関・企業との連携案件を創出する効果が見込まれる。</p>
+<h2>5. スケジュールと予算（年次別）</h2>
+<p>1年目は、公開情報調査、記事DBの再分類、関係者ヒアリング10件、ユースケース仮説の作成を行う。予算は人件費120万円、調査・編集費80万円、ヒアリング謝金・旅費40万円、AI分析環境・データ整理費30万円、管理費30万円の計300万円を想定する。2年目を設定する場合は、大学・企業との試行発信、esse-sense Future Forumでの検証、英語要約作成、成果報告書公開を行い、追加で200万円程度を見込む。単年度申請では、初年度内にユースケース集と説明資料を完成させ、次年度以降の共同研究・実証事業へ接続する。</p>
+<h2>6. 提出物チェックリスト</h2>
+<ul>
+<li><input type="checkbox" disabled> 申請書本文、事業目的、実施体制、成果物一覧</li>
+<li><input type="checkbox" disabled> 法人概要、登記事項、決算書または事業実績資料</li>
+<li><input type="checkbox" disabled> articles 154件、general_articles 34件のDB概要資料</li>
+<li><input type="checkbox" disabled> 学術DX、産学連携、大学発SU支援、AI活用の実績説明</li>
+<li><input type="checkbox" disabled> ヒアリング候補者リストと協力依頼文案</li>
+<li><input type="checkbox" disabled> 予算書、経費積算根拠、実施スケジュール</li>
+<li><input type="checkbox" disabled> 成果公開方針、個人情報・研究倫理・データ管理方針</li>
+</ul>
+<h2>7. 推奨アクション（3-5点）</h2>
+<ul>
+<li>NIIのデジタル資格証明、学認、オープンバッジ、研究データエコシステム関連の最新公開資料を確認し、提案書内の用語を統一する。</li>
+<li>articles 154件、general_articles 34件を「大学DX」「産学連携」「研究人材」「起業支援」「国際展開」の5分類で棚卸しする。</li>
+<li>共同研究先候補となる大学URA、学務DX担当、大学発SU支援部門を3件以上リストアップする。</li>
+<li>技術開発を主張しすぎず、esse-senseの強みである社会実装、編集、発信、ユースケース形成に焦点を置く。</li>
+<li>営利法人単独申請の妥当性を補強するため、成果物の公開性と学術機関への還元方法を明記する。</li>
+</ul>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>文化庁 文化資源デジタル化事業</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>文化庁 文化資源デジタル化事業 申請書ドラフト（esse-sense向け）</h1>
+<p><strong>締切</strong>: 通年 | <strong>上限</strong>: 事業規模による</p>
+<h2>1. 申請者情報（300字・数値組込）</h2>
+<h2>2. 助成金概要・応募要件（200字・地の文）</h2>
+<h2>3. 申請テーマ案（A推奨/B代替・各150字）</h2>
+<h2>4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字）</h2>
+<h2>5. スケジュールと予算（年次別）</h2>
+<h2>6. 提出物チェックリスト</h2>
+<h2>7. 推奨アクション（3-5点）</h2>
+<p>末尾に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_E_文化庁 文化資源デジタル化事業.md」記載。地の文中心、法人数値組込必須。 codex 指定の構成でドラフトを作成し、末尾の保存対象パスに合わせてMarkdownファイルとして配置します。まず既存のドラフト形式があるかだけ確認します。 exec /bin/bash -lc "rg --files | rg 'drafts_v2|B6_E|文化庁'" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms: site/drafts_v2/016_M_ムーンショット型研究開発事業.md site/drafts_v2/NM_サステナブルツーリズム推進事業（沖縄）.md site/drafts_v2/NM_松下幸之助記念志財団 出版助成.md site/drafts_v2/NM_コミュニティ活動促進事業（沖縄）.md site/drafts_v2/NM_京都市 Arts Aid KYOTO.md site/drafts_v2/NE_JETRO J-StarX（海外起業家育成）.md site/drafts_v2/test.md site/drafts_v2/NE_ロッテ財団 実装型共同研究助成.md site/drafts_v2/NM_大同生命厚生事業団 地域保健福祉研究助成.md site/drafts_v2/NE_DX推進補助事業（沖縄DX促進）.md site/drafts_v2/NE_内藤記念国際会議開催助成金.md site/drafts_v2/NE_事業承継・M&A補助金.md site/drafts_v2/NE_京都エコノミック・ガーデニング支援.md site/drafts_v2/NM_ロッテ財団 実装型共同研究助成.md site/drafts_v2/NM_JST 創発的研究支援事業.md site/drafts_v2/NM_京都府 文化力チャレンジ補助金.md site/drafts_v2/NM_内藤記念国際会議開催助成金.md site/drafts_v2/NE_京都市デジタル化推進プロジェクト.md site/drafts_v2/NE_デジタル化・AI導入補助金 2026 セキュリティ枠.md site/drafts_v2/NE_中小企業省力化投資補助金 一般型 第6回.md site/drafts_v2/NE_中国電力技術研究財団 国際会議等開催助成.md site/drafts_v2/NM_京都産学公の森推進事業.md site/drafts_v2/NE_京都産学公の森推進事業.md site/drafts_v2/NM_JST CREST「エクスポソーム」.md site/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md site/drafts_v2/NM_JST さきがけ／ACT-X 2026年度.md site/drafts_v2/NM_住友電工グループ社会貢献基金 学術研究助成.md site/drafts_v2/NM_NEDO 数理科学分野×産学連携の調査.md site/drafts_v2/NM_観光庁 オーバーツーリズム対策面的整備（令和8年度）.md site/drafts_v2/NM_中国電力技術研究財団 国際会議等開催助成.md drafts_html/B6_E_厚労省 介護テクノロジー導入支援.html drafts_html/B6_E_関西エネルギー財団 海外研究者招聘助成.html drafts_html/B6_E_東京都創業助成事業.html drafts_html/B6_E_IT導入補助金 2026.html drafts_html/B6_E_厚労省 人材開発支援助成金 人への投資促進.html drafts_html/B6_E_復興庁・福島県 地域復興実用化開発.html drafts_html/B6_E_関西エネルギー財団 研究発表会等開催助成.html drafts_html/B6_E_農林水産省 スマート農業（データ・AI領域）.html drafts_html/B6_E_日本生命財団 高齢・地域共生社会助成.html drafts_html/B6_E_コンベンション開催支援事業（沖縄）.html drafts_html/B6_E_経産省 地域経済循環創造事業（ローカル10,000）.html drafts_html/B6_E_横浜市スタートアップ支援補助金.html drafts_html/B6_E_J-Startup KANSAI.html drafts_html/B6_E_総務省 ローカル10,000プロジェクト.html drafts_html/B6_E_内閣府 BRIDGE（研究開発とSociety5.0橋渡し）.html drafts_html/B6_E_全国コミュニティ財団協会 各地域財団.html drafts_html/B6_E_国交省 スマートシティ実装化支援事業.html drafts_html/B6_E_事業承継補助金（沖縄県産業振興公社）.html drafts_html/B6_E_JST SUCCESS（出資型新事業創出）.html drafts_html/B6_E_環境省 生物多様性保全推進.html drafts_html/B6_E_SIIF 社会変革推進財団 インパクト投資.html drafts_html/B6_E_産総研 公募課題（共同研究・春秋）.html drafts_html/B6_E_環境省 地域脱炭素推進交付金.html drafts_html/B6_E_JETRO 中堅・中小企業輸出支援エコシステム.html drafts_html/B6_E_NEDO 研究開発型スタートアップ支援(NEP).html drafts_html/B6_E_福岡市スタートアップ海外展開支援.html drafts_html/B6_E_神奈川県中小企業生産性向上補助金.html drafts_html/B6_E_内閣府 新しい地方経済・生活環境創生交付金(第2世代).html drafts_html/B6_E_総務省 ICTスタートアップリーグ.html drafts_html/B6_E_内閣府 規制サンドボックス制度.html drafts_html/B6_E_外務省 外交・安全保障調査研究事業費補助金.html drafts_html/B6_E_JETRO アジアDX等新規事業創造.html drafts_html/B6_E_ETIC. 社会起業塾イニシアティブ.html drafts_v2/B6_M_日本社会福祉弘済会 社会福祉助成事業.md drafts_v2/B5_E_ものづくり補助金 19次（経産省）.md drafts_v2/B6_M_関西エネルギー財団 研究発表会等開催助成.md drafts_v2/B6536_M_NHK放送技術研究所 共同研究プログラム.md drafts_v2/B6654_M_立正佼成会 一食平和基金.md drafts_v2/B6_M_関西エネルギー財団 海外研究者招聘助成.md drafts_v2/B6627_M_復興庁・福島県 地域復興実用化開発.md drafts_v2/N100_M_京都府 文化力チャレンジ補助金.md drafts_v2/016_M_ムーンショット型研究開発事業.md drafts_v2/B5_M_加藤記念バイオサイエンス振興財団 国際交流助成.md drafts_v2/B5411_M_加藤記念バイオサイエンス振興財団 研究助成.md drafts_v2/002_M_JSPS科研費_特別推進_基盤S.md drafts_v2/N110_E_ロッテ財団 実装型共同研究助成.md drafts_v2/B6_M_農林水産省 スマート農業（データ・AI領域）.md drafts_v2/B6623_E_内閣府 新しい地方経済・生活環境創生交付金(第2世代).md drafts_v2/B6539_M_JSPS 課題設定先導事業（連携大学経由）.md drafts_v2/019_M_JST GteX 革新的GX技術創出（推定例年5-7月）.md drafts_v2/B6_E_関西エネルギー財団 研究発表会等開催助成.md drafts_v2/B6_E_神奈川県中小企業生産性向上補助金.md drafts_v2/B5_M_ものづくり補助金 19次（経産省）.md drafts_v2/018_M_NEDO グリーンイノベーション基金.md drafts_v2/B4302_E_日本食品化学研究振興財団 シンポジウム開催助成.md drafts_v2/B5_M_放送文化基金 放送文化関連研究開発助成.md drafts_v2/N111_E_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md drafts_v2/014_E_京都市 MICE開催支援助成金（大規模国際・上期4月_下期10月）.md drafts_v2/B6651_M_日本社会福祉弘済会 社会福祉助成事業.md drafts_v2/B6684_E_J-Startup KANSAI.md drafts_v2/N103_E_京都エコノミック・ガーデニング支援.md drafts_v2/B5_M_JSPS 学術図書出版補助金.md drafts_v2/B6538_M_お金をまわそう基金（第8期3回目）.md drafts_v2/N105_E_中小企業省力化投資補助金 一般型 第6回.md drafts_v2/B5_M_電気通信普及財団 研究調査助成.md drafts_v2/B6_E_復興庁・福島県 地域復興実用化開発.md drafts_v2/B3213_E_DX等成長分野リスキリング推進事業.md drafts_v2/B6_M_産総研 公募課題（共同研究・春秋）.md drafts_v2/B6622_M_内閣府 新しい地方経済・生活環境創生交付金(第2世代).md drafts_v2/B6687_E_神奈川県中小企業生産性向上補助金.md drafts_v2/N126_M_京都市 Arts Aid KYOTO.md drafts_v2/B5404_M_興和生命科学振興財団 国際交流助成・研究会等援助.md drafts_v2/B6626_E_外務省 外交・安全保障調査研究事業費補助金.md drafts_v2/019_E_JST GteX 革新的GX技術創出（推定例年5-7月）.md drafts_v2/B6653_E_日本生命財団 高齢・地域共生社会助成.md drafts_v2/030_E_DNP文化振興財団 グラフィック文化研究助成.md drafts_v2/B6_M_こども家庭庁 子育て支援補助金.md drafts_v2/022_M_地域中核大学・特色ある研究大学 総合振興パッケージ（J-PEAKS）.md drafts_v2/B6_E_JETRO 中堅・中小企業輸出支援エコシステム.md drafts_v2/B5410_E_ものづくり補助金 19次（経産省）.md drafts_v2/B6531_E_内閣府 規制サンドボックス制度.md drafts_v2/N127_M_コミュニティ活動促進事業（沖縄）.md drafts_v2/B6_M_企業メセナ協議会 助成認定（3月_6月_9月_12月）.md drafts_v2/N115_M_松下幸之助記念志財団 出版助成.md drafts_v2/N109_M_ロッテ財団 実装型共同研究助成.md drafts_v2/B6591_M_環境省 生物多様性保全推進.md drafts_v2/B3200_M_立石科学技術振興財団 国際交流助成.md drafts_v2/B6_E_横浜市スタートアップ支援補助金.md drafts_v2/N129_M_中国電力技術研究財団 国際会議等開催助成.md drafts_v2/B6_M_内閣府 BRIDGE（研究開発とSociety5.0橋渡し）.md drafts_v2/008_M_共創の場形成支援プログラム（COI-NEXT）「未来共創分野」.md drafts_v2/B6561_E_IT導入補助金 2026.md drafts_v2/B6569_M_環境省 地域脱炭素推進交付金.md drafts_v2/B6_E_国交省 スマートシティ実装化支援事業.md drafts_v2/B6564_M_NEDO 研究開発型スタートアップ支援(NEP).md drafts_v2/B6593_E_厚労省 介護テクノロジー導入支援.md drafts_v2/024_M_トヨタ財団 国内助成プログラム（自治型社会）.md drafts_v2/B6501_E_関西エネルギー財団 海外研究者招聘助成.md drafts_v2/B6568_E_JETRO アジアDX等新規事業創造.md drafts_v2/023_E_トヨタ財団 国際助成プログラム.md drafts_v2/B5_M_JSPS 国際共同研究加速基金（強化B）.md drafts_v2/B5_M_興和生命科学振興財団 国際交流助成・研究会等援助.md drafts_v2/B4308_E_テルモ生命科学振興財団 国際交流助成.md drafts_v2/010_M_総務省 地域社会DX推進パッケージ事業（二次公募）.md drafts_v2/B5416_E_JST A-STEP 産学共同（秋募集・推定）.md drafts_v2/B6533_E_経産省 地域経済循環創造事業（ローカル10,000）.md drafts_v2/B6507_E_コンベンション開催支援事業（沖縄）.md drafts_v2/B4305_E_島津科学技術振興財団 研究開発助成（先進情報・データサイエンス）.md drafts_v2/B3207_M_住友財団 環境研究助成.md drafts_v2/B4_M_稲盛研究助成「はぐくむ」.md drafts_v2/B4_E_島津科学技術振興財団 研究開発助成（先進情報・データサイエンス）.md drafts_v2/B6650_E_産総研 公募課題（共同研究・春秋）.md drafts_v2/018_E_NEDO グリーンイノベーション基金.md drafts_v2/B4_E_セコム科学技術振興財団 学術集会助成.md drafts_v2/B6_E_関西エネルギー財団 海外研究者招聘助成.md drafts_v2/B3212_E_IMPACT FLOW KYOTO 2025-2026.md drafts_v2/N101_E_デジタル化・AI導入補助金 2026 セキュリティ枠.md drafts_v2/B4307_M_テルモ生命科学振興財団 国際交流助成.md drafts_v2/B6_E_内閣府 新しい地方経済・生活環境創生交付金(第2世代).md drafts_v2/N125_M_JST CREST「エクスポソーム」.md drafts_v2/B6_M_国交省 スマートシティ実装化支援事業.md drafts_v2/B6_E_総務省 ICTスタートアップリーグ.md drafts_v2/B4_M_セコム科学技術振興財団 学術集会助成.md drafts_v2/029_M_トヨタ財団 研究助成「未来の社会システム」.md drafts_v2/006_M_JST RISTEX「ケアが根づく社会システム」.md drafts_v2/B6656_M_ベネッセこども基金 重い病気の子の学び支援.md drafts_v2/B6_M_環境省 生物多様性保全推進.md drafts_v2/015_M_経済安全保障重要技術育成プログラム（K Program）.md drafts_v2/B6565_E_NEDO 研究開発型スタートアップ支援(NEP).md drafts_v2/B6_E_厚労省 介護テクノロジー導入支援.md drafts_v2/021_E_第2期スタートアップ・エコシステム拠点形成戦略（内閣府）.md drafts_v2/005_E_中小企業成長加速化補助金（推定例年6月）.md drafts_v2/B6505_E_京都市国際交流協会 国際交流事業支援.md drafts_v2/B4_M_JST SICORP EIG CONCERT-Japan AIロボティクス.md drafts_v2/B6_E_コンベンション開催支援事業（沖縄）.md drafts_v2/B6_M_ベネッセこども基金 重い病気の子の学び支援.md drafts_v2/N123_M_DX推進補助事業（沖縄DX促進）.md drafts_v2/B5_M_JSPS 二国間交流事業.md drafts_v2/B6_M_京都地域創造基金 事業指定助成.md drafts_v2/025_M_住友財団 基礎科学研究助成.md drafts_v2/B5_E_住友財団 アジア諸国における日本関連研究助成.md drafts_v2/026_M_鹿島学術振興財団 特定テーマ研究助成.md drafts_v2/B6_E_東京都創業助成事業.md drafts_v2/B6_M_住友生命健康財団 コミュニティスポーツ推進助成.md drafts_v2/B6_M_JSPS 課題設定先導事業（連携大学経由）.md drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md drafts_v2/B5401_E_加藤記念バイオサイエンス振興財団 国際交流助成.md drafts_v2/B4309_M_JST SICORP EIG CONCERT-Japan AIロボティクス.md drafts_v2/N108_E_NEDO 数理科学分野×産学連携の調査.md drafts_v2/B6_M_内閣府 規制サンドボックス制度.md drafts_v2/N106_M_大同生命厚生事業団 地域保健福祉研究助成.md drafts_v2/B6658_M_全国コミュニティ財団協会 各地域財団.md drafts_v2/B6_E_環境省 地域脱炭素推進交付金.md drafts_v2/B6_M_コンベンション開催支援事業（沖縄）.md drafts_v2/B3203_E_立石科学技術振興財団 国際会議開催助成.md drafts_v2/N121_M_観光庁 オーバーツーリズム対策面的整備（令和8年度）.md drafts_v2/B6_M_経産省 地域経済循環創造事業（ローカル10,000）.md drafts_v2/B6_E_農林水産省 スマート農業（データ・AI領域）.md drafts_v2/B6560_M_JSPS データインフラ強化事業（連携大学経由）.md drafts_v2/B6_E_厚労省 人材開発支援助成金 人への投資促進.md drafts_v2/B5_E_加藤記念バイオサイエンス振興財団 国際交流助成.md drafts_v2/B6_E_外務省 外交・安全保障調査研究事業費補助金.md drafts_v2/B3208_E_新事業進出・ものづくり補助金 第4回.md drafts_v2/001_M_観光庁オーバーツーリズム対策.md drafts_v2/N117_E_内藤記念国際会議開催助成金.md drafts_v2/B6_E_ETIC. 社会起業塾イニシアティブ.md drafts_v2/014_M_京都市 MICE開催支援助成金（大規模国際・上期4月_下期10月）.md drafts_v2/B6_M_全国コミュニティ財団協会 各地域財団.md drafts_v2/B5_E_観光庁 ICTサービス利活用促進事業.md drafts_v2/B4_E_日本食品化学研究振興財団 シンポジウム開催助成.md drafts_v2/N114_M_JST さきがけ／ACT-X 2026年度.md drafts_v2/B6_E_産総研 公募課題（共同研究・春秋）.md drafts_v2/B6686_E_横浜市スタートアップ支援補助金.md drafts_v2/B6681_E_東京都創業助成事業.md drafts_v2/B6625_M_外務省 外交・安全保障調査研究事業費補助金.md drafts_v2/B6688_E_SIIF 社会変革推進財団 インパクト投資.md drafts_v2/B6_M_外務省 外交・安全保障調査研究事業費補助金.md drafts_v2/B6_M_JSPS データインフラ強化事業（連携大学経由）.md drafts_v2/B4303_M_セコム科学技術振興財団 学術集会助成.md drafts_v2/B6_M_京都市国際交流協会 国際交流事業支援.md drafts_v2/B6652_M_日本生命財団 高齢・地域共生社会助成.md drafts_v2/B6_E_環境省 生物多様性保全推進.md drafts_v2/B4300_M_稲盛研究助成「はぐくむ」.md drafts_v2/B5414_M_JSPS 国際共同研究加速基金（強化B）.md drafts_v2/B6685_E_福岡市スタートアップ海外展開支援.md drafts_v2/B6_M_復興庁・福島県 地域復興実用化開発.md drafts_v2/B6_E_J-Startup KANSAI.md drafts_v2/B6_E_全国コミュニティ財団協会 各地域財団.md drafts_v2/N107_M_NEDO 数理科学分野×産学連携の調査.md drafts_v2/B6629_M_産総研 公募課題（共同研究・春秋）.md drafts_v2/B3202_M_立石科学技術振興財団 国際会議開催助成.md drafts_v2/B5_M_加藤記念バイオサイエンス振興財団 研究助成.md drafts_v2/030_M_DNP文化振興財団 グラフィック文化研究助成.md drafts_v2/B4_E_テルモ生命科学振興財団 国際交流助成.md drafts_v2/B6655_M_住友生命健康財団 コミュニティスポーツ推進助成.md drafts_v2/B6683_E_ETIC. 社会起業塾イニシアティブ.md drafts_v2/B5409_M_ものづくり補助金 19次（経産省）.md drafts_v2/B6_E_JETRO アジアDX等新規事業創造.md drafts_v2/B6566_E_JETRO 中堅・中小企業輸出支援エコシステム.md drafts_v2/B6_E_NEDO 研究開発型スタートアップ支援(NEP).md drafts_v2/B6532_M_経産省 地域経済循環創造事業（ローカル10,000）.md drafts_v2/N113_E_京都産学公の森推進事業.md drafts_v2/N116_M_内藤記念国際会議開催助成金.md drafts_v2/B6_E_内閣府 BRIDGE（研究開発とSociety5.0橋渡し）.md drafts_v2/B6_M_立正佼成会 一食平和基金.md drafts_v2/B6_M_環境省 地域脱炭素推進交付金.md drafts_v2/B4301_M_日本食品化学研究振興財団 シンポジウム開催助成.md drafts_v2/008_E_共創の場形成支援プログラム（COI-NEXT）「未来共創分野」.md drafts_v2/B5400_M_加藤記念バイオサイエンス振興財団 国際交流助成.md drafts_v2/B6567_M_JETRO アジアDX等新規事業創造.md drafts_v2/B4310_E_JST SICORP EIG CONCERT-Japan AIロボティクス.md drafts_v2/B6502_M_関西エネルギー財団 研究発表会等開催助成.md drafts_v2/B4_M_稲盛研究助成「たかめる」.md drafts_v2/N128_E_JETRO J-StarX（海外起業家育成）.md drafts_v2/B5417_M_JSPS 学術図書出版補助金.md drafts_v2/012_E_JST ASPIRE 2026 国際共同研究.md drafts_v2/B6_E_経産省 地域経済循環創造事業（ローカル10,000）.md drafts_v2/B4_M_テルモ生命科学振興財団 国際交流助成.md drafts_v2/013_M_JSPS 研究成果公開促進費 データベース部門.md drafts_v2/B6_M_NHK放送技術研究所 共同研究プログラム.md drafts_v2/B6624_M_こども家庭庁 子育て支援補助金.md drafts_v2/017_M_内閣府 SIP第3期（戦略的イノベーション創造）.md drafts_v2/B6620_M_総務省 ローカル10,000プロジェクト.md drafts_v2/012_M_JST ASPIRE 2026 国際共同研究.md drafts_v2/B5402_M_住友財団 アジア諸国における日本関連研究助成.md drafts_v2/B4311_M_パナソニック NPO_NGOサポートファンド for SDGs.md drafts_v2/B3209_M_丸紅基金 第52回社会福祉助成金.md drafts_v2/B3205_M_JFE21世紀財団 アジア歴史研究助成.md drafts_v2/B5407_M_放送文化基金 放送文化関連研究開発助成.md drafts_v2/B6_M_総務省 過疎地域持続的発展支援交付金.md drafts_v2/B6535_E_農林水産省 スマート農業（データ・AI領域）.md drafts_v2/010_E_総務省 地域社会DX推進パッケージ事業（二次公募）.md drafts_v2/B6504_M_京都市国際交流協会 国際交流事業支援.md drafts_v2/B6534_M_農林水産省 スマート農業（データ・AI領域）.md drafts_v2/B6_E_事業承継補助金（沖縄県産業振興公社）.md drafts_v2/020_E_JST スタートアップ・エコシステム共創（地域拠点）.md drafts_v2/B6_E_内閣府 規制サンドボックス制度.md drafts_v2/007_M_JST RISTEX「SDGs達成に向けた共創的研究開発」.md drafts_v2/B6592_E_環境省 生物多様性保全推進.md drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md drafts_v2/B5403_E_住友財団 アジア諸国における日本関連研究助成.md drafts_v2/B4306_M_稲盛研究助成「たかめる」.md drafts_v2/B5_M_観光庁 ICTサービス利活用促進事業.md drafts_v2/B6_M_NEDO 研究開発型スタートアップ支援(NEP).md drafts_v2/B6680_M_外務省 日本NGO連携無償資金協力.md drafts_v2/N120_E_事業承継・M&A補助金.md drafts_v2/B5415_M_JSPS 二国間交流事業.md drafts_v2/B3206_M_京都市芸術文化協会 伝統芸能文化復元.md drafts_v2/B5408_M_立石科学技術振興財団 研究助成(S).md drafts_v2/001_E_観光庁オーバーツーリズム対策.md drafts_v2/B6659_E_全国コミュニティ財団協会 各地域財団.md drafts_v2/017_E_内閣府 SIP第3期（戦略的イノベーション創造）.md drafts_v2/B6_M_外務省 日本NGO連携無償資金協力.md drafts_v2/B6_E_IT導入補助金 2026.md drafts_v2/B6590_E_環境省 地域脱炭素推進交付金.md drafts_v2/B6503_E_関西エネルギー財団 研究発表会等開催助成.md drafts_v2/B4304_E_セコム科学技術振興財団 学術集会助成.md drafts_v2/B6_E_福岡市スタートアップ海外展開支援.md drafts_v2/B5413_E_観光庁 ICTサービス利活用促進事業.md drafts_v2/N122_E_観光庁 オーバーツーリズム対策面的整備（令和8年度）.md drafts_v2/N124_E_DX推進補助事業（沖縄DX促進）.md drafts_v2/B6_M_厚労省 介護テクノロジー導入支援.md drafts_v2/016_E_ムーンショット型研究開発事業.md drafts_v2/003_M_JST CREST 戦略的創造研究推進事業.md drafts_v2/B5_M_立石科学技術振興財団 研究助成(S).md drafts_v2/B6_M_内閣府 新しい地方経済・生活環境創生交付金(第2世代).md drafts_v2/B4_M_日本食品化学研究振興財団 シンポジウム開催助成.md drafts_v2/B6_E_日本生命財団 高齢・地域共生社会助成.md drafts_v2/B6621_E_総務省 ローカル10,000プロジェクト.md drafts_v2/N112_M_京都産学公の森推進事業.md drafts_v2/B6506_M_コンベンション開催支援事業（沖縄）.md drafts_v2/B6_M_お金をまわそう基金（第8期3回目）.md drafts_v2/N102_M_JST 創発的研究支援事業.md drafts_v2/B6_M_総務省 ローカル10,000プロジェクト.md drafts_v2/B5_E_JST A-STEP 産学共同（秋募集・推定）.md drafts_v2/B6657_M_京都地域創造基金 事業指定助成.md drafts_v2/B6563_E_内閣府 BRIDGE（研究開発とSociety5.0橋渡し）.md drafts_v2/B6508_E_事業承継補助金（沖縄県産業振興公社）.md drafts_v2/B6_M_JETRO アジアDX等新規事業創造.md drafts_v2/B6500_M_関西エネルギー財団 海外研究者招聘助成.md drafts_v2/B6537_M_企業メセナ協議会 助成認定（3月_6月_9月_12月）.md drafts_v2/N118_M_住友電工グループ社会貢献基金 学術研究助成.md drafts_v2/B6_E_総務省 ローカル10,000プロジェクト.md drafts_v2/B6_E_JST SUCCESS（出資型新事業創出）.md drafts_v2/B6628_E_復興庁・福島県 地域復興実用化開発.md drafts_v2/B3211_E_三井住友海上福祉財団 研究助成.md drafts_v2/023_M_トヨタ財団 国際助成プログラム.md drafts_v2/B6562_M_内閣府 BRIDGE（研究開発とSociety5.0橋渡し）.md drafts_v2/B6530_M_内閣府 規制サンドボックス制度.md drafts_v2/B6_E_SIIF 社会変革推進財団 インパクト投資.md drafts_v2/N119_E_京都市デジタル化推進プロジェクト.md drafts_v2/B6_M_日本生命財団 高齢・地域共生社会助成.md drafts_v2/015_E_経済安全保障重要技術育成プログラム（K Program）.md drafts_v2/B3210_M_三井住友海上福祉財団 研究助成.md drafts_v2/B3204_M_清水基金 文化芸術活動特別助成事業.md drafts_v2/N104_M_サステナブルツーリズム推進事業（沖縄）.md drafts_v2/B5406_M_電気通信普及財団 研究調査助成.md drafts_v2/B5405_E_興和生命科学振興財団 国際交流助成・研究会等援助.md drafts_v2/004_E_NEDO ディープテック・スタートアップ支援(DTSU)第10回.md drafts_v2/B5_M_住友財団 アジア諸国における日本関連研究助成.md drafts_v2/N130_E_中国電力技術研究財団 国際会議等開催助成.md drafts_v2/B3201_E_立石科学技術振興財団 国際交流助成.md drafts_v2/B6682_E_JST SUCCESS（出資型新事業創出）.md drafts_v2/B5412_M_観光庁 ICTサービス利活用促進事業.md</p>
+<p>exec /bin/bash -lc ls in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms: 00_summary.md 01_松下幸之助記念志財団_研究助成.md 02_野村グループ基金_みらい助成.md 03_ものづくり補助金_19次.md 04_企業メセナ協議会_助成認定.md 05_JSPS_人文社会研究.md 06_お金をまわそう基金.md 07_esse-sense_補助金候補.md 08_統合実行計画.md 09_提出スケジュール_5月-9月.md 09a_提出スケジュール_ミラツク.md 09b_提出スケジュール_esse-sense.md 10_沖縄県特有助成金.md 11_京都府特有助成金.md 12_国・NEDO・総務省系助成金.md build_schedule_csv.py build_schedule_xlsx.py csv drafts_html drafts_v2 site 提出スケジュール_2026年5-9月.xlsx 提出スケジュール.html</p>
+<p>codex 既存の<code>drafts_v2</code>に同種のB6_Eドラフトがあるため、見出しの粒度だけ合わせて新規作成します。内容は指定条件を優先し、法人の営利性と既存記事DB件数を本文内に明示します。 exec /bin/bash -lc "sed -n '1,220p' 'drafts_v2/B6_E_JETRO アジアDX等新規事業創造.md'" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms:</p>
+<h1>JETRO アジアDX等新規事業創造 申請書ドラフト（esse-sense向け）</h1>
+<p><strong>締切</strong>: 通年 | <strong>上限</strong>: 要公式確認</p>
+<h2>1. 申請者情報（300字・数値組込）</h2>
+<p>esse-senseは、研究者の知を社会に届ける株式会社であり、学術知を社会実装・事業開発・産学連携へ接続するメディア事業を展開している。記事DBはarticles 154件、general_articles 34件、合計188件で、研究領域、社会課題、技術シーズを横断的に整理してきた。強みは、学際DB、データ活用、AI解析、産学連携支援、大学発SU支援、大学DXの実務知にある。国際展開ではesse-sense Future Forumを起点に、研究者、企業、大学、支援機関を結ぶ越境的な知の流通基盤を形成している。</p>
+<h2>2. 助成金概要・応募要件（200字・地の文）</h2>
+<p>JETROのアジアDX等新規事業創造関連支援は、日本企業とアジアの新興国企業等との共創を通じ、デジタル技術による新規事業創出、社会課題解決、現地展開を促進する国系支援である。過年度公募では、共創相手の存在、DXを活用した実証、事業終了後おおむね2年以内の事業化見込みが重視されている。現行公募の有無、通年受付、上限額、補助率は申請前にJETRO公式情報で確認する。</p>
+<h2>3. 申請テーマ案（A推奨/B代替・各150字）</h2>
+<p><strong>案A（推奨）: アジア大学発スタートアップ・研究知DX共創基盤</strong> esse-senseの記事DB 188件とAI解析を活用し、日本の研究者・大学発スタートアップの知見をアジアの大学、企業、支援機関に接続する。現地課題を起点に研究シーズを再編集し、発信、マッチング、実証設計まで一体化するDX共創事業として申請する。</p>
+<p><strong>案B（代替）: esse-sense Future Forumアジア展開実証</strong> esse-sense Future Forumを国際DX共創の場として拡張し、アジアの大学・SU・事業会社と日本の研究者を結ぶ実証プログラムを行う。イベント、記事化、データ分析、商談支援を組み合わせ、継続的な産学連携案件を創出する。</p>
+<h2>4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字）</h2>
+<h3>背景目的</h3>
+<p>アジア諸国では、教育、医療、環境、都市、農業などの社会課題に対し、現地企業と大学が連携したDX型事業への需要が高まっている。一方、日本の研究者や大学発SUの知見は、論文、研究室紹介、個別イベントに分散し、海外企業が事業化可能性を判断しやすい形で流通していない。esse-senseはarticles 154件、general_articles 34件の知見DBを基盤に、研究成果を社会に伝える編集力とAIによる構造化能力を蓄積してきた。本事業では、この基盤をアジアDX共創へ拡張し、日本の研究知を現地課題、共創相手、実証テーマへ翻訳する。</p>
+<h3>方法</h3>
+<p>事業は三段階で実施する。第一に、既存記事DB 188件を対象に、研究領域、社会課題、技術成熟度、想定顧客、アジア展開可能性をタグ付けし、英日対応のナレッジカードを作成する。第二に、AIとテキスト解析で研究テーマとアジア側の課題・産業領域を照合し、教育DX、ヘルスケアDX、地域産業DX、大学DX等に絞り込む。第三に、esse-sense Future Forumと連動し、現地候補との面談、共創ワークショップ、実証計画策定を行う。営利法人として、記事制作、調査・伴走支援、スポンサー、大学DX支援へ接続する収益モデルも検証する。</p>
+<h3>成果</h3>
+<p>定量成果として、アジア展開候補の研究・SUテーマ30件、現地連携候補50件、重点面談15件、共創実証案3件を目標とする。定性成果として、研究知を国際市場向けに翻訳・構造化するプロセスを確立し、大学発SU支援、産学連携支援、大学DX支援を海外共創型サービスへ拡張する。採択後は2年以内の事業化を前提に、現地法人・大学・支援機関との共同メニュー化を進める。</p>
+<h2>5. スケジュールと予算（年次別）</h2>
+<p>1年目は、DB棚卸し、対象国・分野の選定、ナレッジカード作成、現地候補先の抽出、Forum連動企画を行う。概算予算は1,500万円とし、AI・DB整備350万円、英語編集200万円、海外調査250万円、WS運営250万円、PM・事業開発300万円、広報150万円を見込む。2年目は、共創実証3件の設計、現地協議、営業資料整備、収益モデル検証を行い、概算1,000万円を配分する。補助上限と補助率は公式確認後に再積算する。</p>
+<h2>6. 提出物チェックリスト</h2>
+<ul>
+<li><input type="checkbox" disabled> 最新公募要領・交付規程・FAQ</li>
+<li><input type="checkbox" disabled> 交付申請書または応募フォーム、企業概要</li>
+<li><input type="checkbox" disabled> 役員等一覧、直近決算書・財務諸表</li>
+<li><input type="checkbox" disabled> 事業詳細、実証計画、共創相手情報</li>
+<li><input type="checkbox" disabled> 経費概算書、概要資料（日本語・英語）</li>
+<li><input type="checkbox" disabled> articles 154件、general_articles 34件のDB概要</li>
+<li><input type="checkbox" disabled> Forum資料、現地候補との面談記録</li>
+</ul>
+<h2>7. 推奨アクション（3-5点）</h2>
+<ul>
+<li>JETRO公式で、現行公募、通年受付、上限額、補助率、対象国を確認する。</li>
+<li>アジア側の共創候補として、大学、DX企業、政府系支援機関を20件以上抽出する。</li>
+<li>記事DB 188件から、アジア課題との親和性が高い30件を選び、英語要約と事業仮説を付す。</li>
+<li>esse-sense Future Forumを実証活動に位置づけ、海外登壇者候補を整理する。</li>
+<li>2年以内の事業化に向け、調査・伴走、スポンサー、大学DX支援の収益計画を数値化する。</li>
+</ul>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
