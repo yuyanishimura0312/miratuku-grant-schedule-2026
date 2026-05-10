@@ -215,6 +215,7 @@ tbody tr.row-m:hover,tbody tr.row-e:hover,tbody tr.row-me:hover{filter:brightnes
 <aside class="toc-sidebar">
 <h2>CONTENTS</h2>
 <ol>
+  <li><a href="#topPriority">🔥 重要案件TOP12</a></li>
   <li><a href="#overview">概要・凡例</a></li>
   <li><a href="#upload">雛形アップロード</a></li>
   <li><a href="#may">5月の締切</a></li>
@@ -233,6 +234,15 @@ tbody tr.row-m:hover,tbody tr.row-e:hover,tbody tr.row-me:hover{filter:brightnes
 <main>
 <h1>ミラツク／esse-sense<br>補助金・助成金 提出スケジュール</h1>
 <p class="subtitle">2026年5月〜9月｜作成日 2026-05-09｜<a href="https://yuyanishimura0312.github.io/miratuku-news-v2/databases.html" target="_blank">Grant DB 最新版</a><br>機能：行の<strong style="color:var(--accent-warm)">詳細</strong>ボタンで概要・採択後スケジュール・提出書類チェックリスト／<strong style="color:var(--accent-warm)">📄 表示</strong>でドラフトをスタイル付きで閲覧・印刷・HTMLダウンロード／<strong style="color:var(--accent-warm)">編集</strong>で内容更新（ブラウザ保存）／雛形アップロード自動書込</p>
+
+<section id="topPriority">
+<h2><span class="ch-num">00</span>🔥 今やるべき重要案件 TOP 12</h2>
+<p class="lead">締切が迫り、規模が大きく、ミラツク／esse-senseとの適合度が高い案件を抜粋。各セクションでも詳細を確認できます。</p>
+<table>
+<thead><tr><th>締切</th><th>助成金名</th><th>上限</th><th>主体</th><th>カテゴリ</th><th>操作</th></tr></thead>
+<tbody id="topPriorityBody"></tbody>
+</table>
+</section>
 
 <section id="overview">
 <h2><span class="ch-num">01</span>概要と凡例</h2>
@@ -846,7 +856,13 @@ const SECTIONS=[
 
 function rowClass(s){if(s.includes("M+E"))return"row-me";if(s.startsWith("M"))return"row-m";if(s.startsWith("E"))return"row-e";return"";}
 function urgentClass(d){if(d==="2026-05-11"||d==="2026-05-12")return"row-urgent";return"";}
-function impTag(b){if(!b)return"";const c=(b.includes("最重要")||b.includes("最大"))?"tag imp":"tag";return'<span class="'+c+'">'+escapeHtml(b)+'</span>';}
+function impTag(b){
+  if(!b)return"";
+  if(b.includes("最大"))return'<span class="tag imp" style="background:#A24F8E">★★★ '+escapeHtml(b)+'</span>';
+  if(b.includes("最重要"))return'<span class="tag imp">★★ '+escapeHtml(b)+'</span>';
+  if(b.includes("重要"))return'<span class="tag" style="background:var(--accent-warm);color:#FFFFFF">★ '+escapeHtml(b)+'</span>';
+  return'<span class="tag">'+escapeHtml(b)+'</span>';
+}
 function escapeHtml(s){return String(s||"").replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
 
 function renderSchedules(){
@@ -855,9 +871,38 @@ function renderSchedules(){
   SECTIONS.forEach(sec=>{
     const filtered=state.rows.map((r,i)=>({r,i})).filter(o=>sec.filter(o.r));
     if(filtered.length===0)return;
-    // カテゴリ別グルーピング
+    // カテゴリ別グルーピング＋重要度順ソート
     const groups={main:[],sub:[],npo:[],zebra:[],gov:[],learn:[]};
     filtered.forEach(o=>{groups[getCategory(o.r[1])].push(o);});
+    // 各グループ内を重要度→締切順でソート
+    const importanceScore=r=>{
+      const note=String(r[7]||'');
+      if(note.includes('最大'))return 5;
+      if(note.includes('最重要'))return 4;
+      if(note.includes('重要'))return 3;
+      if(note.includes('緊急'))return 4;
+      // 上限額が大きいほど高優先
+      const amt=String(r[2]||'');
+      if(/億円/.test(amt))return 3;
+      if(/[1-9],?\d{3}万円/.test(amt)||/[1-9]\d{3,}万円/.test(amt))return 2;
+      return 1;
+    };
+    const deadlineScore=r=>{
+      const d=String(r[0]||'');
+      if(d==='通年')return 99;
+      const m=d.match(/(\d{4})-(\d{2})-(\d{2})/);
+      if(m)return parseInt(m[2])*100+parseInt(m[3]);
+      const m2=d.match(/(\d{4})-(\d{2})/);
+      if(m2)return parseInt(m2[2])*100+50;
+      return 50;
+    };
+    Object.keys(groups).forEach(k=>{
+      groups[k].sort((a,b)=>{
+        const ia=importanceScore(a.r),ib=importanceScore(b.r);
+        if(ia!==ib)return ib-ia;
+        return deadlineScore(a.r)-deadlineScore(b.r);
+      });
+    });
     const sectionEl=document.createElement('section');
     sectionEl.id=sec.id;
     const counts=Object.entries(groups).filter(([k,v])=>v.length>0).map(([k,v])=>k+':'+v.length).join(' / ');
@@ -1400,6 +1445,54 @@ function flash(msg){
 // ============================================
 // 初期レンダ
 // ============================================
+// 重要案件TOP12のレンダリング
+function renderTopPriority(){
+  const tbody=document.getElementById('topPriorityBody');
+  if(!tbody)return;
+  // 重要度順にスコアリング
+  const imp=r=>{
+    const n=String(r[7]||'');
+    if(n.includes('最大'))return 100;
+    if(n.includes('最重要'))return 90;
+    if(n.includes('重要')||n.includes('緊急'))return 70;
+    const amt=String(r[2]||'');
+    if(/億円/.test(amt))return 60;
+    if(/[1-9],?\d{3}万円/.test(amt))return 40;
+    return 10;
+  };
+  const dlScore=r=>{
+    const d=String(r[0]||'');
+    if(d==='通年')return 9999;
+    const m=d.match(/(\d{4})-(\d{2})-(\d{2})/);
+    if(m){const y=parseInt(m[1]),mo=parseInt(m[2]),da=parseInt(m[3]);return y*10000+mo*100+da;}
+    return 9000;
+  };
+  // 重要度高 + 締切が近い順
+  const sorted=state.rows.map((r,i)=>({r,i})).filter(o=>imp(o.r)>=40||(o.r[2]||'').match(/億|[1-9]\d{3,}万円/));
+  sorted.sort((a,b)=>{
+    const ia=imp(a.r),ib=imp(b.r);
+    if(ib!==ia)return ib-ia;
+    return dlScore(a.r)-dlScore(b.r);
+  });
+  const top=sorted.slice(0,12);
+  tbody.innerHTML='';
+  top.forEach(o=>{
+    const r=o.r,idx=o.i;
+    const cat=getCategory(r[1]);
+    const cls=[rowClass(r[3]),urgentClass(r[0])].filter(Boolean).join(' ');
+    const tr=document.createElement('tr');
+    tr.className=cls+(cat!=='main'?' row-cat-'+cat:'');
+    tr.innerHTML='<td class="deadline">'+escapeHtml(r[0])+'</td>'+
+      '<td>'+escapeHtml(r[1])+'</td>'+
+      '<td class="amount">'+escapeHtml(r[2])+'</td>'+
+      '<td class="subj">'+escapeHtml(r[3])+'</td>'+
+      '<td>'+impTag(r[7]||'重要')+'</td>'+
+      '<td class="action-cell"><button class="btn btn-sm btn-detail" onclick="openDetail('+idx+')">詳細</button></td>';
+    tbody.appendChild(tr);
+  });
+}
+
+renderTopPriority();
 renderSchedules();
 renderDrafts();
 renderGrantSelector();
