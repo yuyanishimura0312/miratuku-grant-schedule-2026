@@ -73,8 +73,13 @@ tbody tr.row-m{background:var(--row-m)}
 tbody tr.row-e{background:var(--row-e)}
 tbody tr.row-me{background:var(--row-me)}
 tbody tr.row-urgent td:first-child{background:var(--row-urgent);font-weight:700;color:var(--accent-warm)}
-tbody tr.row-sub td{font-size:11.5px;opacity:0.85}
-tbody tr.row-sub td:nth-child(2)::before{content:"サブ ";font-size:9.5px;color:var(--accent-warm);font-weight:700;letter-spacing:0.05em;background:var(--accent-muted);padding:1px 4px;border-radius:2px;margin-right:4px}
+tbody tr.row-sub td{font-size:11.5px;opacity:0.9}
+tbody tr.row-sub td:nth-child(2)::before{content:"";display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:0.05em;padding:1px 4px;border-radius:2px;margin-right:4px}
+tbody tr.row-cat-sub td:nth-child(2)::before{content:"中央省庁";color:#FFFFFF;background:#8B5A2B}
+tbody tr.row-cat-npo td:nth-child(2)::before{content:"NPO";color:#FFFFFF;background:#0A8043}
+tbody tr.row-cat-zebra td:nth-child(2)::before{content:"ゼブラ・SU";color:#FFFFFF;background:#5B5BD6}
+tbody tr.row-cat-gov td:nth-child(2)::before{content:"政府系";color:#FFFFFF;background:#3F7DC9}
+tbody tr.row-cat-learn td:nth-child(2)::before{content:"学術連携";color:#FFFFFF;background:#A24F8E}
 .subsection-divider{font-size:11px;color:var(--text-muted);font-weight:500;letter-spacing:0.1em;background:var(--surface);padding:4px 8px;border-bottom:1px dashed var(--border);text-transform:uppercase}
 tbody tr:hover{background:var(--card-hover)}
 tbody tr.row-m:hover,tbody tr.row-e:hover,tbody tr.row-me:hover{filter:brightness(0.97)}
@@ -612,7 +617,61 @@ const DEFAULT_ROWS = [
   ["通年","JST GteX 革新的GX技術創出","蓄電池8億〜23億等","M+E(コンソーシアム)","C+F GX","①④⑤","5年大型","国系・最大",""],
   ["通年","JST A-STEP 産学共同(秋募集)","500万-1,500万円","E(連携大学)","C+F 商用化","④⑤","秋公募9-10月予定","国系",""],
   ["通年","産総研 公募課題（共同研究）","プロジェクト規模","M+E","C+F 産学","①④⑤","随時公募","国系",""],
-  ["通年","人間文化研究機構 グローバル地域研究推進","ポスト設置型","M(連携大学)","A 地域研究","①③","海域アジア等","国系",""]
+  ["通年","人間文化研究機構 グローバル地域研究推進","ポスト設置型","M(連携大学)","A 地域研究","①③","海域アジア等","国系",""],
+  // ============== NPO向け追加 13件 ==============
+  ["2026-05-18","大同生命厚生事業団 地域保健福祉研究助成","要公式確認","M","A 福祉研究","①③","地域保健福祉","NPO向け",""],
+  ["2026-05-24","JETRO GSAP（グローバル・スタートアップ・アクセラ）","エクイティフリー支援","E","C 国際展開","③⑤⑦","海外メンタリング","ゼブラ・SU向け",""],
+  ["2026-06-30","丸紅基金 第52回社会福祉助成金","300万円","M(NPO)","B 福祉","②⑤","総額3億円","NPO向け",""],
+  ["2026-06-30","三井住友海上福祉財団 研究助成","A枠500万・B枠200万","M+E(連携大学)","A 福祉研究","③④⑥","交通・災害・高齢","NPO向け",""],
+  ["2026-07-15〜07/31","パナソニック NPO/NGOサポートファンド for SDGs","組織基盤強化","M(NPO)","B 組織強化","②⑤","2027年新スキーム","NPO向け",""],
+  ["通年","キリン福祉財団 地域のちから・福祉のちから","プログラム別","M(NPO)","B 地域福祉","②④⑤","令和8年度受付中","NPO向け",""],
+  ["通年","日本社会福祉弘済会 社会福祉助成事業","50万円","M(NPO)","B 福祉研修","③④","総額2,000万円","NPO向け",""],
+  ["通年","日本生命財団 高齢・地域共生社会助成","研究助成1-2年","M+E(連携大学)","A 共生社会研究","①③⑥","実践的研究","NPO向け",""],
+  ["通年","立正佼成会 一食平和基金","総額2.55億円(8分野)","M(NPO)","B 平和・教育","①②③⑤","つながり構築","NPO向け",""],
+  ["通年","住友生命健康財団 コミュニティスポーツ推進助成","チャレンジ50万・アドバンス200-300万","M(NPO)","B コミュニティ","②⑤","健康・地域文化","NPO向け",""],
+  ["通年","ベネッセこども基金 重い病気の子の学び支援","要確認","M(NPO)","B こども","⑤","学び支援","NPO向け",""],
+  ["通年","京都地域創造基金 事業指定助成","プログラム別","M(NPO・京都拠点)","B 京都地域","②④⑤","ステップ2認証必須","NPO向け",""],
+  ["通年","全国コミュニティ財団協会 各地域財団","地域別100-500万","M+E(地域別)","B 地域財団","②④⑤⑥","全国網羅","NPO向け",""],
+  ["通年","外務省 日本NGO連携無償資金協力","数千万-数億円","M(NPO)","D 国際協力","①②③④⑥⑦","ODA・年2回","NPO向け",""],
+  // ============== ゼブラ・スタートアップ向け追加 14件 ==============
+  ["2026-05-15","中小企業省力化投資補助金 一般型 第6回","1,500万円(オーダーメイド)","E","G 省力化","④⑤","AI・ロボット","ゼブラ・SU向け",""],
+  ["2026-06-05〜07","JETRO J-StarX（海外起業家育成）","エクイティフリー支援","E","C+D 国際","③⑦","海外進出メンタリング","ゼブラ・SU向け",""],
+  ["2026-06-30〜10/17","IMPACT FLOW KYOTO 2025-2026","コワーキング1年・伴走","E","B+C インパクト","②⑤⑥","京都市・グローバル展開","ゼブラ・SU向け",""],
+  ["通年","東京都創業助成事業","400万円(3/4)","E(都内創業)","C 創業","④⑤","家賃・人件費含む","ゼブラ・SU向け",""],
+  ["通年","JST SUCCESS（出資型新事業創出）","出資+メンタリング","E×ミラツク連携","C 大学発VC","①③⑤","学術DB系SU","ゼブラ・SU向け",""],
+  ["通年","ETIC. 社会起業塾イニシアティブ","小規模助成+伴走","E","B 社会起業","②⑤⑥","6ヶ月-1年","ゼブラ・SU向け",""],
+  ["通年","J-Startup KANSAI","集中支援4年・露出","E(関西)","C 関西SU","④⑤","官民エコシステム","ゼブラ・SU向け",""],
+  ["通年","福岡市スタートアップ海外展開支援","海外展開経費","E(福岡特区)","C+D 国際","③⑤⑦","グローバル創業特区","ゼブラ・SU向け",""],
+  ["通年","横浜市スタートアップ支援補助金","進出・実証費","E(横浜)","B+C 横浜","④⑤","スマートシティ志向","ゼブラ・SU向け",""],
+  ["通年","神奈川県中小企業生産性向上補助金","300万円(1/2)","E(神奈川)","G 生産性","④⑤","創業者支援枠","ゼブラ・SU向け",""],
+  ["通年","SIIF 社会変革推進財団 インパクト投資","投資・ネットワーク","E","B+C インパクト","②⑤","インパクト評価","ゼブラ・SU向け",""],
+  ["通年","GSG Impact JAPAN インパクト投資","ネットワーク・評価軸","E","B+C インパクト","②⑤","投資家マッチング","ゼブラ・SU向け",""],
+  ["通年","JIC 産業革新投資機構","出資・経営支援","E","C 成長投資","④⑤","シリーズA以降","ゼブラ・SU向け",""],
+  ["通年","小規模事業者持続化補助金 創業型","200万円(3/4)","E(創業5年以内)","C 創業","③⑤","広告・設備","ゼブラ・SU向け",""],
+  // ============== 政府系広域追加 8件 ==============
+  ["通年","JSPS 研究成果公開促進費 データベース部門","200-1,000万円","M(連携大学)","A DB公開★","①④","26DB公開・保守","政府系広域",""],
+  ["通年","JSPS 学術図書出版補助金","100-300万円","M(連携大学)","E 出版","③","深い知書籍化","政府系広域",""],
+  ["通年","文化庁 文化芸術デジタル基盤強化","事業規模による","M+E","E+F 文化DX","①③④","NFT/ブロックチェーン","政府系広域",""],
+  ["通年","文化庁 文化資源デジタル化事業","事業規模による","M+E","E+A 文化DB","①③④","アーカイブ戦略2026-30","政府系広域",""],
+  ["通年","観光庁 インバウンド受入環境整備高度化","1,000万円(1/2)","M+E","G 観光DX","④⑤","多言語・デジタル","政府系広域",""],
+  ["通年","JICA はじめの一歩NGOスタートアップ支援","100万円","M(NPO)","D 国際協力","②③⑦","NGO起業初期","政府系広域",""],
+  ["通年","国際交流基金 各種助成事業","100-500万円","M+E","D 国際","③⑦","知識翻訳・国際公開","政府系広域",""],
+  ["通年","中小機構 ソーシャルビジネス支援資金（融資）","7,200万円(融資)","M+E","B 融資","②⑤","NPO向け低利","政府系広域",""],
+  ["通年","農水省 みどりの食料システム戦略推進交付金","500-3,000万円","M+E","B+F 持続農業","①②④","環境×農業","政府系広域",""],
+  ["通年","経産省 地域中核企業創出・支援事業","数千万円","E","B+C 地域中堅","②④","成長段階企業","政府系広域",""],
+  ["通年","内閣府 企業版ふるさと納税","税制優遇90%相当","E","B 地域貢献","②","地方創生応援","政府系広域",""],
+  ["通年","経産省 デジタル化・AI導入補助金（標準枠）","450万円","E","G DX","④⑤","生成AI明示対応","ゼブラ・SU向け",""],
+  // ============== 産学連携・大学発SU・大学DX ==============
+  ["2026-04〜07月","JST 早暁プログラム第3期ステージ1（大学発SU）","数百万円規模","E×ミラツク連携","H 大学SU","③⑤","事業化プロデューサー型","学術連携",""],
+  ["通年","JST D-Global（ディープテック国際展開）","3,000-5,000万円(2-3年)","E×ミラツク連携","H+D 大学発SU国際","③⑤⑦","次回2-3月予定","学術連携",""],
+  ["通年","JST スタートアップ・エコシステム共創（地域拠点）","2.5-5億円/年","E×地域プラットフォーム","H 地域SU","②③⑤","GTIE/KSAC等参画","学術連携・最大",""],
+  ["通年","文科省 大学DX推進事業","数千万-1億円(複数年)","E×大学連携","H 大学DX","④⑤","教育データ利活用","学術連携",""],
+  ["通年","NII/文科省 学位・資格デジタル化標準化","数百万円","E単独","H 学術DX","①④⑤","Open Badge標準","学術連携",""],
+  ["通年","DX等成長分野リスキリング推進事業","数千万-+企業連携支援","E×大学連携","G+H 人材DX","④⑤","6-8月公募","学術連携",""],
+  ["通年","JST マッチングプランナープログラム","無料-数百万円","E単独(地域協力)","H 産学連携","③","5地域ブロック","学術連携",""],
+  ["通年","第2期スタートアップ・エコシステム拠点形成戦略（内閣府）","年5-10億円(複数年)","E×ミラツク×地域","H 大型SU拠点","②③⑤","2026/6第1次選定","学術連携・最大",""],
+  ["通年","GTIE GAPファンド（関東圏大学発SU）","3,000-5,000万円","E×大学発SU","H 関東SU","③⑤","ステップ1-2","学術連携",""],
+  ["通年","文科省 私立大学等改革総合支援事業（社会実装推進型）","最大1-3億円","E×地方私立大学","H 大学社会実装","③④⑤","複数年支援","学術連携",""]
 ];
 
 const DRAFT_FILES = [
@@ -645,6 +704,90 @@ function saveState(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
 let state = loadState();
 // データ整合性: 行が古い場合は再初期化
 if(!state.rows || state.rows.length===0){state={rows:JSON.parse(JSON.stringify(DEFAULT_ROWS)),memos:{},drafts:{}};}
+
+// ============================================
+// カテゴリ別キー（後追加分）
+// ============================================
+const NPO_KEYS=new Set([
+  "大同生命厚生事業団 地域保健福祉研究助成",
+  "丸紅基金 第52回社会福祉助成金",
+  "三井住友海上福祉財団 研究助成",
+  "パナソニック NPO/NGOサポートファンド for SDGs",
+  "キリン福祉財団 地域のちから・福祉のちから",
+  "日本社会福祉弘済会 社会福祉助成事業",
+  "日本生命財団 高齢・地域共生社会助成",
+  "立正佼成会 一食平和基金",
+  "住友生命健康財団 コミュニティスポーツ推進助成",
+  "ベネッセこども基金 重い病気の子の学び支援",
+  "京都地域創造基金 事業指定助成",
+  "全国コミュニティ財団協会 各地域財団",
+  "外務省 日本NGO連携無償資金協力"
+]);
+
+const ZEBRA_KEYS=new Set([
+  "JETRO GSAP（グローバル・スタートアップ・アクセラ）",
+  "中小企業省力化投資補助金 一般型 第6回",
+  "JETRO J-StarX（海外起業家育成）",
+  "IMPACT FLOW KYOTO 2025-2026",
+  "東京都創業助成事業",
+  "JST SUCCESS（出資型新事業創出）",
+  "ETIC. 社会起業塾イニシアティブ",
+  "J-Startup KANSAI",
+  "福岡市スタートアップ海外展開支援",
+  "横浜市スタートアップ支援補助金",
+  "神奈川県中小企業生産性向上補助金",
+  "SIIF 社会変革推進財団 インパクト投資",
+  "GSG Impact JAPAN インパクト投資",
+  "JIC 産業革新投資機構",
+  "小規模事業者持続化補助金 創業型",
+  "経産省 デジタル化・AI導入補助金（標準枠）"
+]);
+
+const GOV_KEYS=new Set([
+  "JSPS 研究成果公開促進費 データベース部門",
+  "JSPS 学術図書出版補助金",
+  "文化庁 文化芸術デジタル基盤強化",
+  "文化庁 文化資源デジタル化事業",
+  "観光庁 インバウンド受入環境整備高度化",
+  "JICA はじめの一歩NGOスタートアップ支援",
+  "国際交流基金 各種助成事業",
+  "中小機構 ソーシャルビジネス支援資金（融資）",
+  "農水省 みどりの食料システム戦略推進交付金",
+  "経産省 地域中核企業創出・支援事業",
+  "内閣府 企業版ふるさと納税"
+]);
+
+const LEARN_KEYS=new Set([
+  "JST 早暁プログラム第3期ステージ1（大学発SU）",
+  "JST D-Global（ディープテック国際展開）",
+  "JST スタートアップ・エコシステム共創（地域拠点）",
+  "文科省 大学DX推進事業",
+  "NII/文科省 学位・資格デジタル化標準化",
+  "DX等成長分野リスキリング推進事業",
+  "JST マッチングプランナープログラム",
+  "第2期スタートアップ・エコシステム拠点形成戦略（内閣府）",
+  "GTIE GAPファンド（関東圏大学発SU）",
+  "文科省 私立大学等改革総合支援事業（社会実装推進型）"
+]);
+
+// 行カテゴリ判定
+function getCategory(name){
+  if(NPO_KEYS.has(name))return'npo';
+  if(ZEBRA_KEYS.has(name))return'zebra';
+  if(GOV_KEYS.has(name))return'gov';
+  if(LEARN_KEYS.has(name))return'learn';
+  if(SUB_KEYS.has(name))return'sub';
+  return'main';
+}
+
+const CATEGORY_LABELS={
+  main:'主要案件（基本リスト）',
+  sub:'サブ案件（中央省庁・補完調査分）',
+  npo:'NPO向け追加',
+  zebra:'ゼブラ・スタートアップ向け',
+  gov:'政府系広域',
+  learn:'産学連携・大学発SU・大学DX'
+};
 
 // ============================================
 // サブ案件（後追加・中央省庁巡回37件）
@@ -712,16 +855,18 @@ function renderSchedules(){
   SECTIONS.forEach(sec=>{
     const filtered=state.rows.map((r,i)=>({r,i})).filter(o=>sec.filter(o.r));
     if(filtered.length===0)return;
-    const mainItems=filtered.filter(o=>!SUB_KEYS.has(o.r[1]));
-    const subItems=filtered.filter(o=>SUB_KEYS.has(o.r[1]));
+    // カテゴリ別グルーピング
+    const groups={main:[],sub:[],npo:[],zebra:[],gov:[],learn:[]};
+    filtered.forEach(o=>{groups[getCategory(o.r[1])].push(o);});
     const sectionEl=document.createElement('section');
     sectionEl.id=sec.id;
-    let html='<h2><span class="ch-num">'+sec.num+'</span>'+sec.title+'<span style="font-size:11px;color:var(--text-muted);margin-left:auto;font-weight:400">主要 '+mainItems.length+' / サブ '+subItems.length+'</span></h2>';
+    const counts=Object.entries(groups).filter(([k,v])=>v.length>0).map(([k,v])=>k+':'+v.length).join(' / ');
+    let html='<h2><span class="ch-num">'+sec.num+'</span>'+sec.title+'<span style="font-size:10px;color:var(--text-muted);margin-left:auto;font-weight:400">'+counts+'</span></h2>';
     html+='<p class="lead">'+sec.intro+'</p>';
     html+='<table><thead><tr><th>締切</th><th>助成金名</th><th>上限額</th><th>主体</th><th>テーマ</th><th>強み</th><th>アクション</th><th>備考</th><th>ドラフト</th><th>操作</th></tr></thead><tbody>';
-    function renderRow(o,isSub){
+    function renderRow(o,cat){
       const r=o.r,idx=o.i;
-      const subCls=isSub?' row-sub':'';
+      const subCls=(cat!=='main')?' row-sub row-cat-'+cat:'';
       const cls=[rowClass(r[3]),urgentClass(r[0])].filter(Boolean).join(' ')+subCls;
       const memo=state.memos[idx]?' row-edited':'';
       const draft=r[8]||'';
@@ -740,14 +885,14 @@ function renderSchedules(){
       h+='</tr>';
       return h;
     }
-    if(mainItems.length>0){
-      html+='<tr><td colspan="10" class="subsection-divider">▼ 主要案件（基本リスト）</td></tr>';
-      mainItems.forEach(o=>{html+=renderRow(o,false);});
-    }
-    if(subItems.length>0){
-      html+='<tr><td colspan="10" class="subsection-divider">▼ サブ案件（中央省庁・補完調査分）</td></tr>';
-      subItems.forEach(o=>{html+=renderRow(o,true);});
-    }
+    // カテゴリ順に表示
+    const order=['main','sub','npo','zebra','gov','learn'];
+    order.forEach(cat=>{
+      if(groups[cat].length>0){
+        html+='<tr><td colspan="10" class="subsection-divider">▼ '+CATEGORY_LABELS[cat]+' ('+groups[cat].length+'件)</td></tr>';
+        groups[cat].forEach(o=>{html+=renderRow(o,cat);});
+      }
+    });
     html+='</tbody></table>';
     sectionEl.innerHTML=html;
     container.appendChild(sectionEl);
