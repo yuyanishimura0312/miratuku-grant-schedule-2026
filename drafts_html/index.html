@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>提出書類ドラフト一覧 — ミラツク／esse-sense Grant 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --accent:#CC1400;--accent-soft:#B01200;--accent-muted:rgba(204,20,0,0.06);
+  --text:#121212;--text-secondary:#555555;--text-muted:#888888;
+  --border:#D9D9D9;--border-light:#EEEEEE;
+  --bg:#FFFFFF;--surface:#F7F7F5;
+  --row-m:#FFF8E7;--row-e:#E7F0FF;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Noto Sans JP","Hiragino Sans",sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-feature-settings:"palt"}
+.top-bar{position:sticky;top:0;z-index:100;background:var(--bg);border-top:3px solid #121212;border-bottom:1px solid var(--border-light);padding:12px 24px;display:flex;justify-content:space-between;align-items:center;height:56px}
+.brand{font-weight:700;font-size:13px;color:var(--accent);letter-spacing:0.05em}
+.search{padding:6px 10px;border:1px solid var(--border);border-radius:2px;font-family:inherit;font-size:12px;width:240px}
+main{max-width:1100px;margin:0 auto;padding:32px 24px 80px}
+h1{font-family:"Noto Serif JP",serif;font-size:28px;margin-bottom:8px}
+.subtitle{color:var(--text-secondary);font-size:13px;margin-bottom:28px}
+.subtitle a{color:var(--accent);text-decoration:none}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+.stat-card{background:var(--surface);padding:14px 18px;border-left:3px solid var(--accent);border-radius:2px}
+.stat-num{font-size:24px;font-weight:700;color:var(--accent);font-family:"Noto Serif JP",serif}
+.stat-label{font-size:11px;color:var(--text-secondary);letter-spacing:0.05em;margin-top:2px}
+.filters{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+.filter-btn{padding:6px 14px;border:1px solid var(--border);background:var(--bg);cursor:pointer;font-size:12px;border-radius:2px;font-family:inherit}
+.filter-btn:hover{background:var(--surface)}
+.filter-btn.active{background:var(--accent);color:#FFFFFF;border-color:var(--accent)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{background:var(--accent);color:#FFFFFF;padding:10px;text-align:left;font-weight:500;font-size:12px;letter-spacing:0.05em;border:1px solid var(--accent-soft)}
+tbody td{padding:10px;border:1px solid var(--border-light);vertical-align:middle}
+tbody tr.row-m{background:var(--row-m)}
+tbody tr.row-e{background:var(--row-e)}
+tbody tr:hover{background:var(--surface)}
+.rank-badge{font-family:"SF Mono",monospace;font-size:11px;color:var(--text-secondary);font-weight:700}
+.org-badge{display:inline-block;padding:2px 8px;font-size:10px;font-weight:700;border-radius:2px;letter-spacing:0.05em}
+.org-m{background:#A24F8E;color:#FFFFFF}
+.org-e{background:#5B5BD6;color:#FFFFFF}
+.title-link{color:var(--text);text-decoration:none;font-weight:500;font-size:13px}
+.title-link:hover{color:var(--accent)}
+.size{font-size:11px;color:var(--text-muted);font-family:"SF Mono",monospace}
+.actions{display:flex;gap:6px}
+.btn{padding:4px 10px;font-size:11px;border:1px solid var(--border);background:var(--bg);cursor:pointer;text-decoration:none;color:var(--text);border-radius:2px;display:inline-block;font-family:inherit}
+.btn:hover{background:var(--surface);border-color:var(--accent);color:var(--accent)}
+.btn-primary{background:var(--accent);color:#FFFFFF;border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft);color:#FFFFFF}
+.note-banner{background:var(--accent-muted);border-left:3px solid var(--accent);padding:12px 16px;margin-bottom:24px;font-size:13px;color:var(--text-secondary);line-height:1.7}
+.note-banner strong{color:var(--accent)}
+@media (max-width:780px){
+  .stats{grid-template-columns:1fr 1fr}
+  table{font-size:11px}
+  .actions{flex-direction:column}
+}
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <div class="brand">GRANT DRAFTS — MIRATUKU × ESSE-SENSE</div>
+  <input type="search" id="search" class="search" placeholder="助成金名・主体で検索">
+</div>
+
+<main>
+<h1>提出書類ドラフト一覧</h1>
+<p class="subtitle">Phase A 38件のHTMLドラフト · 各ドキュメントは編集モード／印刷／PDFダウンロードに対応 · <a href="../site/index.html">スケジュール一覧へ</a></p>
+
+<div class="stats">
+  <div class="stat-card"><div class="stat-num" id="totalNum">—</div><div class="stat-label">ドラフト総数</div></div>
+  <div class="stat-card"><div class="stat-num" id="mNum">—</div><div class="stat-label">ミラツク版</div></div>
+  <div class="stat-card"><div class="stat-num" id="eNum">—</div><div class="stat-label">esse-sense版</div></div>
+  <div class="stat-card"><div class="stat-num" id="totalSize">—</div><div class="stat-label">合計サイズ</div></div>
+</div>
+
+<div class="note-banner">
+<strong>機能：</strong>各ドラフトを開くと「編集モード」ボタンで内容を直接編集できます（ブラウザに自動保存）。「印刷／PDF」ボタンでA4印刷／PDF出力。「リセット」で初期状態に復元。Markdownダウンロード／HTMLダウンロードも可能です。
+</div>
+
+<div class="filters">
+  <button class="filter-btn active" data-filter="all">すべて</button>
+  <button class="filter-btn" data-filter="m">ミラツクのみ</button>
+  <button class="filter-btn" data-filter="e">esse-senseのみ</button>
+</div>
+
+<table>
+<thead>
+<tr><th>#</th><th>主体</th><th>助成金名</th><th>サイズ</th><th>操作</th></tr>
+</thead>
+<tbody id="tbody"></tbody>
+</table>
+</main>
+
+<script>
+// ドラフト一覧データ（build.pyで生成・ここにハードコード）
+const DRAFTS = [
+{"filename": "001_E_観光庁オーバーツーリズム対策.html", "title": "観光庁オーバーツーリズム対策", "org": "esse-sense", "code": "E", "rank": "001", "size": 16965},
+{"filename": "001_M_観光庁オーバーツーリズム対策.html", "title": "観光庁オーバーツーリズム対策", "org": "ミラツク", "code": "M", "rank": "001", "size": 18236},
+{"filename": "002_M_JSPS科研費_特別推進_基盤S.html", "title": "JSPS科研費 特別推進 基盤S", "org": "ミラツク", "code": "M", "rank": "002", "size": 17459},
+{"filename": "003_M_JST CREST 戦略的創造研究推進事業.html", "title": "JST CREST 戦略的創造研究推進事業", "org": "ミラツク", "code": "M", "rank": "003", "size": 13140},
+{"filename": "004_E_NEDO ディープテック・スタートアップ支援(DTSU)第10回.html", "title": "NEDO ディープテック・スタートアップ支援(DTSU)第10回", "org": "esse-sense", "code": "E", "rank": "004", "size": 12551},
+{"filename": "005_E_中小企業成長加速化補助金（推定例年6月）.html", "title": "中小企業成長加速化補助金（推定例年6月）", "org": "esse-sense", "code": "E", "rank": "005", "size": 13297},
+{"filename": "006_M_JST RISTEX「ケアが根づく社会システム」.html", "title": "JST RISTEX「ケアが根づく社会システム」", "org": "ミラツク", "code": "M", "rank": "006", "size": 13495},
+{"filename": "007_M_JST RISTEX「SDGs達成に向けた共創的研究開発」.html", "title": "JST RISTEX「SDGs達成に向けた共創的研究開発」", "org": "ミラツク", "code": "M", "rank": "007", "size": 12491},
+{"filename": "008_E_共創の場形成支援プログラム（COI-NEXT）「未来共創分野」.html", "title": "共創の場形成支援プログラム（COI-NEXT）「未来共創分野」", "org": "esse-sense", "code": "E", "rank": "008", "size": 16740},
+{"filename": "008_M_共創の場形成支援プログラム（COI-NEXT）「未来共創分野」.html", "title": "共創の場形成支援プログラム（COI-NEXT）「未来共創分野」", "org": "ミラツク", "code": "M", "rank": "008", "size": 12802},
+{"filename": "010_E_総務省 地域社会DX推進パッケージ事業（二次公募）.html", "title": "総務省 地域社会DX推進パッケージ事業（二次公募）", "org": "esse-sense", "code": "E", "rank": "010", "size": 12749},
+{"filename": "010_M_総務省 地域社会DX推進パッケージ事業（二次公募）.html", "title": "総務省 地域社会DX推進パッケージ事業（二次公募）", "org": "ミラツク", "code": "M", "rank": "010", "size": 13146},
+{"filename": "012_E_JST ASPIRE 2026 国際共同研究.html", "title": "JST ASPIRE 2026 国際共同研究", "org": "esse-sense", "code": "E", "rank": "012", "size": 13070},
+{"filename": "012_M_JST ASPIRE 2026 国際共同研究.html", "title": "JST ASPIRE 2026 国際共同研究", "org": "ミラツク", "code": "M", "rank": "012", "size": 15657},
+{"filename": "013_M_JSPS 研究成果公開促進費 データベース部門.html", "title": "JSPS 研究成果公開促進費 データベース部門", "org": "ミラツク", "code": "M", "rank": "013", "size": 12502},
+{"filename": "014_E_京都市 MICE開催支援助成金（大規模国際・上期4月_下期10月）.html", "title": "京都市 MICE開催支援助成金（大規模国際・上期4月 下期10月）", "org": "esse-sense", "code": "E", "rank": "014", "size": 13584},
+{"filename": "014_M_京都市 MICE開催支援助成金（大規模国際・上期4月_下期10月）.html", "title": "京都市 MICE開催支援助成金（大規模国際・上期4月 下期10月）", "org": "ミラツク", "code": "M", "rank": "014", "size": 12773},
+{"filename": "015_E_経済安全保障重要技術育成プログラム（K Program）.html", "title": "経済安全保障重要技術育成プログラム（K Program）", "org": "esse-sense", "code": "E", "rank": "015", "size": 12710},
+{"filename": "015_M_経済安全保障重要技術育成プログラム（K Program）.html", "title": "経済安全保障重要技術育成プログラム（K Program）", "org": "ミラツク", "code": "M", "rank": "015", "size": 14487},
+{"filename": "016_E_ムーンショット型研究開発事業.html", "title": "ムーンショット型研究開発事業", "org": "esse-sense", "code": "E", "rank": "016", "size": 13842},
+{"filename": "016_M_ムーンショット型研究開発事業.html", "title": "ムーンショット型研究開発事業", "org": "ミラツク", "code": "M", "rank": "016", "size": 26651},
+{"filename": "017_E_内閣府 SIP第3期（戦略的イノベーション創造）.html", "title": "内閣府 SIP第3期（戦略的イノベーション創造）", "org": "esse-sense", "code": "E", "rank": "017", "size": 12578},
+{"filename": "017_M_内閣府 SIP第3期（戦略的イノベーション創造）.html", "title": "内閣府 SIP第3期（戦略的イノベーション創造）", "org": "ミラツク", "code": "M", "rank": "017", "size": 13090},
+{"filename": "018_E_NEDO グリーンイノベーション基金.html", "title": "NEDO グリーンイノベーション基金", "org": "esse-sense", "code": "E", "rank": "018", "size": 12562},
+{"filename": "018_M_NEDO グリーンイノベーション基金.html", "title": "NEDO グリーンイノベーション基金", "org": "ミラツク", "code": "M", "rank": "018", "size": 13526},
+{"filename": "019_E_JST GteX 革新的GX技術創出（推定例年5-7月）.html", "title": "JST GteX 革新的GX技術創出（推定例年5-7月）", "org": "esse-sense", "code": "E", "rank": "019", "size": 14140},
+{"filename": "019_M_JST GteX 革新的GX技術創出（推定例年5-7月）.html", "title": "JST GteX 革新的GX技術創出（推定例年5-7月）", "org": "ミラツク", "code": "M", "rank": "019", "size": 12658},
+{"filename": "020_E_JST スタートアップ・エコシステム共創（地域拠点）.html", "title": "JST スタートアップ・エコシステム共創（地域拠点）", "org": "esse-sense", "code": "E", "rank": "020", "size": 14336},
+{"filename": "021_E_第2期スタートアップ・エコシステム拠点形成戦略（内閣府）.html", "title": "第2期スタートアップ・エコシステム拠点形成戦略（内閣府）", "org": "esse-sense", "code": "E", "rank": "021", "size": 12782},
+{"filename": "022_M_地域中核大学・特色ある研究大学 総合振興パッケージ（J-PEAKS）.html", "title": "地域中核大学・特色ある研究大学 総合振興パッケージ（J-PEAKS）", "org": "ミラツク", "code": "M", "rank": "022", "size": 15978},
+{"filename": "023_E_トヨタ財団 国際助成プログラム.html", "title": "トヨタ財団 国際助成プログラム", "org": "esse-sense", "code": "E", "rank": "023", "size": 14185},
+{"filename": "023_M_トヨタ財団 国際助成プログラム.html", "title": "トヨタ財団 国際助成プログラム", "org": "ミラツク", "code": "M", "rank": "023", "size": 12453},
+{"filename": "024_M_トヨタ財団 国内助成プログラム（自治型社会）.html", "title": "トヨタ財団 国内助成プログラム（自治型社会）", "org": "ミラツク", "code": "M", "rank": "024", "size": 12519},
+{"filename": "025_M_住友財団 基礎科学研究助成.html", "title": "住友財団 基礎科学研究助成", "org": "ミラツク", "code": "M", "rank": "025", "size": 12405},
+{"filename": "026_M_鹿島学術振興財団 特定テーマ研究助成.html", "title": "鹿島学術振興財団 特定テーマ研究助成", "org": "ミラツク", "code": "M", "rank": "026", "size": 13624},
+{"filename": "029_M_トヨタ財団 研究助成「未来の社会システム」.html", "title": "トヨタ財団 研究助成「未来の社会システム」", "org": "ミラツク", "code": "M", "rank": "029", "size": 13013},
+{"filename": "030_E_DNP文化振興財団 グラフィック文化研究助成.html", "title": "DNP文化振興財団 グラフィック文化研究助成", "org": "esse-sense", "code": "E", "rank": "030", "size": 13666},
+{"filename": "030_M_DNP文化振興財団 グラフィック文化研究助成.html", "title": "DNP文化振興財団 グラフィック文化研究助成", "org": "ミラツク", "code": "M", "rank": "030", "size": 13670}
+];
+
+let currentFilter = 'all';
+let currentSearch = '';
+
+function render() {
+  const tbody = document.getElementById('tbody');
+  tbody.innerHTML = '';
+  let filtered = DRAFTS;
+  if (currentFilter === 'm') filtered = DRAFTS.filter(d => d.code === 'M');
+  if (currentFilter === 'e') filtered = DRAFTS.filter(d => d.code === 'E');
+  if (currentSearch) {
+    const q = currentSearch.toLowerCase();
+    filtered = filtered.filter(d => d.title.toLowerCase().includes(q) || d.org.toLowerCase().includes(q));
+  }
+  filtered.forEach(d => {
+    const tr = document.createElement('tr');
+    tr.className = d.code === 'M' ? 'row-m' : 'row-e';
+    const sizeKB = (d.size / 1024).toFixed(1);
+    const orgClass = d.code === 'M' ? 'org-m' : 'org-e';
+    tr.innerHTML =
+      `<td><span class="rank-badge">${d.rank}</span></td>` +
+      `<td><span class="org-badge ${orgClass}">${d.org}</span></td>` +
+      `<td><a class="title-link" href="${encodeURIComponent(d.filename)}">${escapeHtml(d.title)}</a></td>` +
+      `<td><span class="size">${sizeKB} KB</span></td>` +
+      `<td class="actions">` +
+        `<a class="btn btn-primary" href="${encodeURIComponent(d.filename)}" target="_blank">開く</a>` +
+        `<a class="btn" href="${encodeURIComponent(d.filename)}" download>DL</a>` +
+      `</td>`;
+    tbody.appendChild(tr);
+  });
+  // サマリー
+  document.getElementById('totalNum').textContent = DRAFTS.length;
+  document.getElementById('mNum').textContent = DRAFTS.filter(d => d.code === 'M').length;
+  document.getElementById('eNum').textContent = DRAFTS.filter(d => d.code === 'E').length;
+  const totalKB = (DRAFTS.reduce((s, d) => s + d.size, 0) / 1024).toFixed(0);
+  document.getElementById('totalSize').textContent = totalKB + ' KB';
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    render();
+  });
+});
+
+document.getElementById('search').addEventListener('input', e => {
+  currentSearch = e.target.value;
+  render();
+});
+
+render();
+</script>
+</body>
+</html>
