@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>J-Startup KANSAI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>J-Startup KANSAI 申請書ドラフト（esse-sense向け）</h1>
+<p><strong>締切</strong>: 通年 | <strong>上限</strong>: 集中支援4年・露出</p>
+<h2>1. 申請者情報（300字・数値組込）</h2>
+<h2>2. 助成金概要・応募要件（200字・地の文）</h2>
+<h2>3. 申請テーマ案（A推奨/B代替・各150字）</h2>
+<h2>4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字）</h2>
+<h2>5. スケジュールと予算（年次別）</h2>
+<h2>6. 提出物チェックリスト</h2>
+<h2>7. 推奨アクション（3-5点）</h2>
+<p>末尾に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_E_J-Startup KANSAI.md」記載。地の文中心、法人数値組込必須。 codex 指定の構成に合わせてドラフトを作成し、あわせて保存対象パスへファイル化します。助成金名や制度の表現は、いただいた条件を軸に申請書向けの地の文へ整えます。 exec /bin/bash -lc "rg --files | sed -n '1,120p'" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms: 提出スケジュール_2026年5-9月.xlsx 06_お金をまわそう基金.md build_schedule_xlsx.py 02_野村グループ基金_みらい助成.md 09b_提出スケジュール_esse-sense.md 04_企業メセナ協議会_助成認定.md 08_統合実行計画.md site/NM_DX推進補助事業（沖縄DX促進）.md site/templates/sample_template.txt site/templates/sample_template.md site/NE_観光庁 オーバーツーリズム対策面的整備（令和8年度）.md site/index.html site/grant_preferences.js 11_京都府特有助成金.md csv/02_ミラツク.csv csv/05_採択期待値.csv csv/01_全体タイムライン.csv csv/03_esse-sense.csv csv/04_月次アクション.csv csv/06_凡例.csv 00_summary.md 07_esse-sense_補助金候補.md 09_提出スケジュール_5月-9月.md 提出スケジュール.html site/drafts_html/N112_M_京都産学公の森推進事業.html 01_松下幸之助記念志財団_研究助成.md site/drafts_html/012_M_JST ASPIRE 2026 国際共同研究.html 05_JSPS_人文社会研究.md site/drafts_html/006_M_JST RISTEX「ケアが根づく社会システム」.html site/drafts_html/024_M_トヨタ財団 国内助成プログラム（自治型社会）.html site/drafts_html/N110_E_ロッテ財団 実装型共同研究助成.html site/drafts_html/N101_E_デジタル化・AI導入補助金 2026 セキュリティ枠.html site/drafts_html/N102_M_JST 創発的研究支援事業.html site/drafts_html/N129_M_中国電力技術研究財団 国際会議等開催助成.html site/drafts_html/N121_M_観光庁 オーバーツーリズム対策面的整備（令和8年度）.html site/drafts_html/030_M_DNP文化振興財団 グラフィック文化研究助成.html site/drafts_html/N115_M_松下幸之助記念志財団 出版助成.html site/drafts_html/014_M_京都市 MICE開催支援助成金（大規模国際・上期4月_下期10月）.html site/drafts_html/N105_E_中小企業省力化投資補助金 一般型 第6回.html site/drafts_html/N123_M_DX推進補助事業（沖縄DX促進）.html site/drafts_html/index.html site/drafts_html/N106_M_大同生命厚生事業団 地域保健福祉研究助成.html site/drafts_html/002_M_JSPS科研費_特別推進_基盤S.html site/drafts_html/017_E_内閣府 SIP第3期（戦略的イノベーション創造）.html site/drafts_html/_template.html site/drafts_html/N104_M_サステナブルツーリズム推進事業（沖縄）.html site/drafts_html/N120_E_事業承継・M&A補助金.html site/drafts_html/001_M_観光庁オーバーツーリズム対策.html site/drafts_html/014_E_京都市 MICE開催支援助成金（大規模国際・上期4月_下期10月）.html site/drafts_html/N108_E_NEDO 数理科学分野×産学連携の調査.html site/drafts_html/023_E_トヨタ財団 国際助成プログラム.html site/drafts_html/N119_E_京都市デジタル化推進プロジェクト.html site/drafts_html/017_M_内閣府 SIP第3期（戦略的イノベーション創造）.html site/drafts_html/N130_E_中国電力技術研究財団 国際会議等開催助成.html site/drafts_html/N128_E_JETRO J-StarX（海外起業家育成）.html site/drafts_html/001_E_観光庁オーバーツーリズム対策.html site/drafts_html/005_E_中小企業成長加速化補助金（推定例年6月）.html site/drafts_html/008_E_共創の場形成支援プログラム（COI-NEXT）「未来共創分野」.html site/drafts_html/015_M_経済安全保障重要技術育成プログラム（K Program）.html site/drafts_html/N111_E_JETRO GSAP（グローバル・スタートアップ・アクセラ）.html site/drafts_html/020_E_JST スタートアップ・エコシステム共創（地域拠点）.html site/drafts_html/021_E_第2期スタートアップ・エコシステム拠点形成戦略（内閣府）.html site/drafts_html/build.py site/drafts_html/N122_E_観光庁 オーバーツーリズム対策面的整備（令和8年度）.html site/drafts_html/019_E_JST GteX 革新的GX技術創出（推定例年5-7月）.html site/drafts_html/N109_M_ロッテ財団 実装型共同研究助成.html site/drafts_html/N126_M_京都市 Arts Aid KYOTO.html site/drafts_html/N103_E_京都エコノミック・ガーデニング支援.html site/drafts_html/N124_E_DX推進補助事業（沖縄DX促進）.html site/drafts_html/N113_E_京都産学公の森推進事業.html site/drafts_html/030_E_DNP文化振興財団 グラフィック文化研究助成.html site/drafts_html/015_E_経済安全保障重要技術育成プログラム（K Program）.html site/drafts_html/013_M_JSPS 研究成果公開促進費 データベース部門.html site/drafts_html/N127_M_コミュニティ活動促進事業（沖縄）.html site/drafts_html/N100_M_京都府 文化力チャレンジ補助金.html site/drafts_html/012_E_JST ASPIRE 2026 国際共同研究.html site/drafts_html/N114_M_JST さきがけ／ACT-X 2026年度.html site/drafts_html/003_M_JST CREST 戦略的創造研究推進事業.html site/drafts_html/008_M_共創の場形成支援プログラム（COI-NEXT）「未来共創分野」.html site/drafts_html/007_M_JST RISTEX「SDGs達成に向けた共創的研究開発」.html site/drafts_html/018_E_NEDO グリーンイノベーション基金.html site/drafts_html/010_E_総務省 地域社会DX推進パッケージ事業（二次公募）.html site/drafts_html/N116_M_内藤記念国際会議開催助成金.html site/drafts_html/019_M_JST GteX 革新的GX技術創出（推定例年5-7月）.html site/drafts_html/016_M_ムーンショット型研究開発事業.html site/drafts_html/N118_M_住友電工グループ社会貢献基金 学術研究助成.html site/drafts_html/018_M_NEDO グリーンイノベーション基金.html site/drafts_html/016_E_ムーンショット型研究開発事業.html site/drafts_html/025_M_住友財団 基礎科学研究助成.html site/drafts_html/029_M_トヨタ財団 研究助成「未来の社会システム」.html site/drafts_html/N117_E_内藤記念国際会議開催助成金.html site/drafts_html/004_E_NEDO ディープテック・スタートアップ支援(DTSU)第10回.html site/drafts_html/N107_M_NEDO 数理科学分野×産学連携の調査.html site/drafts_html/N125_M_JST CREST「エクスポソーム」.html site/drafts_html/022_M_地域中核大学・特色ある研究大学 総合振興パッケージ（J-PEAKS）.html site/drafts_html/026_M_鹿島学術振興財団 特定テーマ研究助成.html site/drafts_html/010_M_総務省 地域社会DX推進パッケージ事業（二次公募）.html site/drafts_html/023_M_トヨタ財団 国際助成プログラム.html 10_沖縄県特有助成金.md build_schedule_csv.py 12_国・NEDO・総務省系助成金.md 09a_提出スケジュール_ミラツク.md 03_ものづくり補助金_19次.md site/NE_NEDO 数理科学分野×産学連携の調査.md site/grant_details.js site/README.md drafts_v2/B5412_M_観光庁 ICTサービス利活用促進事業.md drafts_v2/B3201_E_立石科学技術振興財団 国際交流助成.md drafts_v2/N130_E_中国電力技術研究財団 国際会議等開催助成.md drafts_v2/B5_M_住友財団 アジア諸国における日本関連研究助成.md drafts_v2/004_E_NEDO ディープテック・スタートアップ支援(DTSU)第10回.md drafts_v2/B5405_E_興和生命科学振興財団 国際交流助成・研究会等援助.md drafts_v2/B5406_M_電気通信普及財団 研究調査助成.md site/drafts/06_お金をまわそう基金.md site/drafts/02_野村グループ基金_みらい助成.md site/drafts/09b_提出スケジュール_esse-sense.md site/drafts/04_企業メセナ協議会_助成認定.md site/drafts/08_統合実行計画.md site/drafts/11_京都府特有助成金.md site/drafts/03_ものづくり補助金_19次.md</p>
+<p>exec /bin/bash -lc "pwd && ls -la && find . -maxdepth 2 -type d | sort | sed -n '1,80p'" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms: /Users/nishimura+/work/miratuku-grants-2026 total 632 drwxr-xr-x   26 nishimura+  staff    832  5月 10 10:58 . drwxr-xr-x   66 nishimura+  staff   2112  5月 10 10:21 .. -rw-r--r--@   1 nishimura+  staff   6148  5月  9 21:12 .DS_Store -rw-r--r--    1 nishimura+  staff   3745  5月  9 18:57 00_summary.md -rw-r--r--@   1 nishimura+  staff   7550  5月  9 19:08 01_松下幸之助記念志財団_研究助成.md -rw-r--r--@   1 nishimura+  staff   9082  5月  9 19:09 02_野村グループ基金_みらい助成.md -rw-r--r--@   1 nishimura+  staff   9601  5月  9 19:09 03_ものづくり補助金_19次.md -rw-r--r--    1 nishimura+  staff   8283  5月  9 19:10 04_企業メセナ協議会_助成認定.md -rw-r--r--    1 nishimura+  staff   8973  5月  9 19:11 05_JSPS_人文社会研究.md -rw-r--r--    1 nishimura+  staff   7034  5月  9 19:12 06_お金をまわそう基金.md -rw-r--r--    1 nishimura+  staff   4394  5月  9 19:12 07_esse-sense_補助金候補.md -rw-r--r--    1 nishimura+  staff   7702  5月  9 19:13 08_統合実行計画.md -rw-r--r--    1 nishimura+  staff  18962  5月  9 19:29 09_提出スケジュール_5月-9月.md -rw-r--r--    1 nishimura+  staff  16109  5月  9 19:55 09a_提出スケジュール_ミラツク.md -rw-r--r--    1 nishimura+  staff  16481  5月  9 19:55 09b_提出スケジュール_esse-sense.md -rw-r--r--    1 nishimura+  staff  12301  5月  9 19:38 10_沖縄県特有助成金.md -rw-r--r--    1 nishimura+  staff  17202  5月  9 19:40 11_京都府特有助成金.md -rw-r--r--    1 nishimura+  staff  21360  5月  9 19:55 12_国・NEDO・総務省系助成金.md -rw-r--r--    1 nishimura+  staff  17707  5月  9 21:12 build_schedule_csv.py -rw-r--r--    1 nishimura+  staff  22382  5月  9 21:07 build_schedule_xlsx.py drwxr-xr-x    8 nishimura+  staff    256  5月  9 21:12 csv drwxr-xr-x   74 nishimura+  staff   2368  5月 10 11:20 drafts_html drwxr-xr-x  210 nishimura+  staff   6720  5月 10 11:37 drafts_v2 drwxr-xr-x   14 nishimura+  staff    448  5月 10 11:11 site -rw-r--r--@   1 nishimura+  staff  27367  5月  9 21:07 提出スケジュール_2026年5-9月.xlsx -rw-r--r--@   1 nishimura+  staff  33191  5月  9 21:18 提出スケジュール.html . ./csv ./drafts_html ./drafts_v2 ./site ./site/.git ./site/drafts ./site/drafts_html ./site/drafts_v2 ./site/templates</p>
+<p>codex 既存の <code>drafts_v2</code> には同型の申請書ドラフトが多数あるため、文体と粒度を確認してから新規ファイルを追加します。今回は営利法人・スタートアップ支援枠として、補助金額より「認定・集中支援・露出」の価値を前面に出す構成にします。 exec /bin/bash -lc "find drafts_v2 -maxdepth 1 -type f -name '<em>J-Startup</em>' -o -name '<em>KANSAI</em>' | sort" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms: exec /bin/bash -lc "sed -n '1,220p' 'drafts_v2/N128_E_JETRO J-StarX（海外起業家育成）.md'" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms:</p>
+<h1>JETRO J-StarX（海外起業家育成） 申請書ドラフト（esse-sense向け）</h1>
+<p><strong>締切</strong>: 2026-06-05〜07 | <strong>上限</strong>: エクイティフリー支援</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>法人プロフィールを基に、当該助成金との適合性を強調する自然な文章。営業収益・コミュニティ規模・DB数・連載数等の数値を本文に組み込む。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>助成金の目的・要件・評価ポイントを地の文で整理。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 法人の強み（③⑦）と評価軸に最も合致するテーマ <strong>案B（代替）</strong>: 別角度からのアプローチ （各案にタイトルと150字の要旨）</p>
+<h2>4. 事業/研究計画書本文（推奨案A）</h2>
+<h3>背景・目的（300-400字）</h3>
+<p>社会的・学術的意義を地の文で記述。法人の実績・数値を引用。</p>
+<h3>研究/事業の方法（300-400字）</h3>
+<p>具体的アプローチ、段階的実施計画。</p>
+<h3>期待される成果（200-300字）</h3>
+<p>定量・定性の両面で。</p>
+<h2>5. スケジュールと予算</h2>
+<p>年次別の予算内訳・実施計画。総事業費・補助申請額を明示。</p>
+<h2>6. 提出物チェックリスト</h2>
+<p>申請書類のチェックボックスリスト。</p>
+<h2>7. 推奨アクション</h2>
+<p>即時に行うべき次のステップを箇条書き3-5点。</p>
+<p>【重要】</p>
+<ul>
+<li>地の文中心、箇条書きは補助的に</li>
+<li>法人の数値・実績を本文に組み込む</li>
+<li>1,500-2,500字</li>
+<li>出力の最後に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_JETRO J-StarX（海外起業家育成）.md」と1行で報告</li>
+</ul>
+<p>【ファイル保存】 最終Markdownを完成させたら、以下のパスに保存してください（書き込み権限がない場合はログ末尾に保存対象を明記してください）: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_JETRO J-StarX（海外起業家育成）.md</p>
+<p>codex 指定パスが現在の書き込み許可範囲の外にあるため、まず保存可否を確認しながら進めます。保存できない場合でも、指定どおり保存対象パスを明記してドラフト本文を残します。 2026-05-10T02:09:51.856787Z ERROR codex_core::tools::router: error=patch rejected: writing outside of the project; rejected by user approval settings codex 指定の親ディレクトリにはこのセッションから書き込めませんでした。代替として、現在の書き込み可能な作業ディレクトリ内に同名ドラフトを保存し、最終報告では指定保存先も明記します。 apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/site/drafts_v2/NE_JETRO J-StarX（海外起業家育成）.md diff --git a/drafts_v2/NE_JETRO J-StarX（海外起業家育成）.md b/drafts_v2/NE_JETRO J-StarX（海外起業家育成）.md new file mode 100644 index 0000000000000000000000000000000000000000..91f91118570b94e28ebb4fb87c7a2a4189141655 --- /dev/null +++ b/drafts_v2/NE_JETRO J-StarX（海外起業家育成）.md @@ -0,0 +1,62 @@ +# JETRO J-StarX（海外起業家育成） 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-06-05〜07 | <strong>上限</strong>: エクイティフリー支援 + +## 1. 申請者情報（300字） + +esse-senseは、研究者の知を社会に届けることを主要事業とする株式会社であり、学術知と事業開発を接続するメディア・データ活用基盤を運営している。現在、専門性の高い記事DBとしてarticles 154件、general_articles 34件を蓄積し、研究成果、社会課題、産業応用の接点を継続的に可視化してきた。営業収益はメディア事業、産学連携支援、大学発スタートアップ支援、大学・学術機関DX支援を中心に形成しており、営利法人として持続的な事業化を志向している点も本事業と整合する。国際展開ではesse-sense Future Forumを通じ、海外の起業家、研究者、投資家、支援機関との接続可能性を広げている。ミラツクとの密接な共同応募実績を基盤に、ゼブラ型スタートアップとして、研究知を社会実装する国際事業開発に取り組む。 + +## 2. 助成金概要・応募要件（200字） + +JETRO J-StarXは、海外市場で成長を目指す起業家・スタートアップに対し、海外派遣、メンタリング、ネットワーク形成、事業検証機会を提供するエクイティフリー支援である。応募にあたっては、国際展開の明確な仮説、海外顧客・パートナーとの接続可能性、プログラム参加後の成長計画、チームの実行力が重視される。特にゼブラ型スタートアップにおいては、社会的意義と収益性を両立し、海外で再現可能な事業モデルとして提示することが評価上重要となる。 + +## 3. 申請テーマ案 + +<strong>案A（推奨）</strong>: 研究知グローバル実装プラットフォームの海外展開 + +esse-senseが蓄積するarticles 154件、general_articles 34件の学際的知見DBとAI・テキスト解析技術を活用し、大学発スタートアップ、研究者、海外事業会社を結ぶ国際連携基盤を構築する。海外プログラムを通じ、米欧アジアの支援機関・大学・投資家との連携仮説を検証する。 + +<strong>案B（代替）</strong>: esse-sense Future Forumを核とした越境ゼブラ・スタートアップ支援 + +esse-sense Future Forumを国際展開の起点とし、社会課題解決型スタートアップと研究者コミュニティを接続するプログラムを海外で実証する。メディア発の信頼形成力を活かし、海外の大学、財団、インパクト投資家との共同企画を開発する。 + +## 4. 事業/研究計画書本文（推奨案A） + +### 背景・目的（300-400字） + +気候変動、ヘルスケア、教育、地域持続性などの複雑な社会課題は、単一分野の技術や事業だけでは解決しにくく、研究者の知見、起業家の実行力、企業・行政・投資家の資源を横断的に結び直す仕組みが求められている。一方で、日本の研究成果や大学発スタートアップの多くは、海外市場での顧客理解、現地パートナー探索、英語での価値訴求に課題を抱える。esse-senseは、研究者の知を社会に届けるメディア事業を通じ、articles 154件、general_articles 34件の知見DBを蓄積し、学際的テーマを社会実装の文脈で編集・構造化してきた。本申請では、このDB、AI、大規模解析・テキスト解析の強みを活かし、研究知と海外の事業機会を接続する国際展開モデルを検証する。 + +### 研究/事業の方法（300-400字） + +事業は三段階で実施する。第一に、既存記事DBと連携先情報を整理し、海外展開に適した研究領域、大学発スタートアップ、社会課題テーマを抽出する。AIとテキスト解析を用いて、研究知の応用可能性、想定市場、連携候補を可視化し、英語で説明可能な事業仮説に変換する。第二に、J-StarXの海外プログラムを活用し、現地の大学、アクセラレーター、事業会社、インパクト投資家に対してヒアリングと仮説検証を行う。第三に、esse-sense Future Forumと連動し、海外パートナーを招いた実証イベントまたはオンラインセッションを開催する。ミラツクとの共同応募実績を活かし、NPO的な社会課題探索力と株式会社としての事業化力を組み合わせ、ゼブラ型スタートアップとして収益性と公共性の両立を図る。 + +### 期待される成果（200-300字） + +定量成果として、海外連携候補30件のリスト化、重点領域5件の事業仮説作成、海外パートナー候補10件以上へのヒアリング、共同企画または実証提案3件の創出を目指す。定性成果としては、日本の研究知を海外の事業機会へ翻訳する編集・解析プロセスを確立し、大学発スタートアップ支援、産学連携支援、大学・学術機関DX支援に展開可能なサービスモデルを形成する。プログラム終了後は、国際共同企画、スポンサー収益、調査・伴走支援収益へ接続する。 + +## 5. スケジュールと予算 + +本支援はエクイティフリーの海外起業家育成プログラムとして活用し、総事業費は概算500万円、補助・支援申請額はJETROプログラムで認められる渡航、研修、メンタリング、現地活動支援の範囲で最大限申請する。2026年度上期はDB整理、海外展開仮説、英語ピッチ資料、連携候補リストを作成し、概算150万円を人件費・調査費・翻訳費に充てる。2026年度下期は海外プログラム参加、現地ヒアリング、パートナー面談、Forum連動企画を実施し、概算250万円を渡航・滞在・イベント準備・外部専門家費に配分する。2027年度初頭は成果整理、共同企画提案、収益モデル検証を行い、概算100万円を事業開発と広報に充てる。 + +## 6. 提出物チェックリスト + +- <input type="checkbox" disabled> J-StarX応募フォーム +- <input type="checkbox" disabled> 会社概要資料 +- <input type="checkbox" disabled> 代表者・主要メンバー略歴 +- <input type="checkbox" disabled> 海外展開計画書 +- <input type="checkbox" disabled> 英語ピッチ資料 +- <input type="checkbox" disabled> 事業仮説・顧客仮説整理シート +- <input type="checkbox" disabled> articles 154件、general_articles 34件を含む知見DB概要 +- <input type="checkbox" disabled> esse-sense Future Forum実績資料 +- <input type="checkbox" disabled> ミラツクとの連携・共同応募実績資料 +- <input type="checkbox" disabled> 反社会的勢力排除、誓約書等の指定書類 + +## 7. 推奨アクション + +- J-StarXの最新公募要領を確認し、対象コース、渡航地域、提出締切日を2026年6月5日から7日の範囲で確定する。 +- articles 154件、general_articles 34件を領域別に整理し、海外展開に適した5テーマを選定する。 +- esse-sense Future Forumの国際実績、登壇者、参加者、連携候補を1枚資料にまとめる。 +- 海外ヒアリング候補として大学、アクセラレーター、インパクト投資家、事業会社を30件抽出する。 +- 研究知DB、AI解析、産学連携支援を一体化した英語ピッチを作成する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_JETRO J-StarX（海外起業家育成）.md</p>
+<p>diff --git a/drafts_v2/NE_JETRO J-StarX（海外起業家育成）.md b/drafts_v2/NE_JETRO J-StarX（海外起業家育成）.md new file mode 100644 index 0000000000000000000000000000000000000000..91f91118570b94e28ebb4fb87c7a2a4189141655 --- /dev/null +++ b/drafts_v2/NE_JETRO J-StarX（海外起業家育成）.md @@ -0,0 +1,62 @@ +# JETRO J-StarX（海外起業家育成） 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-06-05〜07 | <strong>上限</strong>: エクイティフリー支援 + +## 1. 申請者情報（300字） + +esse-senseは、研究者の知を社会に届けることを主要事業とする株式会社であり、学術知と事業開発を接続するメディア・データ活用基盤を運営している。現在、専門性の高い記事DBとしてarticles 154件、general_articles 34件を蓄積し、研究成果、社会課題、産業応用の接点を継続的に可視化してきた。営業収益はメディア事業、産学連携支援、大学発スタートアップ支援、大学・学術機関DX支援を中心に形成しており、営利法人として持続的な事業化を志向している点も本事業と整合する。国際展開ではesse-sense Future Forumを通じ、海外の起業家、研究者、投資家、支援機関との接続可能性を広げている。ミラツクとの密接な共同応募実績を基盤に、ゼブラ型スタートアップとして、研究知を社会実装する国際事業開発に取り組む。 + +## 2. 助成金概要・応募要件（200字） + +JETRO J-StarXは、海外市場で成長を目指す起業家・スタートアップに対し、海外派遣、メンタリング、ネットワーク形成、事業検証機会を提供するエクイティフリー支援である。応募にあたっては、国際展開の明確な仮説、海外顧客・パートナーとの接続可能性、プログラム参加後の成長計画、チームの実行力が重視される。特にゼブラ型スタートアップにおいては、社会的意義と収益性を両立し、海外で再現可能な事業モデルとして提示することが評価上重要となる。 + +## 3. 申請テーマ案 + +<strong>案A（推奨）</strong>: 研究知グローバル実装プラットフォームの海外展開 + +esse-senseが蓄積するarticles 154件、general_articles 34件の学際的知見DBとAI・テキスト解析技術を活用し、大学発スタートアップ、研究者、海外事業会社を結ぶ国際連携基盤を構築する。海外プログラムを通じ、米欧アジアの支援機関・大学・投資家との連携仮説を検証する。 + +<strong>案B（代替）</strong>: esse-sense Future Forumを核とした越境ゼブラ・スタートアップ支援 + +esse-sense Future Forumを国際展開の起点とし、社会課題解決型スタートアップと研究者コミュニティを接続するプログラムを海外で実証する。メディア発の信頼形成力を活かし、海外の大学、財団、インパクト投資家との共同企画を開発する。 + +## 4. 事業/研究計画書本文（推奨案A） + +### 背景・目的（300-400字） + +気候変動、ヘルスケア、教育、地域持続性などの複雑な社会課題は、単一分野の技術や事業だけでは解決しにくく、研究者の知見、起業家の実行力、企業・行政・投資家の資源を横断的に結び直す仕組みが求められている。一方で、日本の研究成果や大学発スタートアップの多くは、海外市場での顧客理解、現地パートナー探索、英語での価値訴求に課題を抱える。esse-senseは、研究者の知を社会に届けるメディア事業を通じ、articles 154件、general_articles 34件の知見DBを蓄積し、学際的テーマを社会実装の文脈で編集・構造化してきた。本申請では、このDB、AI、大規模解析・テキスト解析の強みを活かし、研究知と海外の事業機会を接続する国際展開モデルを検証する。 + +### 研究/事業の方法（300-400字） + +事業は三段階で実施する。第一に、既存記事DBと連携先情報を整理し、海外展開に適した研究領域、大学発スタートアップ、社会課題テーマを抽出する。AIとテキスト解析を用いて、研究知の応用可能性、想定市場、連携候補を可視化し、英語で説明可能な事業仮説に変換する。第二に、J-StarXの海外プログラムを活用し、現地の大学、アクセラレーター、事業会社、インパクト投資家に対してヒアリングと仮説検証を行う。第三に、esse-sense Future Forumと連動し、海外パートナーを招いた実証イベントまたはオンラインセッションを開催する。ミラツクとの共同応募実績を活かし、NPO的な社会課題探索力と株式会社としての事業化力を組み合わせ、ゼブラ型スタートアップとして収益性と公共性の両立を図る。 + +### 期待される成果（200-300字） + +定量成果として、海外連携候補30件のリスト化、重点領域5件の事業仮説作成、海外パートナー候補10件以上へのヒアリング、共同企画または実証提案3件の創出を目指す。定性成果としては、日本の研究知を海外の事業機会へ翻訳する編集・解析プロセスを確立し、大学発スタートアップ支援、産学連携支援、大学・学術機関DX支援に展開可能なサービスモデルを形成する。プログラム終了後は、国際共同企画、スポンサー収益、調査・伴走支援収益へ接続する。 + +## 5. スケジュールと予算 + +本支援はエクイティフリーの海外起業家育成プログラムとして活用し、総事業費は概算500万円、補助・支援申請額はJETROプログラムで認められる渡航、研修、メンタリング、現地活動支援の範囲で最大限申請する。2026年度上期はDB整理、海外展開仮説、英語ピッチ資料、連携候補リストを作成し、概算150万円を人件費・調査費・翻訳費に充てる。2026年度下期は海外プログラム参加、現地ヒアリング、パートナー面談、Forum連動企画を実施し、概算250万円を渡航・滞在・イベント準備・外部専門家費に配分する。2027年度初頭は成果整理、共同企画提案、収益モデル検証を行い、概算100万円を事業開発と広報に充てる。 + +## 6. 提出物チェックリスト + +- <input type="checkbox" disabled> J-StarX応募フォーム +- <input type="checkbox" disabled> 会社概要資料 +- <input type="checkbox" disabled> 代表者・主要メンバー略歴 +- <input type="checkbox" disabled> 海外展開計画書 +- <input type="checkbox" disabled> 英語ピッチ資料 +- <input type="checkbox" disabled> 事業仮説・顧客仮説整理シート +- <input type="checkbox" disabled> articles 154件、general_articles 34件を含む知見DB概要 +- <input type="checkbox" disabled> esse-sense Future Forum実績資料 +- <input type="checkbox" disabled> ミラツクとの連携・共同応募実績資料 +- <input type="checkbox" disabled> 反社会的勢力排除、誓約書等の指定書類 + +## 7. 推奨アクション + +- J-StarXの最新公募要領を確認し、対象コース、渡航地域、提出締切日を2026年6月5日から7日の範囲で確定する。 +- articles 154件、general_articles 34件を領域別に整理し、海外展開に適した5テーマを選定する。 +- esse-sense Future Forumの国際実績、登壇者、参加者、連携候補を1枚資料にまとめる。 +- 海外ヒアリング候補として大学、アクセラレーター、インパクト投資家、事業会社を30件抽出する。 +- 研究知DB、AI解析、産学連携支援を一体化した英語ピッチを作成する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_JETRO J-StarX（海外起業家育成）.md</p>
+<p>codex ドラフト本文は作業ディレクトリ内の <code>drafts_v2</code> に保存できました。文字量とファイル内容を確認して、要件から外れていないかだけ検査します。 exec /bin/bash -lc "wc -m drafts_v2/NE_JETRO\\ J-StarX（海外起業家育成）.md" in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms:     3038 drafts_v2/NE_JETRO J-StarX（海外起業家育成）.md</p>
+<p>exec /bin/bash -lc "ls -l drafts_v2/NE_JETRO\\ J-StarX（海外起業家育成）.md" in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms: -rw-r--r--  1 nishimura+  staff  7520  5月 10 11:10 drafts_v2/NE_JETRO J-StarX（海外起業家育成）.md</p>
+<p>diff --git a/drafts_v2/NE_JETRO J-StarX（海外起業家育成）.md b/drafts_v2/NE_JETRO J-StarX（海外起業家育成）.md new file mode 100644 index 0000000000000000000000000000000000000000..91f91118570b94e28ebb4fb87c7a2a4189141655 --- /dev/null +++ b/drafts_v2/NE_JETRO J-StarX（海外起業家育成）.md @@ -0,0 +1,62 @@ +# JETRO J-StarX（海外起業家育成） 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-06-05〜07 | <strong>上限</strong>: エクイティフリー支援 + +## 1. 申請者情報（300字） + +esse-senseは、研究者の知を社会に届けることを主要事業とする株式会社であり、学術知と事業開発を接続するメディア・データ活用基盤を運営している。現在、専門性の高い記事DBとしてarticles 154件、general_articles 34件を蓄積し、研究成果、社会課題、産業応用の接点を継続的に可視化してきた。営業収益はメディア事業、産学連携支援、大学発スタートアップ支援、大学・学術機関DX支援を中心に形成しており、営利法人として持続的な事業化を志向している点も本事業と整合する。国際展開ではesse-sense Future Forumを通じ、海外の起業家、研究者、投資家、支援機関との接続可能性を広げている。ミラツクとの密接な共同応募実績を基盤に、ゼブラ型スタートアップとして、研究知を社会実装する国際事業開発に取り組む。 + +## 2. 助成金概要・応募要件（200字） + +JETRO J-StarXは、海外市場で成長を目指す起業家・スタートアップに対し、海外派遣、メンタリング、ネットワーク形成、事業検証機会を提供するエクイティフリー支援である。応募にあたっては、国際展開の明確な仮説、海外顧客・パートナーとの接続可能性、プログラム参加後の成長計画、チームの実行力が重視される。特にゼブラ型スタートアップにおいては、社会的意義と収益性を両立し、海外で再現可能な事業モデルとして提示することが評価上重要となる。 +</p>
+<p>exec /bin/bash -lc "sed -n '1,180p' 'drafts_v2/N111_E_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md' 2>/dev/null || true" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms:</p>
+<h1>JETRO GSAP（グローバル・スタートアップ・アクセラ） 申請書ドラフト（esse-sense向け）</h1>
+<p><strong>締切</strong>: 2026-05-24 | <strong>上限</strong>: エクイティフリー支援</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>法人プロフィールを基に、当該助成金との適合性を強調する自然な文章。営業収益・コミュニティ規模・DB数・連載数等の数値を本文に組み込む。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>助成金の目的・要件・評価ポイントを地の文で整理。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 法人の強み（③⑤⑦）と評価軸に最も合致するテーマ <strong>案B（代替）</strong>: 別角度からのアプローチ （各案にタイトルと150字の要旨）</p>
+<h2>4. 事業/研究計画書本文（推奨案A）</h2>
+<h3>背景・目的（300-400字）</h3>
+<p>社会的・学術的意義を地の文で記述。法人の実績・数値を引用。</p>
+<h3>研究/事業の方法（300-400字）</h3>
+<p>具体的アプローチ、段階的実施計画。</p>
+<h3>期待される成果（200-300字）</h3>
+<p>定量・定性の両面で。</p>
+<h2>5. スケジュールと予算</h2>
+<p>年次別の予算内訳・実施計画。総事業費・補助申請額を明示。</p>
+<h2>6. 提出物チェックリスト</h2>
+<p>申請書類のチェックボックスリスト。</p>
+<h2>7. 推奨アクション</h2>
+<p>即時に行うべき次のステップを箇条書き3-5点。</p>
+<p>【重要】</p>
+<ul>
+<li>地の文中心、箇条書きは補助的に</li>
+<li>法人の数値・実績を本文に組み込む</li>
+<li>1,500-2,500字</li>
+<li>出力の最後に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md」と1行で報告</li>
+</ul>
+<p>【ファイル保存】 最終Markdownを完成させたら、以下のパスに保存してください（書き込み権限がない場合はログ末尾に保存対象を明記してください）: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md</p>
+<p>codex 指定パスは現在の書き込み可能ルート（<code>site</code> 配下）より一階層上なので、まず保存可否を確認します。権限で止まる場合は、指定どおり保存対象パスを明記してドラフト本文を提示します。 exec /bin/bash -lc "mkdir -p '/Users/nishimura+/work/miratuku-grants-2026/drafts_v2' && test -w '/Users/nishimura+/work/miratuku-grants-2026/drafts_v2' && printf writable || printf not-writable" in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms: not-writable codex 指定先のディレクトリは読み取り確認上 <code>not-writable</code> でした。作業可能な <code>site</code> 配下に同名ドラフトを保存し、本文末尾には指定された保存対象パスをそのまま入れます。 apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/site/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md diff --git a/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md b/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md new file mode 100644 index 0000000000000000000000000000000000000000..af538616c16e6da0f6979fa1ca7d63750b9ec9f1 --- /dev/null +++ b/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md @@ -0,0 +1,59 @@ +# JETRO GSAP（グローバル・スタートアップ・アクセラ） 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-05-24 | <strong>上限</strong>: エクイティフリー支援 + +## 1. 申請者情報（300字） + +esse-senseは、研究者の知を社会に届けることを主要事業とする株式会社であり、学術知と産業・地域・行政を接続するメディア事業を展開している。自社で蓄積する記事データベースはarticles 154件、general_articles 34件に達し、研究者・大学・企業の知見を横断的に整理してきた。営業収益はメディア制作、産学連携支援、大学発スタートアップ支援、大学・学術機関DX支援を組み合わせて形成しており、単なる記事制作にとどまらず、学際的知見DB、データ活用、AI、大規模解析・テキスト解析を用いた事業開発基盤を持つ点が強みである。NPO法人ミラツクとの共同応募実績もあり、社会課題起点のゼブラ型スタートアップとして国際展開支援との適合性が高い。 + +## 2. 助成金概要・応募要件（200字） + +JETRO GSAPは、日本発スタートアップの海外市場展開を加速するため、海外アクセラレーター、メンタリング、投資家・事業会社との接点形成等をエクイティフリーで支援するプログラムである。応募においては、国際展開の必然性、対象市場の明確さ、成長可能性、実行チームの能力、海外展開を通じた社会的・経済的インパクトが重視される。esse-senseは、研究知の国際流通と産学連携DXを軸に、既存DBとAI解析能力を海外展開に転用できる。 + +## 3. 申請テーマ案 + +<strong>案A（推奨）</strong>: 研究知の国際流通を支えるAIメディア・ナレッジ基盤の海外展開 +日本の研究者・大学発スタートアップの知見を多言語で編集・構造化し、海外企業、投資家、大学、支援機関へ届けるAIナレッジ基盤を構築する。既存の記事DB 188件を起点に、国際展開に必要なストーリー化、技術領域分析、マッチング支援を実装する。 + +<strong>案B（代替）</strong>: esse-sense Future Forumを核とした国際産学連携コミュニティ形成 +esse-sense Future Forumを海外展開の実証拠点とし、研究者、大学発スタートアップ、事業会社、支援機関を結ぶ国際コミュニティを形成する。メディア発信とイベント、分析レポートを組み合わせ、継続的な協業案件の創出を目指す。 + +## 4. 事業/研究計画書本文（推奨案A） + +### 背景・目的（300-400字） + +日本の大学・研究機関には、環境、医療、教育、地域、AI、材料、都市など多様な領域で世界的価値を持つ知見が蓄積されている一方、その多くは論文、研究室紹介、個別イベントの中に分散し、海外の事業会社や投資家が理解しやすい形で流通していない。特に大学発スタートアップやゼブラ型スタートアップは、短期的な急成長だけでなく社会的価値の説明が重要であり、技術の意義、研究者の背景、社会実装の文脈を統合して伝える編集・解析機能が求められる。esse-senseはこれまでarticles 154件、general_articles 34件の知見DBを構築し、研究者の知を社会に届ける実務を積み重ねてきた。本事業では、この実績を国際展開に拡張し、日本発の研究知と海外市場をつなぐAIメディア・ナレッジ基盤を構築する。 + +### 研究/事業の方法（300-400字） + +事業は三段階で進める。第一段階では、既存の記事DB 188件を対象に、研究領域、社会課題、技術成熟度、想定顧客、海外市場との接点をタグ付けし、英語発信用の要約・ピッチ素材を整備する。第二段階では、AIとテキスト解析を用いて、研究テーマと海外の事業会社、アクセラレーター、大学、投資家の関心領域を照合するプロトタイプを開発する。第三段階では、JETRO GSAPのメンタリングと海外ネットワークを活用し、北米・欧州・アジアのいずれか優先市場で、esse-sense Future Forumと連動した発信、面談、検証を行う。ミラツクとの共同応募実績を活かし、NPO的な社会課題理解と株式会社としての事業化能力を組み合わせ、海外展開に耐える収益モデルを検証する。 + +### 期待される成果（200-300字） + +定量面では、海外発信用に整備した研究・スタートアップ関連記事50件、海外候補連携先100件、重点面談20件、実証協議5件の創出を目標とする。定性面では、日本の研究知を単発の記事ではなく、社会課題、技術、事業化可能性を統合した国際的なナレッジ資産として提示できるようになる。これにより、大学発スタートアップ支援、産学連携DX、学術機関の国際広報支援というesse-senseの既存事業を海外市場へ展開し、ゼブラ型の成長モデルを具体化する。 + +## 5. スケジュールと予算 + +2026年度は、GSAP採択後から3か月でDB棚卸し、英語要約、海外市場仮説の設定を行い、4-6か月目にAIタグ付け・マッチング試作、海外メンター面談、優先市場の検証を進める。7-9か月目にはesse-sense Future Forumと連動した海外向け発信、個別商談、実証候補先との協議を実施し、10-12か月目に事業モデル、価格、営業資料、次年度展開計画を確定する。総事業費は900万円を想定し、内訳は海外展開調査150万円、英語編集・翻訳180万円、AI解析・DB整備250万円、海外イベント・面談運営170万円、PM・事業開発150万円とする。補助申請額はGSAPのエクイティフリー支援として、アクセラレーション、メンタリング、海外ネットワーク接続、実証機会の提供を申請する。 + +## 6. 提出物チェックリスト + +- <input type="checkbox" disabled> 申請フォーム基本情報 +- <input type="checkbox" disabled> 事業概要・海外展開計画 +- <input type="checkbox" disabled> 会社概要資料 +- <input type="checkbox" disabled> ピッチデック +- <input type="checkbox" disabled> 財務・営業収益の説明資料 +- <input type="checkbox" disabled> 既存記事DB・実績一覧 +- <input type="checkbox" disabled> esse-sense Future Forum関連資料 +- <input type="checkbox" disabled> ミラツク等との連携実績資料 +- <input type="checkbox" disabled> 英語版サービス説明または暫定LP + +## 7. 推奨アクション + +- 既存DB 188件から海外展開に適した研究・スタートアップ関連記事50件を選定する。 +- 営業収益、主要顧客、コミュニティ規模、連載数など未記入の定量実績を補完する。 +- GSAP応募コースの対象市場を北米、欧州、アジアのいずれかに絞り、仮説を明文化する。 +- 英語ピッチデックを10枚程度で作成し、AIナレッジ基盤とFuture Forumの関係を整理する。 +- ミラツクとの共同応募・連携実績を、社会的インパクトの証跡として添付資料化する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md</p>
+<p>diff --git a/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md b/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md new file mode 100644 index 0000000000000000000000000000000000000000..af538616c16e6da0f6979fa1ca7d63750b9ec9f1 --- /dev/null +++ b/drafts_v2/NE_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md @@ -0,0 +1,59 @@ +# JETRO GSAP（グローバル・スタートアップ・アクセラ） 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-05-24 | <strong>上限</strong>: エクイティフリー支援 + +## 1. 申請者情報（300字） + +esse-senseは、研究者の知を社会に届けることを主要事業とする株式会社であり、学術知と産業・地域・行政を接続するメディア事業を展開している。自社で蓄積する記事データベースはarticles 154件、general_articles 34件に達し、研究者・大学・企業の知見を横断的に整理してきた。営業収益はメディア制作、産学連携支援、大学発スタートアップ支援、大学・学術機関DX支援を組み合わせて形成しており、単なる記事制作にとどまらず、学際的知見DB、データ活用、AI、大規模解析・テキスト解析を用いた事業開発基盤を持つ点が強みである。NPO法人ミラツクとの共同応募実績もあり、社会課題起点のゼブラ型スタートアップとして国際展開支援との適合性が高い。 + +## 2. 助成金概要・応募要件（200字） + +JETRO GSAPは、日本発スタートアップの海外市場展開を加速するため、海外アクセラレーター、メンタリング、投資家・事業会社との接点形成等をエクイティフリーで支援するプログラムである。応募においては、国際展開の必然性、対象市場の明確さ、成長可能性、実行チームの能力、海外展開を通じた社会的・経済的インパクトが重視される。esse-senseは、研究知の国際流通と産学連携DXを軸に、既存DBとAI解析能力を海外展開に転用できる。 + +## 3. 申請テーマ案 + +<strong>案A（推奨）</strong>: 研究知の国際流通を支えるAIメディア・ナレッジ基盤の海外展開 +日本の研究者・大学発スタートアップの知見を多言語で編集・構造化し、海外企業、投資家、大学、支援機関へ届けるAIナレッジ基盤を構築する。既存の記事DB 188件を起点に、国際展開に必要なストーリー化、技術領域分析、マッチング支援を実装する。 + +<strong>案B（代替）</strong>: esse-sense Future Forumを核とした国際産学連携コミュニティ形成 +esse-sense Future Forumを海外展開の実証拠点とし、研究者、大学発スタートアップ、事業会社、支援機関を結ぶ国際コミュニティを形成する。メディア発信とイベント、分析レポートを組み合わせ、継続的な協業案件の創出を目指す。 + +## 4. 事業/研究計画書本文（推奨案A） + +### 背景・目的（300-400字） + +日本の大学・研究機関には、環境、医療、教育、地域、AI、材料、都市など多様な領域で世界的価値を持つ知見が蓄積されている一方、その多くは論文、研究室紹介、個別イベントの中に分散し、海外の事業会社や投資家が理解しやすい形で流通していない。特に大学発スタートアップやゼブラ型スタートアップは、短期的な急成長だけでなく社会的価値の説明が重要であり、技術の意義、研究者の背景、社会実装の文脈を統合して伝える編集・解析機能が求められる。esse-senseはこれまでarticles 154件、general_articles 34件の知見DBを構築し、研究者の知を社会に届ける実務を積み重ねてきた。本事業では、この実績を国際展開に拡張し、日本発の研究知と海外市場をつなぐAIメディア・ナレッジ基盤を構築する。 + +### 研究/事業の方法（300-400字） + +事業は三段階で進める。第一段階では、既存の記事DB 188件を対象に、研究領域、社会課題、技術成熟度、想定顧客、海外市場との接点をタグ付けし、英語発信用の要約・ピッチ素材を整備する。第二段階では、AIとテキスト解析を用いて、研究テーマと海外の事業会社、アクセラレーター、大学、投資家の関心領域を照合するプロトタイプを開発する。第三段階では、JETRO GSAPのメンタリングと海外ネットワークを活用し、北米・欧州・アジアのいずれか優先市場で、esse-sense Future Forumと連動した発信、面談、検証を行う。ミラツクとの共同応募実績を活かし、NPO的な社会課題理解と株式会社としての事業化能力を組み合わせ、海外展開に耐える収益モデルを検証する。 + +### 期待される成果（200-300字） + +定量面では、海外発信用に整備した研究・スタートアップ関連記事50件、海外候補連携先100件、重点面談20件、実証協議5件の創出を目標とする。定性面では、日本の研究知を単発の記事ではなく、社会課題、技術、事業化可能性を統合した国際的なナレッジ資産として提示できるようになる。これにより、大学発スタートアップ支援、産学連携DX、学術機関の国際広報支援というesse-senseの既存事業を海外市場へ展開し、ゼブラ型の成長モデルを具体化する。 + +## 5. スケジュールと予算 + +2026年度は、GSAP採択後から3か月でDB棚卸し、英語要約、海外市場仮説の設定を行い、4-6か月目にAIタグ付け・マッチング試作、海外メンター面談、優先市場の検証を進める。7-9か月目にはesse-sense Future Forumと連動した海外向け発信、個別商談、実証候補先との協議を実施し、10-12か月目に事業モデル、価格、営業資料、次年度展開計画を確定する。総事業費は900万円を想定し、内訳は海外展開調査150万円、英語編集・翻訳180万円、AI解析・DB整備250万円、海外イベント・面談運営170万円、PM・事業開発150万円とする。補助申請額はGSAPのエクイティフリー支援として、アクセラレーション、メンタリング、海外ネットワーク接続、実証機会の提供を申請する。 + +## 6. 提出物チェックリスト + +- <input type="checkbox" disabled> 申請フォーム基本情報 +- <input type="checkbox" disabled> 事業概要・海外展開計画 +- <input type="checkbox" disabled> 会社概要資料 +- <input type="checkbox" disabled> ピッチデック +- <input type="checkbox" disabled> 財務・営業収益の説明資料 +- <input type="checkbox" disabled> 既存記事DB・実績一覧 +- <input type="checkbox" disabled> esse-sense Future Forum関連資料 +- <input type="checkbox" disabled> ミラツク等との連携実績資料 +- <input type="checkbox" disabled> 英語版サービス説明または暫定LP + +## 7. 推奨アクション + +- 既存DB 188件から海外展開に適した研究・スタートアップ関連記事50件を選定する。</p>
+<p>codex これから指定ファイルを新規追加します。本文は1,500〜2,500字内に収め、補助金ではなく認定・集中支援型プログラムである点が伝わるように、予算欄は自己負担と支援活用の整理にします。 apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_E_J-Startup KANSAI.md diff --git a/miratuku-grants-2026/drafts_v2/B6_E_J-Startup KANSAI.md b/miratuku-grants-2026/drafts_v2/B6_E_J-Startup KANSAI.md new file mode 100644 index 0000000000000000000000000000000000000000..ee61ce8f2d778e3e71bad47a1534409775e9d838 --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B6_E_J-Startup KANSAI.md @@ -0,0 +1,61 @@ +# J-Startup KANSAI 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 通年 | <strong>上限</strong>: 集中支援4年・露出 + +## 1. 申請者情報（300字・数値組込） + +esse-senseは、研究者の知を社会に届けることを主要事業とする株式会社であり、学術知と産業・地域・行政を接続するメディア事業を展開している。自社の記事DBはarticles 154件、general_articles 34件の計188件を蓄積し、研究成果、社会課題、産業応用を横断的に編集・構造化してきた。強みは、学際DB、データ活用、AI、産学連携支援、大学発スタートアップ支援、大学DXを一体で扱える点にある。国際展開ではesse-sense Future Forumを起点に、研究者、企業、支援機関、起業家を結ぶ場を形成しており、ゼブラ型スタートアップとして社会的価値と収益性の両立を目指す。 + +## 2. 助成金概要・応募要件（200字・地の文） + +J-Startup KANSAIは、関西から全国・世界へ成長する有望スタートアップを選定し、自治体、経済団体、支援機関、企業等のネットワークを通じて集中的に支援する制度である。資金給付を主目的とする補助金ではなく、選定後の4年間程度にわたり、露出、マッチング、メンタリング、実証機会、関西エコシステム内での信用形成を得る点に価値がある。応募では、成長性、地域との接続、社会課題解決性、支援を受けることで伸びる明確な事業仮説が重要となる。 + +## 3. 申請テーマ案（A推奨/B代替・各150字） + +<strong>案A（推奨）: 関西発・研究知社会実装メディア基盤による大学発SU支援</strong> + +esse-senseの188件の記事DB、AI解析、産学連携支援の知見を活用し、関西の大学・研究機関・大学発スタートアップの知を社会実装へつなぐメディア・データ基盤を構築する。J-Startup KANSAIの露出とネットワークを活用し、研究者、企業、VC、自治体の接点を増やす。 + +<strong>案B（代替）: esse-sense Future Forumを核とした関西ゼブラSU国際発信</strong> + +esse-sense Future Forumを関西スタートアップの国際発信拠点として発展させ、研究知、社会課題、事業化仮説を海外の大学、財団、インパクト投資家へ届ける。短期的な急成長だけでなく、持続的な社会価値創出を重視するゼブラ型スタートアップのモデルを関西から提示する。 + +## 4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字） + +### 背景・目的 + +関西には、京都・大阪・兵庫を中心に大学、研究機関、大企業、自治体、文化資本が集積し、大学発スタートアップや社会課題解決型事業が生まれやすい環境がある。一方で、研究成果や初期スタートアップの価値は専門用語や論文情報に閉じやすく、企業、自治体、投資家、市民が理解し、連携に進むための翻訳機能が不足している。esse-senseは、研究者の知を社会に届けるメディア事業を通じてarticles 154件、general_articles 34件を蓄積し、学際的知見を社会実装の文脈で編集してきた。本申請では、J-Startup KANSAIの集中支援と露出を活用し、関西の研究知と大学発スタートアップを社会・産業・海外へ接続する事業基盤を強化する。 + +### 方法 + +事業は4年間の集中支援期間を見据えて段階的に実施する。初年度は、既存188件のDBを関西の大学発スタートアップ、産学連携、大学DX、社会課題テーマに再分類し、支援対象候補と連携先候補を可視化する。2年目は、AIとテキスト解析を用いて、研究テーマ、事業仮説、企業ニーズ、自治体課題を照合する簡易プロトタイプを整備し、記事、レポート、マッチング企画として展開する。3年目は、J-Startup KANSAIのネットワークを活用し、関西企業、VC、自治体、大学との面談・共同企画を増やす。4年目は、esse-sense Future Forumと連動し、関西発の研究知社会実装モデルを国内外に発信し、メディア収益、調査・伴走支援、大学DX支援へ事業化する。 + +### 成果 + +成果として、関西の大学発スタートアップ・研究者・支援機関を横断する候補リスト100件、重点取材・分析記事30件、企業・自治体・VC等との面談50件、共同企画または実証案件5件の創出を目指す。定性面では、研究知を社会実装に向けて翻訳する編集・DB・AI解析の方法論を確立し、esse-senseを関西のスタートアップ・エコシステムにおける知の流通基盤として位置づける。 + +## 5. スケジュールと予算（年次別） + +1年目はDB再整理、関西大学・研究機関・大学発スタートアップの候補抽出、J-Startup KANSAI事務局・支援機関との接点形成を行う。自己負担は約300万円とし、編集・調査・DB整備を中心に配分する。2年目はAI解析、マッチング仮説、記事・レポート化、企業面談を進め、自己負担約500万円を開発、編集、営業活動に充てる。3年目は共同企画、実証案件、スポンサー・自治体連携を拡大し、自己負担約700万円を事業開発とイベント運営に配分する。4年目はesse-sense Future Forumと国際発信を強化し、自己負担約800万円を海外発信、広報、伴走支援体制に充てる。J-Startup KANSAIには資金支援ではなく、露出、専門家助言、実証先・企業・VC紹介、関西エコシステム内の信用補完を申請する。 + +## 6. 提出物チェックリスト + +- <input type="checkbox" disabled> 会社概要資料 +- <input type="checkbox" disabled> 事業概要・成長計画 +- <input type="checkbox" disabled> J-Startup KANSAI応募フォーム +- <input type="checkbox" disabled> articles 154件、general_articles 34件を含むDB概要 +- <input type="checkbox" disabled> 主要事業、収益モデル、顧客候補の説明資料 +- <input type="checkbox" disabled> 大学発スタートアップ支援・産学連携支援の実績整理 +- <input type="checkbox" disabled> esse-sense Future Forumの企画・実績資料 +- <input type="checkbox" disabled> 関西での連携候補リスト +- <input type="checkbox" disabled> 代表者・主要メンバー略歴 + +## 7. 推奨アクション（3-5点） + +- articles 154件、general_articles 34件を関西大学・研究機関・社会課題テーマ別に再分類する。 +- J-Startup KANSAIの推薦・選定プロセス、対象地域、評価観点を最新要領で確認する。 +- 関西の大学発スタートアップ、大学DX、産学連携先候補を100件リスト化する。 +- esse-sense Future Forumを関西発信・国際発信の実績資料として1枚に整理する。 +- 資金獲得ではなく、4年間の露出・信用形成・マッチング獲得を主目的に申請文を調整する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_E_J-Startup KANSAI.md</p>
+<p>diff --git a/miratuku-grants-2026/drafts_v2/B6_E_J-Startup KANSAI.md b/miratuku-grants-2026/drafts_v2/B6_E_J-Startup KANSAI.md new file mode 100644 index 0000000000000000000000000000000000000000..ee61ce8f2d778e3e71bad47a1534409775e9d838 --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B6_E_J-Startup KANSAI.md @@ -0,0 +1,61 @@ +# J-Startup KANSAI 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 通年 | <strong>上限</strong>: 集中支援4年・露出 + +## 1. 申請者情報（300字・数値組込） + +esse-senseは、研究者の知を社会に届けることを主要事業とする株式会社であり、学術知と産業・地域・行政を接続するメディア事業を展開している。自社の記事DBはarticles 154件、general_articles 34件の計188件を蓄積し、研究成果、社会課題、産業応用を横断的に編集・構造化してきた。強みは、学際DB、データ活用、AI、産学連携支援、大学発スタートアップ支援、大学DXを一体で扱える点にある。国際展開ではesse-sense Future Forumを起点に、研究者、企業、支援機関、起業家を結ぶ場を形成しており、ゼブラ型スタートアップとして社会的価値と収益性の両立を目指す。 + +## 2. 助成金概要・応募要件（200字・地の文） + +J-Startup KANSAIは、関西から全国・世界へ成長する有望スタートアップを選定し、自治体、経済団体、支援機関、企業等のネットワークを通じて集中的に支援する制度である。資金給付を主目的とする補助金ではなく、選定後の4年間程度にわたり、露出、マッチング、メンタリング、実証機会、関西エコシステム内での信用形成を得る点に価値がある。応募では、成長性、地域との接続、社会課題解決性、支援を受けることで伸びる明確な事業仮説が重要となる。 + +## 3. 申請テーマ案（A推奨/B代替・各150字） + +<strong>案A（推奨）: 関西発・研究知社会実装メディア基盤による大学発SU支援</strong> + +esse-senseの188件の記事DB、AI解析、産学連携支援の知見を活用し、関西の大学・研究機関・大学発スタートアップの知を社会実装へつなぐメディア・データ基盤を構築する。J-Startup KANSAIの露出とネットワークを活用し、研究者、企業、VC、自治体の接点を増やす。 + +<strong>案B（代替）: esse-sense Future Forumを核とした関西ゼブラSU国際発信</strong> + +esse-sense Future Forumを関西スタートアップの国際発信拠点として発展させ、研究知、社会課題、事業化仮説を海外の大学、財団、インパクト投資家へ届ける。短期的な急成長だけでなく、持続的な社会価値創出を重視するゼブラ型スタートアップのモデルを関西から提示する。 + +## 4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字） + +### 背景・目的 + +関西には、京都・大阪・兵庫を中心に大学、研究機関、大企業、自治体、文化資本が集積し、大学発スタートアップや社会課題解決型事業が生まれやすい環境がある。一方で、研究成果や初期スタートアップの価値は専門用語や論文情報に閉じやすく、企業、自治体、投資家、市民が理解し、連携に進むための翻訳機能が不足している。esse-senseは、研究者の知を社会に届けるメディア事業を通じてarticles 154件、general_articles 34件を蓄積し、学際的知見を社会実装の文脈で編集してきた。本申請では、J-Startup KANSAIの集中支援と露出を活用し、関西の研究知と大学発スタートアップを社会・産業・海外へ接続する事業基盤を強化する。 + +### 方法 + +事業は4年間の集中支援期間を見据えて段階的に実施する。初年度は、既存188件のDBを関西の大学発スタートアップ、産学連携、大学DX、社会課題テーマに再分類し、支援対象候補と連携先候補を可視化する。2年目は、AIとテキスト解析を用いて、研究テーマ、事業仮説、企業ニーズ、自治体課題を照合する簡易プロトタイプを整備し、記事、レポート、マッチング企画として展開する。3年目は、J-Startup KANSAIのネットワークを活用し、関西企業、VC、自治体、大学との面談・共同企画を増やす。4年目は、esse-sense Future Forumと連動し、関西発の研究知社会実装モデルを国内外に発信し、メディア収益、調査・伴走支援、大学DX支援へ事業化する。 + +### 成果 + +成果として、関西の大学発スタートアップ・研究者・支援機関を横断する候補リスト100件、重点取材・分析記事30件、企業・自治体・VC等との面談50件、共同企画または実証案件5件の創出を目指す。定性面では、研究知を社会実装に向けて翻訳する編集・DB・AI解析の方法論を確立し、esse-senseを関西のスタートアップ・エコシステムにおける知の流通基盤として位置づける。 + +## 5. スケジュールと予算（年次別） + +1年目はDB再整理、関西大学・研究機関・大学発スタートアップの候補抽出、J-Startup KANSAI事務局・支援機関との接点形成を行う。自己負担は約300万円とし、編集・調査・DB整備を中心に配分する。2年目はAI解析、マッチング仮説、記事・レポート化、企業面談を進め、自己負担約500万円を開発、編集、営業活動に充てる。3年目は共同企画、実証案件、スポンサー・自治体連携を拡大し、自己負担約700万円を事業開発とイベント運営に配分する。4年目はesse-sense Future Forumと国際発信を強化し、自己負担約800万円を海外発信、広報、伴走支援体制に充てる。J-Startup KANSAIには資金支援ではなく、露出、専門家助言、実証先・企業・VC紹介、関西エコシステム内の信用補完を申請する。 + +## 6. 提出物チェックリスト + +- <input type="checkbox" disabled> 会社概要資料 +- <input type="checkbox" disabled> 事業概要・成長計画 +- <input type="checkbox" disabled> J-Startup KANSAI応募フォーム +- <input type="checkbox" disabled> articles 154件、general_articles 34件を含むDB概要 +- <input type="checkbox" disabled> 主要事業、収益モデル、顧客候補の説明資料 +- <input type="checkbox" disabled> 大学発スタートアップ支援・産学連携支援の実績整理 +- <input type="checkbox" disabled> esse-sense Future Forumの企画・実績資料 +- <input type="checkbox" disabled> 関西での連携候補リスト +- <input type="checkbox" disabled> 代表者・主要メンバー略歴 + +## 7. 推奨アクション（3-5点） + +- articles 154件、general_articles 34件を関西大学・研究機関・社会課題テーマ別に再分類する。 +- J-Startup KANSAIの推薦・選定プロセス、対象地域、評価観点を最新要領で確認する。 +- 関西の大学発スタートアップ、大学DX、産学連携先候補を100件リスト化する。 +- esse-sense Future Forumを関西発信・国際発信の実績資料として1枚に整理する。 +- 資金獲得ではなく、4年間の露出・信用形成・マッチング獲得を主目的に申請文を調整する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_E_J-Startup KANSAI.md</p>
+<p>codex ファイルを追加しました。最後に文字数と末尾パスの有無を確認し、指定条件の範囲に入っているか検査します。 exec /bin/bash -lc "wc -m 'drafts_v2/B6_E_J-Startup KANSAI.md'" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms:     2969 drafts_v2/B6_E_J-Startup KANSAI.md</p>
+<p>exec /bin/bash -lc "tail -n 5 'drafts_v2/B6_E_J-Startup KANSAI.md'" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms:</p>
+<ul>
+<li>関西の大学発スタートアップ、大学DX、産学連携先候補を100件リスト化する。</li>
+<li>esse-sense Future Forumを関西発信・国際発信の実績資料として1枚に整理する。</li>
+<li>資金獲得ではなく、4年間の露出・信用形成・マッチング獲得を主目的に申請文を調整する。</li>
+</ul>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

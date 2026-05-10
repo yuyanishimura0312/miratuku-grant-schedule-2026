@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>関西エネルギー財団 海外研究者招聘助成</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>関西エネルギー財団 海外研究者招聘助成 申請書ドラフト（ミラツク向け）</h1>
+<p><strong>締切</strong>: 通年（開催1ヶ月前） | <strong>上限</strong>: 渡航費・滞在費実額</p>
+<h2>1. 申請者情報（300字・数値組込）</h2>
+<h2>2. 助成金概要・応募要件（200字・地の文）</h2>
+<h2>3. 申請テーマ案（A推奨/B代替・各150字）</h2>
+<h2>4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字）</h2>
+<h2>5. スケジュールと予算（年次別）</h2>
+<h2>6. 提出物チェックリスト</h2>
+<h2>7. 推奨アクション（3-5点）</h2>
+<p>末尾に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_M_関西エネルギー財団 海外研究者招聘助成.md」記載。地の文中心、法人数値組込必須。 codex 指定の構成でドラフトを作成し、末尾の保存対象パスに合わせてMarkdownファイルとして配置します。まず既存ディレクトリの状態を確認します。 exec /bin/bash -lc 'pwd && rg --files drafts_v2 2>/dev/null | head -50' in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms: /Users/nishimura+/work/miratuku-grants-2026 drafts_v2/B5_E_ものづくり補助金 19次（経産省）.md drafts_v2/N100_M_京都府 文化力チャレンジ補助金.md drafts_v2/016_M_ムーンショット型研究開発事業.md drafts_v2/B5_M_加藤記念バイオサイエンス振興財団 国際交流助成.md drafts_v2/B5411_M_加藤記念バイオサイエンス振興財団 研究助成.md drafts_v2/002_M_JSPS科研費_特別推進_基盤S.md drafts_v2/N110_E_ロッテ財団 実装型共同研究助成.md drafts_v2/019_M_JST GteX 革新的GX技術創出（推定例年5-7月）.md drafts_v2/B5_M_ものづくり補助金 19次（経産省）.md drafts_v2/018_M_NEDO グリーンイノベーション基金.md drafts_v2/B4302_E_日本食品化学研究振興財団 シンポジウム開催助成.md drafts_v2/B5_M_放送文化基金 放送文化関連研究開発助成.md drafts_v2/N111_E_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md drafts_v2/014_E_京都市 MICE開催支援助成金（大規模国際・上期4月_下期10月）.md drafts_v2/N103_E_京都エコノミック・ガーデニング支援.md drafts_v2/B5_M_JSPS 学術図書出版補助金.md drafts_v2/N105_E_中小企業省力化投資補助金 一般型 第6回.md drafts_v2/B5_M_電気通信普及財団 研究調査助成.md drafts_v2/B3213_E_DX等成長分野リスキリング推進事業.md drafts_v2/N126_M_京都市 Arts Aid KYOTO.md drafts_v2/B5404_M_興和生命科学振興財団 国際交流助成・研究会等援助.md drafts_v2/019_E_JST GteX 革新的GX技術創出（推定例年5-7月）.md drafts_v2/030_E_DNP文化振興財団 グラフィック文化研究助成.md drafts_v2/022_M_地域中核大学・特色ある研究大学 総合振興パッケージ（J-PEAKS）.md drafts_v2/B5410_E_ものづくり補助金 19次（経産省）.md drafts_v2/N127_M_コミュニティ活動促進事業（沖縄）.md drafts_v2/N115_M_松下幸之助記念志財団 出版助成.md drafts_v2/N109_M_ロッテ財団 実装型共同研究助成.md drafts_v2/B3200_M_立石科学技術振興財団 国際交流助成.md drafts_v2/N129_M_中国電力技術研究財団 国際会議等開催助成.md drafts_v2/008_M_共創の場形成支援プログラム（COI-NEXT）「未来共創分野」.md drafts_v2/024_M_トヨタ財団 国内助成プログラム（自治型社会）.md drafts_v2/023_E_トヨタ財団 国際助成プログラム.md drafts_v2/B5_M_JSPS 国際共同研究加速基金（強化B）.md drafts_v2/B5_M_興和生命科学振興財団 国際交流助成・研究会等援助.md drafts_v2/B4308_E_テルモ生命科学振興財団 国際交流助成.md drafts_v2/010_M_総務省 地域社会DX推進パッケージ事業（二次公募）.md drafts_v2/B5416_E_JST A-STEP 産学共同（秋募集・推定）.md drafts_v2/B4305_E_島津科学技術振興財団 研究開発助成（先進情報・データサイエンス）.md drafts_v2/B3207_M_住友財団 環境研究助成.md drafts_v2/B4_M_稲盛研究助成「はぐくむ」.md drafts_v2/B4_E_島津科学技術振興財団 研究開発助成（先進情報・データサイエンス）.md drafts_v2/018_E_NEDO グリーンイノベーション基金.md drafts_v2/B4_E_セコム科学技術振興財団 学術集会助成.md drafts_v2/B3212_E_IMPACT FLOW KYOTO 2025-2026.md drafts_v2/N101_E_デジタル化・AI導入補助金 2026 セキュリティ枠.md drafts_v2/B4307_M_テルモ生命科学振興財団 国際交流助成.md drafts_v2/N125_M_JST CREST「エクスポソーム」.md drafts_v2/B4_M_セコム科学技術振興財団 学術集会助成.md drafts_v2/029_M_トヨタ財団 研究助成「未来の社会システム」.md</p>
+<p>codex 既存の<code>drafts_v2</code>に同種の国際交流・招聘系ドラフトがあるため、文体と粒度を合わせて新規ファイルを追加します。 exec /bin/bash -lc "sed -n '1,220p' 'drafts_v2/B3200_M_立石科学技術振興財団 国際交流助成.md'" in /Users/nishimura+/work/miratuku-grants-2026 exec /bin/bash -lc "sed -n '1,220p' 'drafts_v2/B5_M_加藤記念バイオサイエンス振興財団 国際交流助成.md'" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms:</p>
+<h1>加藤記念バイオサイエンス振興財団 国際交流助成 申請書ドラフト（ミラツク向け）</h1>
+<p><strong>締切</strong>: 2026-08-31 | <strong>上限</strong>: —</p>
+<h2>1. 申請者情報（300字・数値組込）</h2>
+<p>特定非営利活動法人ミラツクは、2010年設立、第14期を迎える京都府・東京都拠点の非営利法人である。専従25名体制で、2024年度営業収益は87.4百万円。企業協働20社、コミュニティ参加者350名との実践を通じ、研究知と社会課題を接続してきた。学術知識30,288概念を含む26のSQLite知識データベースを保有し、「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載を蓄積している。学際DB、セクター協働、知の社会接続、データ活用、実装、大規模解析、海外招聘を強みとする。</p>
+<h2>2. 助成金概要・応募要件（200字・地の文）</h2>
+<p>加藤記念バイオサイエンス振興財団の国際交流助成は、バイオサイエンス分野の研究交流、研究者招聘、会議参加、共同研究形成等を後押しする制度である。ミラツクは国内外の研究者、企業、NPO、行政を結ぶ中間支援機能を有するため、生命科学の知を社会実装へ接続する国際交流企画として申請することが望ましい。</p>
+<h2>3. 申請テーマ案（A推奨/B代替・各150字）</h2>
+<p><strong>A推奨</strong>: バイオサイエンスの社会実装に関する国際対話と知識基盤形成。海外研究者を招聘し、国内研究者、企業、NPO、行政とともに、再生医療、ヘルスケア、環境バイオ等の社会受容・倫理・事業化課題を検討する。</p>
+<p><strong>B代替</strong>: 生命科学研究と市民・企業協働を結ぶ国際ワークショップ。海外の実装型研究者を招き、ミラツクの26知識DBと300話の事例資産を用いて、研究成果の社会展開モデルを比較分析する。</p>
+<h2>4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字）</h2>
+<h3>背景目的</h3>
+<p>バイオサイエンスは、医療、食、環境、ウェルビーイングなど社会の基盤に深く関わる一方、研究成果が社会で活用されるまでには、倫理、規制、事業化、地域実装、市民理解といった多層の課題が存在する。国内では優れた研究成果が生まれているが、国際的な知見や実装経験と接続し、研究者以外のセクターも含めて議論する場は十分ではない。ミラツクは、26のSQLite知識データベースと、企業協働20社・コミュニティ350名のネットワークを活かし、研究知を社会課題解決へ翻訳してきた。本事業では、海外のバイオサイエンス関連研究者・実装支援者を招聘し、生命科学の社会接続モデルを検討する。</p>
+<h3>方法</h3>
+<p>2026年度下期に、京都・東京を主会場として、海外招聘者を含む国際交流プログラムを実施する。第1に、招へい研究者による公開セミナーを開催し、研究成果の社会実装、産学民連携、倫理的・制度的課題を共有する。第2に、国内研究者、企業、NPO、行政関係者を交えた少人数ワークショップを行い、再生医療、ヘルスケアデータ、環境バイオ等の実装論点を整理する。第3に、ミラツクの知識DBと300話の事例連載を用い、議論内容を概念マップ、課題リスト、連携候補として構造化する。事前・事後にオンライン会合を設け、継続的な共同研究・共同事業の形成につなげる。</p>
+<h3>成果</h3>
+<p>成果として、国際セミナー1回、テーマ別ワークショップ2回、参加者延べ80名程度を想定する。議論結果は、バイオサイエンスの社会実装課題マップ、国内外連携候補リスト、公開可能なレポートとして整理する。ミラツクの既存DBに関連概念を追加し、今後の研究者招聘、企業協働、助成申請、共同研究形成に活用する。これにより、生命科学の知を社会へ接続する国際的な協働基盤を形成する。</p>
+<h2>5. スケジュールと予算（年次別）</h2>
+<p>2026年度は、9月に招聘候補者と国内協力者を確定し、10月から11月に事前オンライン会合と論点整理を行う。12月から2027年2月にかけて、京都・東京で国際セミナーとワークショップを実施する。2027年3月には成果レポート、知識DB登録、次年度以降の共同研究案をまとめる。予算は、海外招聘者の渡航費、国内移動費、滞在費、通訳・翻訳費、会場費、記録編集費、成果物作成費を中心に組む。助成上限が明示されていないため、募集要項確認後、財団の対象経費に合わせて最小実施案と拡張実施案の二段階で積算する。</p>
+<h2>6. 提出物チェックリスト（チェックボックス）</h2>
+<ul>
+<li><input type="checkbox" disabled> 2026年度募集要項・申請様式の最新版確認</li>
+<li><input type="checkbox" disabled> 申請資格、対象分野、対象経費、上限額の確認</li>
+<li><input type="checkbox" disabled> 海外招聘候補者の略歴、所属、招聘理由</li>
+<li><input type="checkbox" disabled> 国内協力者・登壇者の内諾</li>
+<li><input type="checkbox" disabled> セミナー・ワークショップ実施計画</li>
+<li><input type="checkbox" disabled> 渡航費、滞在費、通訳翻訳費等の見積</li>
+<li><input type="checkbox" disabled> ミラツクの法人概要、決算、活動実績資料</li>
+<li><input type="checkbox" disabled> 成果公開方針と個人情報・研究情報の取扱方針</li>
+</ul>
+<h2>7. 推奨アクション（3-5点）</h2>
+<ol>
+<li>財団の最新募集要項を確認し、NPO法人による申請可否、共同申請者要件、招聘対象者の条件を確定する。</li>
+<li>海外招聘候補者は、生命科学研究だけでなく社会実装・ELSI・産学民連携の実績を持つ人物を優先する。</li>
+<li>申請本文では「国際交流」そのものではなく、交流後に形成される共同研究・共同事業・知識基盤の価値を前面に出す。</li>
+<li>ミラツクの26DB、30,288概念、300話連載、20社協働、350名コミュニティを、交流成果を吸収・展開する基盤として明記する。</li>
+<li>予算は渡航招聘中心の簡潔な構成にし、財団指定様式に合わせて対象外経費を除外する。</li>
+</ol>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

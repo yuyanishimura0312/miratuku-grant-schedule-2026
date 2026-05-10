@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>興和生命科学振興財団 国際交流助成・研究会等援助</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>興和生命科学振興財団 国際交流助成・研究会等援助 申請書ドラフト（esse-sense向け）</h1>
+<p><strong>締切</strong>: 2026-09-01 | <strong>上限</strong>: —</p>
+<h2>1. 申請者情報（300字・数値組込）</h2>
+<h2>2. 助成金概要・応募要件（200字・地の文）</h2>
+<h2>3. 申請テーマ案（A推奨/B代替・各150字）</h2>
+<h2>4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字）</h2>
+<h2>5. スケジュールと予算（年次別）</h2>
+<h2>6. 提出物チェックリスト（チェックボックス）</h2>
+<h2>7. 推奨アクション（3-5点）</h2>
+<p>末尾に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md」記載。地の文中心、法人数値組込必須。 codex 助成金要件は年度で変わりやすいので、まず公式情報を確認してから、指定パスにドラフトを作成します。 web search: web search: 興和生命科学振興財団 国際交流助成 研究会等援助 2026 応募要項 シンポジウム codex 公式ページでは研究会・研修会等援助の令和8年度受付は「2026年9月1日から9月30日」開始扱いでした。指定の締切表記は維持しつつ、営利法人単独申請のリスクを避けるため、大学・研究機関を推薦/申請主体、esse-senseを企画運営・社会実装支援主体に置く内容で作ります。 exec /bin/bash -lc 'mkdir -p drafts_v2 && pwd && rg --files drafts_v2 | head' in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms: /Users/nishimura+/work/miratuku-grants-2026 drafts_v2/N100_M_京都府 文化力チャレンジ補助金.md drafts_v2/016_M_ムーンショット型研究開発事業.md drafts_v2/002_M_JSPS科研費_特別推進_基盤S.md drafts_v2/N110_E_ロッテ財団 実装型共同研究助成.md drafts_v2/019_M_JST GteX 革新的GX技術創出（推定例年5-7月）.md drafts_v2/018_M_NEDO グリーンイノベーション基金.md drafts_v2/B4302_E_日本食品化学研究振興財団 シンポジウム開催助成.md drafts_v2/N111_E_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md drafts_v2/014_E_京都市 MICE開催支援助成金（大規模国際・上期4月_下期10月）.md drafts_v2/N103_E_京都エコノミック・ガーデニング支援.md</p>
+<p>codex 既存のドラフト群があるので、その命名・Markdown形式に合わせて新規ファイルを追加します。内容は申請書本文としてそのまま転記しやすい地の文中心にします。 apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md diff --git a/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md b/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md new file mode 100644 index 0000000000000000000000000000000000000000..73c8e8e6953418643003a81523db9f4604c81b04 --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md @@ -0,0 +1,48 @@ +# 興和生命科学振興財団 国際交流助成・研究会等援助 申請書ドラフト（esse-sense向け） +<strong>締切</strong>: 2026-09-01 | <strong>上限</strong>: — + +## 1. 申請者情報（300字・数値組込） +esse-senseは、研究者の知を社会に届けることを目的に、研究成果の編集、記事化、データベース化、産学連携支援を行う株式会社である。自社媒体では研究者・大学・企業の知見を扱う記事DBとしてarticles 154件、general_articles 34件を蓄積し、学際領域の研究テーマ、社会課題、共同研究ニーズを横断的に整理してきた。営利法人であるため、本助成では国内大学、研究所、病院等の研究機関を申請・推薦主体とし、esse-senseは研究会の企画、広報、記録、成果発信、参加者データ分析を担う共同運営者として位置づける。 + +## 2. 助成金概要・応募要件（200字・地の文） +興和生命科学振興財団の研究会・研修会等援助は、人類の疾病の予防と治療に関する自然科学分野の国内研究会、研修会等を支援する制度である。令和8年度は2026年9月1日から9月30日まで受付予定で、推薦者は大学、研究所、病院等の機関長等に限られる。国際交流助成は海外学会・シンポジウム等での研究発表や短期留学を対象とするため、本件は国内開催の研究会・シンポジウムとして研究会・研修会等援助を主軸に設計する。 + +## 3. 申請テーマ案（A推奨/B代替・各150字） +<strong>A推奨: 生命科学研究の社会実装を加速する学際シンポジウム</strong> +疾患予防、治療、セルフケア、医療DXに関わる研究者、大学発スタートアップ、企業、医療現場を接続し、研究成果を社会実装へ進めるための公開型シンポジウムを開催する。 + +<strong>B代替: AI時代の疾病予防・治療研究と産学連携研究会</strong> +生命科学研究におけるAI、データ活用、大学DXの実践例を共有し、研究者と企業が共同研究テーマを形成する小規模研究会を実施する。国際発信はesse-sense Future Forumと連動させる。 + +## 4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字） +<strong>背景目的</strong> +疾病の予防と治療に関する自然科学研究は、基礎研究、臨床研究、データサイエンス、生活者のセルフケア、医療機器・創薬・ヘルスケア産業の接点で急速に広がっている。一方で、研究成果が専門領域内に留まり、異分野の研究者、企業、医療現場、行政、生活者へ十分に届かないことが、共同研究形成や社会実装の遅れにつながっている。esse-senseはarticles 154件、general_articles 34件の研究記事DBを通じて、研究テーマを社会課題や産業ニーズと結びつける編集・発信基盤を整えてきた。本研究会は、生命科学研究の知見を横断的に共有し、疾病予防・治療に資する共同研究、大学発スタートアップ支援、国際発信へ接続する場を形成することを目的とする。 + +<strong>方法</strong> +国内大学または研究機関を主催・申請主体とし、esse-senseは共同運営者として企画設計、登壇者調整、広報、当日運営、記録、成果発信を担う。研究会は半日から1日の公開型シンポジウムとして設計し、基調講演、研究発表、産学連携セッション、大学発スタートアップ事例、総合討論を組み合わせる。対象領域は疾病予防・治療、医療データ、AI、セルフケア、臨床応用に関連する自然科学研究とし、研究者、医療関係者、企業R&D担当、大学URA、スタートアップ支援者の参加を募る。esse-senseの学際DBを用いて関連研究者・テーマを抽出し、参加者属性、関心領域、連携希望を事前アンケートで把握することで、当日の議論と終了後の共同研究マッチングを実効的に行う。 + +<strong>成果</strong> +本研究会により、疾病予防・治療に関する研究成果を専門領域外へ開き、研究者間および産学間の新たな連携候補を可視化する。成果として、開催報告、登壇要旨、参加者分析、共同研究候補リスト、社会実装上の課題整理を作成し、財団への成果報告に加えてesse-sense媒体で一般向けに発信する。将来的にはesse-sense Future Forumと連動し、国内研究会で形成した論点を国際交流・国際共同研究へ展開する。 + +## 5. スケジュールと予算（年次別） +<strong>2026年度</strong>は、7月から8月に主催研究機関、推薦者、登壇候補、会場候補を確定し、9月1日までに申請書、推薦書、開催趣旨、予算書、登壇候補リストを整える。採択後の11月から12月に参加募集、広報、事前アンケートを行い、2027年1月から3月に研究会を開催する。開催後3カ月以内に成果報告書、収支報告、公開記事を作成する。予算は、会場費、配信・記録費、登壇者旅費・謝金、資料作成費、広報費、運営補助費に配分し、間接経費や法人の一般管理費は計上しない。 + +## 6. 提出物チェックリスト（チェックボックス） +- <input type="checkbox" disabled> 主催・申請主体となる大学、研究所、病院等の確定 +- <input type="checkbox" disabled> 機関長等の推薦可否確認 +- <input type="checkbox" disabled> 財団所定の申請書様式の入手 +- <input type="checkbox" disabled> 開催趣旨、対象分野、参加対象者の整理 +- <input type="checkbox" disabled> 登壇候補者、座長、共催・後援候補の一覧 +- <input type="checkbox" disabled> 会場、開催日、開催形式の仮押さえ +- <input type="checkbox" disabled> 助成対象経費のみで構成した予算書 +- <input type="checkbox" disabled> esse-senseの役割を明記した共同運営説明書 +- <input type="checkbox" disabled> 成果報告・収支報告の提出体制 + +## 7. 推奨アクション（3-5点） +1. 営利法人単独ではなく、生命科学領域の大学・研究機関を主催兼申請主体に設定し、esse-senseは共同運営・成果発信担当として整理する。 +2. 財団趣旨に合わせ、テーマを「疾病の予防と治療に関する自然科学」に寄せ、メディア事業やDX支援は手段として記載する。 +3. articles 154件、general_articles 34件のDBを、登壇者選定、論点整理、参加者マッチングに使う具体的な方法として示す。 +4. 研究会後3カ月以内に提出する成果報告を前提に、開催報告、収支、参加者分析、共同研究候補の作成担当を事前に決める。 +5. 国際交流助成への展開は次段階とし、まず国内研究会で論点とネットワークを形成し、esse-sense Future Forumで国際発信する導線を設計する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md</p>
+<p>diff --git a/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md b/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md new file mode 100644 index 0000000000000000000000000000000000000000..73c8e8e6953418643003a81523db9f4604c81b04 --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md @@ -0,0 +1,48 @@ +# 興和生命科学振興財団 国際交流助成・研究会等援助 申請書ドラフト（esse-sense向け） +<strong>締切</strong>: 2026-09-01 | <strong>上限</strong>: — + +## 1. 申請者情報（300字・数値組込） +esse-senseは、研究者の知を社会に届けることを目的に、研究成果の編集、記事化、データベース化、産学連携支援を行う株式会社である。自社媒体では研究者・大学・企業の知見を扱う記事DBとしてarticles 154件、general_articles 34件を蓄積し、学際領域の研究テーマ、社会課題、共同研究ニーズを横断的に整理してきた。営利法人であるため、本助成では国内大学、研究所、病院等の研究機関を申請・推薦主体とし、esse-senseは研究会の企画、広報、記録、成果発信、参加者データ分析を担う共同運営者として位置づける。 + +## 2. 助成金概要・応募要件（200字・地の文） +興和生命科学振興財団の研究会・研修会等援助は、人類の疾病の予防と治療に関する自然科学分野の国内研究会、研修会等を支援する制度である。令和8年度は2026年9月1日から9月30日まで受付予定で、推薦者は大学、研究所、病院等の機関長等に限られる。国際交流助成は海外学会・シンポジウム等での研究発表や短期留学を対象とするため、本件は国内開催の研究会・シンポジウムとして研究会・研修会等援助を主軸に設計する。 + +## 3. 申請テーマ案（A推奨/B代替・各150字） +<strong>A推奨: 生命科学研究の社会実装を加速する学際シンポジウム</strong> +疾患予防、治療、セルフケア、医療DXに関わる研究者、大学発スタートアップ、企業、医療現場を接続し、研究成果を社会実装へ進めるための公開型シンポジウムを開催する。 + +<strong>B代替: AI時代の疾病予防・治療研究と産学連携研究会</strong> +生命科学研究におけるAI、データ活用、大学DXの実践例を共有し、研究者と企業が共同研究テーマを形成する小規模研究会を実施する。国際発信はesse-sense Future Forumと連動させる。 + +## 4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字） +<strong>背景目的</strong> +疾病の予防と治療に関する自然科学研究は、基礎研究、臨床研究、データサイエンス、生活者のセルフケア、医療機器・創薬・ヘルスケア産業の接点で急速に広がっている。一方で、研究成果が専門領域内に留まり、異分野の研究者、企業、医療現場、行政、生活者へ十分に届かないことが、共同研究形成や社会実装の遅れにつながっている。esse-senseはarticles 154件、general_articles 34件の研究記事DBを通じて、研究テーマを社会課題や産業ニーズと結びつける編集・発信基盤を整えてきた。本研究会は、生命科学研究の知見を横断的に共有し、疾病予防・治療に資する共同研究、大学発スタートアップ支援、国際発信へ接続する場を形成することを目的とする。 + +<strong>方法</strong> +国内大学または研究機関を主催・申請主体とし、esse-senseは共同運営者として企画設計、登壇者調整、広報、当日運営、記録、成果発信を担う。研究会は半日から1日の公開型シンポジウムとして設計し、基調講演、研究発表、産学連携セッション、大学発スタートアップ事例、総合討論を組み合わせる。対象領域は疾病予防・治療、医療データ、AI、セルフケア、臨床応用に関連する自然科学研究とし、研究者、医療関係者、企業R&D担当、大学URA、スタートアップ支援者の参加を募る。esse-senseの学際DBを用いて関連研究者・テーマを抽出し、参加者属性、関心領域、連携希望を事前アンケートで把握することで、当日の議論と終了後の共同研究マッチングを実効的に行う。 + +<strong>成果</strong> +本研究会により、疾病予防・治療に関する研究成果を専門領域外へ開き、研究者間および産学間の新たな連携候補を可視化する。成果として、開催報告、登壇要旨、参加者分析、共同研究候補リスト、社会実装上の課題整理を作成し、財団への成果報告に加えてesse-sense媒体で一般向けに発信する。将来的にはesse-sense Future Forumと連動し、国内研究会で形成した論点を国際交流・国際共同研究へ展開する。 + +## 5. スケジュールと予算（年次別） +<strong>2026年度</strong>は、7月から8月に主催研究機関、推薦者、登壇候補、会場候補を確定し、9月1日までに申請書、推薦書、開催趣旨、予算書、登壇候補リストを整える。採択後の11月から12月に参加募集、広報、事前アンケートを行い、2027年1月から3月に研究会を開催する。開催後3カ月以内に成果報告書、収支報告、公開記事を作成する。予算は、会場費、配信・記録費、登壇者旅費・謝金、資料作成費、広報費、運営補助費に配分し、間接経費や法人の一般管理費は計上しない。 + +## 6. 提出物チェックリスト（チェックボックス） +- <input type="checkbox" disabled> 主催・申請主体となる大学、研究所、病院等の確定 +- <input type="checkbox" disabled> 機関長等の推薦可否確認 +- <input type="checkbox" disabled> 財団所定の申請書様式の入手 +- <input type="checkbox" disabled> 開催趣旨、対象分野、参加対象者の整理 +- <input type="checkbox" disabled> 登壇候補者、座長、共催・後援候補の一覧 +- <input type="checkbox" disabled> 会場、開催日、開催形式の仮押さえ +- <input type="checkbox" disabled> 助成対象経費のみで構成した予算書 +- <input type="checkbox" disabled> esse-senseの役割を明記した共同運営説明書 +- <input type="checkbox" disabled> 成果報告・収支報告の提出体制 + +## 7. 推奨アクション（3-5点） +1. 営利法人単独ではなく、生命科学領域の大学・研究機関を主催兼申請主体に設定し、esse-senseは共同運営・成果発信担当として整理する。 +2. 財団趣旨に合わせ、テーマを「疾病の予防と治療に関する自然科学」に寄せ、メディア事業やDX支援は手段として記載する。 +3. articles 154件、general_articles 34件のDBを、登壇者選定、論点整理、参加者マッチングに使う具体的な方法として示す。 +4. 研究会後3カ月以内に提出する成果報告を前提に、開催報告、収支、参加者分析、共同研究候補の作成担当を事前に決める。 +5. 国際交流助成への展開は次段階とし、まず国内研究会で論点とネットワークを形成し、esse-sense Future Forumで国際発信する導線を設計する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md</p>
+<p>codex 作成は完了しました。指定の1,500-2,500字に収まっているか、文字数を確認して必要なら圧縮します。 exec /bin/bash -lc "wc -m 'drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md'" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms:     2782 drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md</p>
+<p>diff --git a/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md b/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md new file mode 100644 index 0000000000000000000000000000000000000000..73c8e8e6953418643003a81523db9f4604c81b04 --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md @@ -0,0 +1,48 @@ +# 興和生命科学振興財団 国際交流助成・研究会等援助 申請書ドラフト（esse-sense向け） +<strong>締切</strong>: 2026-09-01 | <strong>上限</strong>: — + +## 1. 申請者情報（300字・数値組込） +esse-senseは、研究者の知を社会に届けることを目的に、研究成果の編集、記事化、データベース化、産学連携支援を行う株式会社である。自社媒体では研究者・大学・企業の知見を扱う記事DBとしてarticles 154件、general_articles 34件を蓄積し、学際領域の研究テーマ、社会課題、共同研究ニーズを横断的に整理してきた。営利法人であるため、本助成では国内大学、研究所、病院等の研究機関を申請・推薦主体とし、esse-senseは研究会の企画、広報、記録、成果発信、参加者データ分析を担う共同運営者として位置づける。 + +## 2. 助成金概要・応募要件（200字・地の文） +興和生命科学振興財団の研究会・研修会等援助は、人類の疾病の予防と治療に関する自然科学分野の国内研究会、研修会等を支援する制度である。令和8年度は2026年9月1日から9月30日まで受付予定で、推薦者は大学、研究所、病院等の機関長等に限られる。国際交流助成は海外学会・シンポジウム等での研究発表や短期留学を対象とするため、本件は国内開催の研究会・シンポジウムとして研究会・研修会等援助を主軸に設計する。 + +## 3. 申請テーマ案（A推奨/B代替・各150字） +<strong>A推奨: 生命科学研究の社会実装を加速する学際シンポジウム</strong> +疾患予防、治療、セルフケア、医療DXに関わる研究者、大学発スタートアップ、企業、医療現場を接続し、研究成果を社会実装へ進めるための公開型シンポジウムを開催する。 + +<strong>B代替: AI時代の疾病予防・治療研究と産学連携研究会</strong> +生命科学研究におけるAI、データ活用、大学DXの実践例を共有し、研究者と企業が共同研究テーマを形成する小規模研究会を実施する。国際発信はesse-sense Future Forumと連動させる。 + +## 4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字） +<strong>背景目的</strong> +疾病の予防と治療に関する自然科学研究は、基礎研究、臨床研究、データサイエンス、生活者のセルフケア、医療機器・創薬・ヘルスケア産業の接点で急速に広がっている。一方で、研究成果が専門領域内に留まり、異分野の研究者、企業、医療現場、行政、生活者へ十分に届かないことが、共同研究形成や社会実装の遅れにつながっている。esse-senseはarticles 154件、general_articles 34件の研究記事DBを通じて、研究テーマを社会課題や産業ニーズと結びつける編集・発信基盤を整えてきた。本研究会は、生命科学研究の知見を横断的に共有し、疾病予防・治療に資する共同研究、大学発スタートアップ支援、国際発信へ接続する場を形成することを目的とする。 + +<strong>方法</strong> +国内大学または研究機関を主催・申請主体とし、esse-senseは共同運営者として企画設計、登壇者調整、広報、当日運営、記録、成果発信を担う。研究会は半日から1日の公開型シンポジウムとして設計し、基調講演、研究発表、産学連携セッション、大学発スタートアップ事例、総合討論を組み合わせる。対象領域は疾病予防・治療、医療データ、AI、セルフケア、臨床応用に関連する自然科学研究とし、研究者、医療関係者、企業R&D担当、大学URA、スタートアップ支援者の参加を募る。esse-senseの学際DBを用いて関連研究者・テーマを抽出し、参加者属性、関心領域、連携希望を事前アンケートで把握することで、当日の議論と終了後の共同研究マッチングを実効的に行う。 + +<strong>成果</strong> +本研究会により、疾病予防・治療に関する研究成果を専門領域外へ開き、研究者間および産学間の新たな連携候補を可視化する。成果として、開催報告、登壇要旨、参加者分析、共同研究候補リスト、社会実装上の課題整理を作成し、財団への成果報告に加えてesse-sense媒体で一般向けに発信する。将来的にはesse-sense Future Forumと連動し、国内研究会で形成した論点を国際交流・国際共同研究へ展開する。 + +## 5. スケジュールと予算（年次別） +<strong>2026年度</strong>は、7月から8月に主催研究機関、推薦者、登壇候補、会場候補を確定し、9月1日までに申請書、推薦書、開催趣旨、予算書、登壇候補リストを整える。採択後の11月から12月に参加募集、広報、事前アンケートを行い、2027年1月から3月に研究会を開催する。開催後3カ月以内に成果報告書、収支報告、公開記事を作成する。予算は、会場費、配信・記録費、登壇者旅費・謝金、資料作成費、広報費、運営補助費に配分し、間接経費や法人の一般管理費は計上しない。 + +## 6. 提出物チェックリスト（チェックボックス） +- <input type="checkbox" disabled> 主催・申請主体となる大学、研究所、病院等の確定 +- <input type="checkbox" disabled> 機関長等の推薦可否確認 +- <input type="checkbox" disabled> 財団所定の申請書様式の入手 +- <input type="checkbox" disabled> 開催趣旨、対象分野、参加対象者の整理 +- <input type="checkbox" disabled> 登壇候補者、座長、共催・後援候補の一覧 +- <input type="checkbox" disabled> 会場、開催日、開催形式の仮押さえ +- <input type="checkbox" disabled> 助成対象経費のみで構成した予算書 +- <input type="checkbox" disabled> esse-senseの役割を明記した共同運営説明書 +- <input type="checkbox" disabled> 成果報告・収支報告の提出体制 + +## 7. 推奨アクション（3-5点） +1. 営利法人単独ではなく、生命科学領域の大学・研究機関を主催兼申請主体に設定し、esse-senseは共同運営・成果発信担当として整理する。 +2. 財団趣旨に合わせ、テーマを「疾病の予防と治療に関する自然科学」に寄せ、メディア事業やDX支援は手段として記載する。 +3. articles 154件、general_articles 34件のDBを、登壇者選定、論点整理、参加者マッチングに使う具体的な方法として示す。 +4. 研究会後3カ月以内に提出する成果報告を前提に、開催報告、収支、参加者分析、共同研究候補の作成担当を事前に決める。 +5. 国際交流助成への展開は次段階とし、まず国内研究会で論点とネットワークを形成し、esse-sense Future Forumで国際発信する導線を設計する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md</p>
+<p>codex 現在2,782字で指定上限を少し超えています。構成は維持したまま、重複する説明を削って2,500字以内に調整します。 apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md diff --git a/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md b/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md new file mode 100644 index 0000000000000000000000000000000000000000..bfb2db849cfb840b6d36bda2d64411396f442a3e --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md @@ -0,0 +1,48 @@ +# 興和生命科学振興財団 国際交流助成・研究会等援助 申請書ドラフト（esse-sense向け） +<strong>締切</strong>: 2026-09-01 | <strong>上限</strong>: — + +## 1. 申請者情報（300字・数値組込） +esse-senseは、研究者の知を社会に届けることを目的に、研究成果の編集、記事化、データベース化、産学連携支援を行う株式会社である。自社媒体ではarticles 154件、general_articles 34件を蓄積し、学際研究、社会課題、共同研究ニーズを横断的に整理してきた。営利法人であるため、本助成では国内大学、研究所、病院等を申請・推薦主体とし、esse-senseは企画、広報、記録、成果発信、参加者データ分析を担う共同運営者とする。 + +## 2. 助成金概要・応募要件（200字・地の文） +興和生命科学振興財団の研究会・研修会等援助は、人類の疾病の予防と治療に関する自然科学分野の国内研究会、研修会等を支援する制度である。令和8年度は2026年9月1日から9月30日まで受付予定で、推薦者は大学、研究所、病院等の機関長等に限られる。国際交流助成は海外学会等での発表や短期留学が対象のため、本件は国内シンポジウムとして設計する。 + +## 3. 申請テーマ案（A推奨/B代替・各150字） +<strong>A推奨: 生命科学研究の社会実装を加速する学際シンポジウム</strong> +疾患予防、治療、セルフケア、医療DXに関わる研究者、大学発スタートアップ、企業、医療現場を接続し、研究成果を社会実装へ進める公開型シンポジウムを開催する。 + +<strong>B代替: AI時代の疾病予防・治療研究と産学連携研究会</strong> +生命科学研究におけるAI、データ活用、大学DXの実践例を共有し、研究者と企業が共同研究テーマを形成する小規模研究会を実施する。 + +## 4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字） +<strong>背景目的</strong> +疾病の予防と治療に関する自然科学研究は、基礎研究、臨床研究、データサイエンス、セルフケア、医療機器・創薬の接点で広がっている。一方で、研究成果が専門領域内に留まり、異分野の研究者、企業、医療現場へ届きにくいことが、共同研究形成や社会実装の遅れにつながっている。esse-senseはarticles 154件、general_articles 34件の研究記事DBを通じて、研究テーマを社会課題や産業ニーズと結びつける編集・発信基盤を整えてきた。本研究会は、生命科学研究の知見を横断的に共有し、疾病予防・治療に資する共同研究、大学発スタートアップ支援、国際発信へ接続する場を形成する。 + +<strong>方法</strong> +国内大学または研究機関を主催・申請主体とし、esse-senseは企画設計、登壇者調整、広報、当日運営、記録、成果発信を担う。研究会は半日から1日の公開型シンポジウムとし、基調講演、研究発表、産学連携セッション、大学発スタートアップ事例、総合討論を組み合わせる。対象は疾病予防・治療、医療データ、AI、セルフケア、臨床応用に関連する自然科学研究とし、研究者、医療関係者、企業R&D担当、大学URAの参加を募る。esse-senseの学際DBで関連研究者・テーマを抽出し、事前アンケートで関心領域と連携希望を把握する。 + +<strong>成果</strong> +本研究会により、疾病予防・治療に関する研究成果を専門領域外へ開き、研究者間および産学間の連携候補を可視化する。成果として、開催報告、登壇要旨、参加者分析、共同研究候補、社会実装上の課題整理を作成し、財団への成果報告に加えてesse-sense媒体で発信する。将来的にはesse-sense Future Forumと連動し、国際交流・国際共同研究へ展開する。 + +## 5. スケジュールと予算（年次別） +<strong>2026年度</strong>は、7月から8月に主催研究機関、推薦者、登壇候補、会場候補を確定し、9月1日までに申請書、推薦書、開催趣旨、予算書を整える。採択後の11月から12月に参加募集、広報、事前アンケートを行い、2027年1月から3月に研究会を開催する。開催後3カ月以内に成果報告書、収支報告、公開記事を作成する。予算は、会場費、配信・記録費、登壇者旅費・謝金、資料作成費、広報費に配分し、間接経費や法人の一般管理費は計上しない。 + +## 6. 提出物チェックリスト（チェックボックス） +- <input type="checkbox" disabled> 主催・申請主体となる大学、研究所、病院等の確定 +- <input type="checkbox" disabled> 機関長等の推薦可否確認 +- <input type="checkbox" disabled> 財団所定の申請書様式の入手 +- <input type="checkbox" disabled> 開催趣旨、対象分野、参加対象者の整理 +- <input type="checkbox" disabled> 登壇候補者、座長、共催・後援候補の一覧 +- <input type="checkbox" disabled> 会場、開催日、開催形式の仮押さえ +- <input type="checkbox" disabled> 助成対象経費のみで構成した予算書 +- <input type="checkbox" disabled> esse-senseの役割を明記した共同運営説明書 +- <input type="checkbox" disabled> 成果報告・収支報告の提出体制 + +## 7. 推奨アクション（3-5点） +1. 営利法人単独ではなく、生命科学領域の大学・研究機関を主催兼申請主体に設定し、esse-senseは共同運営・成果発信担当として整理する。 +2. 財団趣旨に合わせ、テーマを「疾病の予防と治療に関する自然科学」に寄せ、メディア事業やDX支援は手段として記載する。 +3. articles 154件、general_articles 34件のDBを、登壇者選定、論点整理、参加者マッチングに使う具体的な方法として示す。 +4. 研究会後3カ月以内に提出する成果報告を前提に、開催報告、収支、参加者分析、共同研究候補の作成担当を事前に決める。 +5. 国際交流助成への展開は次段階とし、まず国内研究会で論点とネットワークを形成し、esse-sense Future Forumで国際発信する導線を設計する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md</p>
+<p>diff --git a/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md b/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md new file mode 100644 index 0000000000000000000000000000000000000000..bfb2db849cfb840b6d36bda2d64411396f442a3e --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md @@ -0,0 +1,48 @@ +# 興和生命科学振興財団 国際交流助成・研究会等援助 申請書ドラフト（esse-sense向け） +<strong>締切</strong>: 2026-09-01 | <strong>上限</strong>: — + +## 1. 申請者情報（300字・数値組込） +esse-senseは、研究者の知を社会に届けることを目的に、研究成果の編集、記事化、データベース化、産学連携支援を行う株式会社である。自社媒体ではarticles 154件、general_articles 34件を蓄積し、学際研究、社会課題、共同研究ニーズを横断的に整理してきた。営利法人であるため、本助成では国内大学、研究所、病院等を申請・推薦主体とし、esse-senseは企画、広報、記録、成果発信、参加者データ分析を担う共同運営者とする。 + +## 2. 助成金概要・応募要件（200字・地の文） +興和生命科学振興財団の研究会・研修会等援助は、人類の疾病の予防と治療に関する自然科学分野の国内研究会、研修会等を支援する制度である。令和8年度は2026年9月1日から9月30日まで受付予定で、推薦者は大学、研究所、病院等の機関長等に限られる。国際交流助成は海外学会等での発表や短期留学が対象のため、本件は国内シンポジウムとして設計する。 + +## 3. 申請テーマ案（A推奨/B代替・各150字） +<strong>A推奨: 生命科学研究の社会実装を加速する学際シンポジウム</strong> +疾患予防、治療、セルフケア、医療DXに関わる研究者、大学発スタートアップ、企業、医療現場を接続し、研究成果を社会実装へ進める公開型シンポジウムを開催する。 + +<strong>B代替: AI時代の疾病予防・治療研究と産学連携研究会</strong> +生命科学研究におけるAI、データ活用、大学DXの実践例を共有し、研究者と企業が共同研究テーマを形成する小規模研究会を実施する。 + +## 4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字） +<strong>背景目的</strong> +疾病の予防と治療に関する自然科学研究は、基礎研究、臨床研究、データサイエンス、セルフケア、医療機器・創薬の接点で広がっている。一方で、研究成果が専門領域内に留まり、異分野の研究者、企業、医療現場へ届きにくいことが、共同研究形成や社会実装の遅れにつながっている。esse-senseはarticles 154件、general_articles 34件の研究記事DBを通じて、研究テーマを社会課題や産業ニーズと結びつける編集・発信基盤を整えてきた。本研究会は、生命科学研究の知見を横断的に共有し、疾病予防・治療に資する共同研究、大学発スタートアップ支援、国際発信へ接続する場を形成する。 + +<strong>方法</strong> +国内大学または研究機関を主催・申請主体とし、esse-senseは企画設計、登壇者調整、広報、当日運営、記録、成果発信を担う。研究会は半日から1日の公開型シンポジウムとし、基調講演、研究発表、産学連携セッション、大学発スタートアップ事例、総合討論を組み合わせる。対象は疾病予防・治療、医療データ、AI、セルフケア、臨床応用に関連する自然科学研究とし、研究者、医療関係者、企業R&D担当、大学URAの参加を募る。esse-senseの学際DBで関連研究者・テーマを抽出し、事前アンケートで関心領域と連携希望を把握する。 + +<strong>成果</strong> +本研究会により、疾病予防・治療に関する研究成果を専門領域外へ開き、研究者間および産学間の連携候補を可視化する。成果として、開催報告、登壇要旨、参加者分析、共同研究候補、社会実装上の課題整理を作成し、財団への成果報告に加えてesse-sense媒体で発信する。将来的にはesse-sense Future Forumと連動し、国際交流・国際共同研究へ展開する。 + +## 5. スケジュールと予算（年次別） +<strong>2026年度</strong>は、7月から8月に主催研究機関、推薦者、登壇候補、会場候補を確定し、9月1日までに申請書、推薦書、開催趣旨、予算書を整える。採択後の11月から12月に参加募集、広報、事前アンケートを行い、2027年1月から3月に研究会を開催する。開催後3カ月以内に成果報告書、収支報告、公開記事を作成する。予算は、会場費、配信・記録費、登壇者旅費・謝金、資料作成費、広報費に配分し、間接経費や法人の一般管理費は計上しない。 + +## 6. 提出物チェックリスト（チェックボックス） +- <input type="checkbox" disabled> 主催・申請主体となる大学、研究所、病院等の確定 +- <input type="checkbox" disabled> 機関長等の推薦可否確認 +- <input type="checkbox" disabled> 財団所定の申請書様式の入手 +- <input type="checkbox" disabled> 開催趣旨、対象分野、参加対象者の整理 +- <input type="checkbox" disabled> 登壇候補者、座長、共催・後援候補の一覧 +- <input type="checkbox" disabled> 会場、開催日、開催形式の仮押さえ +- <input type="checkbox" disabled> 助成対象経費のみで構成した予算書 +- <input type="checkbox" disabled> esse-senseの役割を明記した共同運営説明書 +- <input type="checkbox" disabled> 成果報告・収支報告の提出体制 + +## 7. 推奨アクション（3-5点） +1. 営利法人単独ではなく、生命科学領域の大学・研究機関を主催兼申請主体に設定し、esse-senseは共同運営・成果発信担当として整理する。 +2. 財団趣旨に合わせ、テーマを「疾病の予防と治療に関する自然科学」に寄せ、メディア事業やDX支援は手段として記載する。 +3. articles 154件、general_articles 34件のDBを、登壇者選定、論点整理、参加者マッチングに使う具体的な方法として示す。 +4. 研究会後3カ月以内に提出する成果報告を前提に、開催報告、収支、参加者分析、共同研究候補の作成担当を事前に決める。 +5. 国際交流助成への展開は次段階とし、まず国内研究会で論点とネットワークを形成し、esse-sense Future Forumで国際発信する導線を設計する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md</p>
+<p>exec /bin/bash -lc "wc -m 'drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md'" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms:     2536 drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md</p>
+<p>diff --git a/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md b/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md new file mode 100644 index 0000000000000000000000000000000000000000..bfb2db849cfb840b6d36bda2d64411396f442a3e --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md @@ -0,0 +1,48 @@ +# 興和生命科学振興財団 国際交流助成・研究会等援助 申請書ドラフト（esse-sense向け） +<strong>締切</strong>: 2026-09-01 | <strong>上限</strong>: — + +## 1. 申請者情報（300字・数値組込） +esse-senseは、研究者の知を社会に届けることを目的に、研究成果の編集、記事化、データベース化、産学連携支援を行う株式会社である。自社媒体ではarticles 154件、general_articles 34件を蓄積し、学際研究、社会課題、共同研究ニーズを横断的に整理してきた。営利法人であるため、本助成では国内大学、研究所、病院等を申請・推薦主体とし、esse-senseは企画、広報、記録、成果発信、参加者データ分析を担う共同運営者とする。 + +## 2. 助成金概要・応募要件（200字・地の文） +興和生命科学振興財団の研究会・研修会等援助は、人類の疾病の予防と治療に関する自然科学分野の国内研究会、研修会等を支援する制度である。令和8年度は2026年9月1日から9月30日まで受付予定で、推薦者は大学、研究所、病院等の機関長等に限られる。国際交流助成は海外学会等での発表や短期留学が対象のため、本件は国内シンポジウムとして設計する。 + +## 3. 申請テーマ案（A推奨/B代替・各150字） +<strong>A推奨: 生命科学研究の社会実装を加速する学際シンポジウム</strong> +疾患予防、治療、セルフケア、医療DXに関わる研究者、大学発スタートアップ、企業、医療現場を接続し、研究成果を社会実装へ進める公開型シンポジウムを開催する。 + +<strong>B代替: AI時代の疾病予防・治療研究と産学連携研究会</strong> +生命科学研究におけるAI、データ活用、大学DXの実践例を共有し、研究者と企業が共同研究テーマを形成する小規模研究会を実施する。 + +## 4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字） +<strong>背景目的</strong> +疾病の予防と治療に関する自然科学研究は、基礎研究、臨床研究、データサイエンス、セルフケア、医療機器・創薬の接点で広がっている。一方で、研究成果が専門領域内に留まり、異分野の研究者、企業、医療現場へ届きにくいことが、共同研究形成や社会実装の遅れにつながっている。esse-senseはarticles 154件、general_articles 34件の研究記事DBを通じて、研究テーマを社会課題や産業ニーズと結びつける編集・発信基盤を整えてきた。本研究会は、生命科学研究の知見を横断的に共有し、疾病予防・治療に資する共同研究、大学発スタートアップ支援、国際発信へ接続する場を形成する。 + +<strong>方法</strong> +国内大学または研究機関を主催・申請主体とし、esse-senseは企画設計、登壇者調整、広報、当日運営、記録、成果発信を担う。研究会は半日から1日の公開型シンポジウムとし、基調講演、研究発表、産学連携セッション、大学発スタートアップ事例、総合討論を組み合わせる。対象は疾病予防・治療、医療データ、AI、セルフケア、臨床応用に関連する自然科学研究とし、研究者、医療関係者、企業R&D担当、大学URAの参加を募る。esse-senseの学際DBで関連研究者・テーマを抽出し、事前アンケートで関心領域と連携希望を把握する。 + +<strong>成果</strong> +本研究会により、疾病予防・治療に関する研究成果を専門領域外へ開き、研究者間および産学間の連携候補を可視化する。成果として、開催報告、登壇要旨、参加者分析、共同研究候補、社会実装上の課題整理を作成し、財団への成果報告に加えてesse-sense媒体で発信する。将来的にはesse-sense Future Forumと連動し、国際交流・国際共同研究へ展開する。 + +## 5. スケジュールと予算（年次別） +<strong>2026年度</strong>は、7月から8月に主催研究機関、推薦者、登壇候補、会場候補を確定し、9月1日までに申請書、推薦書、開催趣旨、予算書を整える。採択後の11月から12月に参加募集、広報、事前アンケートを行い、2027年1月から3月に研究会を開催する。開催後3カ月以内に成果報告書、収支報告、公開記事を作成する。予算は、会場費、配信・記録費、登壇者旅費・謝金、資料作成費、広報費に配分し、間接経費や法人の一般管理費は計上しない。 + +## 6. 提出物チェックリスト（チェックボックス） +- <input type="checkbox" disabled> 主催・申請主体となる大学、研究所、病院等の確定 +- <input type="checkbox" disabled> 機関長等の推薦可否確認 +- <input type="checkbox" disabled> 財団所定の申請書様式の入手 +- <input type="checkbox" disabled> 開催趣旨、対象分野、参加対象者の整理 +- <input type="checkbox" disabled> 登壇候補者、座長、共催・後援候補の一覧 +- <input type="checkbox" disabled> 会場、開催日、開催形式の仮押さえ +- <input type="checkbox" disabled> 助成対象経費のみで構成した予算書 +- <input type="checkbox" disabled> esse-senseの役割を明記した共同運営説明書 +- <input type="checkbox" disabled> 成果報告・収支報告の提出体制 + +## 7. 推奨アクション（3-5点） +1. 営利法人単独ではなく、生命科学領域の大学・研究機関を主催兼申請主体に設定し、esse-senseは共同運営・成果発信担当として整理する。 +2. 財団趣旨に合わせ、テーマを「疾病の予防と治療に関する自然科学」に寄せ、メディア事業やDX支援は手段として記載する。 +3. articles 154件、general_articles 34件のDBを、登壇者選定、論点整理、参加者マッチングに使う具体的な方法として示す。 +4. 研究会後3カ月以内に提出する成果報告を前提に、開催報告、収支、参加者分析、共同研究候補の作成担当を事前に決める。 +5. 国際交流助成への展開は次段階とし、まず国内研究会で論点とネットワークを形成し、esse-sense Future Forumで国際発信する導線を設計する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md</p>
+<p>apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md diff --git a/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md b/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md new file mode 100644 index 0000000000000000000000000000000000000000..8ab5c1ab8a5a4083ff865e07a5e366f6aeb61978 --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md @@ -0,0 +1,48 @@ +# 興和生命科学振興財団 国際交流助成・研究会等援助 申請書ドラフト（esse-sense向け） +<strong>締切</strong>: 2026-09-01 | <strong>上限</strong>: — + +## 1. 申請者情報（300字・数値組込） +esse-senseは、研究者の知を社会に届けることを目的に、研究成果の編集、記事化、データベース化、産学連携支援を行う株式会社である。自社媒体ではarticles 154件、general_articles 34件を蓄積し、学際研究、社会課題、共同研究ニーズを横断的に整理してきた。営利法人であるため、本助成では国内大学、研究所、病院等を申請・推薦主体とし、esse-senseは企画、広報、記録、成果発信、参加者データ分析を担う共同運営者とする。 + +## 2. 助成金概要・応募要件（200字・地の文） +興和生命科学振興財団の研究会・研修会等援助は、人類の疾病の予防と治療に関する自然科学分野の国内研究会、研修会等を支援する制度である。令和8年度は2026年9月1日から9月30日まで受付予定で、推薦者は大学、研究所、病院等の機関長等に限られる。国際交流助成は海外学会等での発表や短期留学が対象のため、本件は国内シンポジウムとして設計する。 + +## 3. 申請テーマ案（A推奨/B代替・各150字） +<strong>A推奨: 生命科学研究の社会実装を加速する学際シンポジウム</strong> +疾患予防、治療、セルフケア、医療DXに関わる研究者、大学発スタートアップ、企業、医療現場を接続し、研究成果を社会実装へ進める公開型シンポジウムを開催する。 + +<strong>B代替: AI時代の疾病予防・治療研究と産学連携研究会</strong> +生命科学研究におけるAI、データ活用、大学DXの実践例を共有し、研究者と企業が共同研究テーマを形成する小規模研究会を実施する。 + +## 4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字） +<strong>背景目的</strong> +疾病の予防と治療に関する自然科学研究は、基礎研究、臨床研究、データサイエンス、セルフケア、医療機器・創薬の接点で広がっている。一方で、研究成果が専門領域内に留まり、異分野の研究者、企業、医療現場へ届きにくいことが、共同研究形成や社会実装の遅れにつながっている。esse-senseはarticles 154件、general_articles 34件の研究記事DBを通じて、研究テーマを社会課題や産業ニーズと結びつける編集・発信基盤を整えてきた。本研究会は、生命科学研究の知見を横断的に共有し、疾病予防・治療に資する共同研究、大学発スタートアップ支援、国際発信へ接続する場を形成する。 + +<strong>方法</strong> +国内大学または研究機関を主催・申請主体とし、esse-senseは企画設計、登壇者調整、広報、当日運営、記録、成果発信を担う。研究会は半日から1日の公開型シンポジウムとし、基調講演、研究発表、産学連携セッション、大学発スタートアップ事例、総合討論を組み合わせる。対象は疾病予防・治療、医療データ、AI、セルフケア、臨床応用に関連する自然科学研究とし、研究者、医療関係者、企業R&D担当、大学URAの参加を募る。esse-senseの学際DBで関連研究者・テーマを抽出し、事前アンケートで関心領域と連携希望を把握する。 + +<strong>成果</strong> +本研究会により、疾病予防・治療に関する研究成果を専門領域外へ開き、研究者間および産学間の連携候補を可視化する。成果として、開催報告、登壇要旨、参加者分析、共同研究候補、社会実装上の課題整理を作成し、財団への成果報告に加えてesse-sense媒体で発信する。将来的にはesse-sense Future Forumと連動し、国際交流・国際共同研究へ展開する。 + +## 5. スケジュールと予算（年次別） +<strong>2026年度</strong>は、7月から8月に主催研究機関、推薦者、登壇候補、会場候補を確定し、9月1日までに申請書、推薦書、開催趣旨、予算書を整える。採択後の11月から12月に参加募集、広報、事前アンケートを行い、2027年1月から3月に研究会を開催する。開催後3カ月以内に成果報告書、収支報告、公開記事を作成する。予算は、会場費、配信・記録費、登壇者旅費・謝金、資料作成費、広報費に配分し、間接経費や法人の一般管理費は計上しない。 + +## 6. 提出物チェックリスト（チェックボックス） +- <input type="checkbox" disabled> 主催・申請主体となる大学、研究所、病院等の確定 +- <input type="checkbox" disabled> 機関長等の推薦可否確認 +- <input type="checkbox" disabled> 財団所定の申請書様式の入手 +- <input type="checkbox" disabled> 開催趣旨、対象分野、参加対象者の整理 +- <input type="checkbox" disabled> 登壇候補者、座長候補の一覧 +- <input type="checkbox" disabled> 会場、開催日、開催形式の仮押さえ +- <input type="checkbox" disabled> 助成対象経費のみで構成した予算書 +- <input type="checkbox" disabled> esse-senseの共同運営説明書 +- <input type="checkbox" disabled> 成果報告・収支報告の提出体制 + +## 7. 推奨アクション（3-5点） +1. 生命科学領域の大学・研究機関を主催兼申請主体に設定し、esse-senseは共同運営・成果発信担当とする。 +2. 財団趣旨に合わせ、テーマを「疾病の予防と治療に関する自然科学」に寄せ、メディア事業やDX支援は手段として記載する。 +3. articles 154件、general_articles 34件のDBを、登壇者選定、論点整理、参加者マッチングに使う具体的な方法として示す。 +4. 研究会後3カ月以内の成果報告を前提に、開催報告、収支、参加者分析の担当を決める。 +5. 国際交流助成への展開は次段階とし、まず国内研究会で論点とネットワークを形成し、esse-sense Future Forumで国際発信する導線を設計する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md</p>
+<p>diff --git a/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md b/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md new file mode 100644 index 0000000000000000000000000000000000000000..8ab5c1ab8a5a4083ff865e07a5e366f6aeb61978 --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md @@ -0,0 +1,48 @@ +# 興和生命科学振興財団 国際交流助成・研究会等援助 申請書ドラフト（esse-sense向け） +<strong>締切</strong>: 2026-09-01 | <strong>上限</strong>: — + +## 1. 申請者情報（300字・数値組込） +esse-senseは、研究者の知を社会に届けることを目的に、研究成果の編集、記事化、データベース化、産学連携支援を行う株式会社である。自社媒体ではarticles 154件、general_articles 34件を蓄積し、学際研究、社会課題、共同研究ニーズを横断的に整理してきた。営利法人であるため、本助成では国内大学、研究所、病院等を申請・推薦主体とし、esse-senseは企画、広報、記録、成果発信、参加者データ分析を担う共同運営者とする。 + +## 2. 助成金概要・応募要件（200字・地の文） +興和生命科学振興財団の研究会・研修会等援助は、人類の疾病の予防と治療に関する自然科学分野の国内研究会、研修会等を支援する制度である。令和8年度は2026年9月1日から9月30日まで受付予定で、推薦者は大学、研究所、病院等の機関長等に限られる。国際交流助成は海外学会等での発表や短期留学が対象のため、本件は国内シンポジウムとして設計する。 + +## 3. 申請テーマ案（A推奨/B代替・各150字） +<strong>A推奨: 生命科学研究の社会実装を加速する学際シンポジウム</strong> +疾患予防、治療、セルフケア、医療DXに関わる研究者、大学発スタートアップ、企業、医療現場を接続し、研究成果を社会実装へ進める公開型シンポジウムを開催する。 + +<strong>B代替: AI時代の疾病予防・治療研究と産学連携研究会</strong> +生命科学研究におけるAI、データ活用、大学DXの実践例を共有し、研究者と企業が共同研究テーマを形成する小規模研究会を実施する。 + +## 4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字） +<strong>背景目的</strong> +疾病の予防と治療に関する自然科学研究は、基礎研究、臨床研究、データサイエンス、セルフケア、医療機器・創薬の接点で広がっている。一方で、研究成果が専門領域内に留まり、異分野の研究者、企業、医療現場へ届きにくいことが、共同研究形成や社会実装の遅れにつながっている。esse-senseはarticles 154件、general_articles 34件の研究記事DBを通じて、研究テーマを社会課題や産業ニーズと結びつける編集・発信基盤を整えてきた。本研究会は、生命科学研究の知見を横断的に共有し、疾病予防・治療に資する共同研究、大学発スタートアップ支援、国際発信へ接続する場を形成する。 + +<strong>方法</strong> +国内大学または研究機関を主催・申請主体とし、esse-senseは企画設計、登壇者調整、広報、当日運営、記録、成果発信を担う。研究会は半日から1日の公開型シンポジウムとし、基調講演、研究発表、産学連携セッション、大学発スタートアップ事例、総合討論を組み合わせる。対象は疾病予防・治療、医療データ、AI、セルフケア、臨床応用に関連する自然科学研究とし、研究者、医療関係者、企業R&D担当、大学URAの参加を募る。esse-senseの学際DBで関連研究者・テーマを抽出し、事前アンケートで関心領域と連携希望を把握する。 + +<strong>成果</strong> +本研究会により、疾病予防・治療に関する研究成果を専門領域外へ開き、研究者間および産学間の連携候補を可視化する。成果として、開催報告、登壇要旨、参加者分析、共同研究候補、社会実装上の課題整理を作成し、財団への成果報告に加えてesse-sense媒体で発信する。将来的にはesse-sense Future Forumと連動し、国際交流・国際共同研究へ展開する。 + +## 5. スケジュールと予算（年次別） +<strong>2026年度</strong>は、7月から8月に主催研究機関、推薦者、登壇候補、会場候補を確定し、9月1日までに申請書、推薦書、開催趣旨、予算書を整える。採択後の11月から12月に参加募集、広報、事前アンケートを行い、2027年1月から3月に研究会を開催する。開催後3カ月以内に成果報告書、収支報告、公開記事を作成する。予算は、会場費、配信・記録費、登壇者旅費・謝金、資料作成費、広報費に配分し、間接経費や法人の一般管理費は計上しない。 + +## 6. 提出物チェックリスト（チェックボックス） +- <input type="checkbox" disabled> 主催・申請主体となる大学、研究所、病院等の確定 +- <input type="checkbox" disabled> 機関長等の推薦可否確認 +- <input type="checkbox" disabled> 財団所定の申請書様式の入手 +- <input type="checkbox" disabled> 開催趣旨、対象分野、参加対象者の整理 +- <input type="checkbox" disabled> 登壇候補者、座長候補の一覧 +- <input type="checkbox" disabled> 会場、開催日、開催形式の仮押さえ +- <input type="checkbox" disabled> 助成対象経費のみで構成した予算書 +- <input type="checkbox" disabled> esse-senseの共同運営説明書 +- <input type="checkbox" disabled> 成果報告・収支報告の提出体制 + +## 7. 推奨アクション（3-5点） +1. 生命科学領域の大学・研究機関を主催兼申請主体に設定し、esse-senseは共同運営・成果発信担当とする。 +2. 財団趣旨に合わせ、テーマを「疾病の予防と治療に関する自然科学」に寄せ、メディア事業やDX支援は手段として記載する。 +3. articles 154件、general_articles 34件のDBを、登壇者選定、論点整理、参加者マッチングに使う具体的な方法として示す。 +4. 研究会後3カ月以内の成果報告を前提に、開催報告、収支、参加者分析の担当を決める。 +5. 国際交流助成への展開は次段階とし、まず国内研究会で論点とネットワークを形成し、esse-sense Future Forumで国際発信する導線を設計する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md</p>
+<p>exec /bin/bash -lc "wc -m 'drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md' && sed -n '1,220p' 'drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md'" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms:     2492 drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md</p>
+<h1>興和生命科学振興財団 国際交流助成・研究会等援助 申請書ドラフト（esse-sense向け）</h1>
+<p><strong>締切</strong>: 2026-09-01 | <strong>上限</strong>: —</p>
+<h2>1. 申請者情報（300字・数値組込）</h2>
+<p>esse-senseは、研究者の知を社会に届けることを目的に、研究成果の編集、記事化、データベース化、産学連携支援を行う株式会社である。自社媒体ではarticles 154件、general_articles 34件を蓄積し、学際研究、社会課題、共同研究ニーズを横断的に整理してきた。営利法人であるため、本助成では国内大学、研究所、病院等を申請・推薦主体とし、esse-senseは企画、広報、記録、成果発信、参加者データ分析を担う共同運営者とする。</p>
+<h2>2. 助成金概要・応募要件（200字・地の文）</h2>
+<p>興和生命科学振興財団の研究会・研修会等援助は、人類の疾病の予防と治療に関する自然科学分野の国内研究会、研修会等を支援する制度である。令和8年度は2026年9月1日から9月30日まで受付予定で、推薦者は大学、研究所、病院等の機関長等に限られる。国際交流助成は海外学会等での発表や短期留学が対象のため、本件は国内シンポジウムとして設計する。</p>
+<h2>3. 申請テーマ案（A推奨/B代替・各150字）</h2>
+<p><strong>A推奨: 生命科学研究の社会実装を加速する学際シンポジウム</strong> 疾患予防、治療、セルフケア、医療DXに関わる研究者、大学発スタートアップ、企業、医療現場を接続し、研究成果を社会実装へ進める公開型シンポジウムを開催する。</p>
+<p><strong>B代替: AI時代の疾病予防・治療研究と産学連携研究会</strong> 生命科学研究におけるAI、データ活用、大学DXの実践例を共有し、研究者と企業が共同研究テーマを形成する小規模研究会を実施する。</p>
+<h2>4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字）</h2>
+<p><strong>背景目的</strong> 疾病の予防と治療に関する自然科学研究は、基礎研究、臨床研究、データサイエンス、セルフケア、医療機器・創薬の接点で広がっている。一方で、研究成果が専門領域内に留まり、異分野の研究者、企業、医療現場へ届きにくいことが、共同研究形成や社会実装の遅れにつながっている。esse-senseはarticles 154件、general_articles 34件の研究記事DBを通じて、研究テーマを社会課題や産業ニーズと結びつける編集・発信基盤を整えてきた。本研究会は、生命科学研究の知見を横断的に共有し、疾病予防・治療に資する共同研究、大学発スタートアップ支援、国際発信へ接続する場を形成する。</p>
+<p><strong>方法</strong> 国内大学または研究機関を主催・申請主体とし、esse-senseは企画設計、登壇者調整、広報、当日運営、記録、成果発信を担う。研究会は半日から1日の公開型シンポジウムとし、基調講演、研究発表、産学連携セッション、大学発スタートアップ事例、総合討論を組み合わせる。対象は疾病予防・治療、医療データ、AI、セルフケア、臨床応用に関連する自然科学研究とし、研究者、医療関係者、企業R&D担当、大学URAの参加を募る。esse-senseの学際DBで関連研究者・テーマを抽出し、事前アンケートで関心領域と連携希望を把握する。</p>
+<p><strong>成果</strong> 本研究会により、疾病予防・治療に関する研究成果を専門領域外へ開き、研究者間および産学間の連携候補を可視化する。成果として、開催報告、登壇要旨、参加者分析、共同研究候補、社会実装上の課題整理を作成し、財団への成果報告に加えてesse-sense媒体で発信する。将来的にはesse-sense Future Forumと連動し、国際交流・国際共同研究へ展開する。</p>
+<h2>5. スケジュールと予算（年次別）</h2>
+<p><strong>2026年度</strong>は、7月から8月に主催研究機関、推薦者、登壇候補、会場候補を確定し、9月1日までに申請書、推薦書、開催趣旨、予算書を整える。採択後の11月から12月に参加募集、広報、事前アンケートを行い、2027年1月から3月に研究会を開催する。開催後3カ月以内に成果報告書、収支報告、公開記事を作成する。予算は、会場費、配信・記録費、登壇者旅費・謝金、資料作成費、広報費に配分し、間接経費や法人の一般管理費は計上しない。</p>
+<h2>6. 提出物チェックリスト（チェックボックス）</h2>
+<ul>
+<li><input type="checkbox" disabled> 主催・申請主体となる大学、研究所、病院等の確定</li>
+<li><input type="checkbox" disabled> 機関長等の推薦可否確認</li>
+<li><input type="checkbox" disabled> 財団所定の申請書様式の入手</li>
+<li><input type="checkbox" disabled> 開催趣旨、対象分野、参加対象者の整理</li>
+<li><input type="checkbox" disabled> 登壇候補者、座長候補の一覧</li>
+<li><input type="checkbox" disabled> 会場、開催日、開催形式の仮押さえ</li>
+<li><input type="checkbox" disabled> 助成対象経費のみで構成した予算書</li>
+<li><input type="checkbox" disabled> esse-senseの共同運営説明書</li>
+<li><input type="checkbox" disabled> 成果報告・収支報告の提出体制</li>
+</ul>
+<h2>7. 推奨アクション（3-5点）</h2>
+<ol>
+<li>生命科学領域の大学・研究機関を主催兼申請主体に設定し、esse-senseは共同運営・成果発信担当とする。</li>
+<li>財団趣旨に合わせ、テーマを「疾病の予防と治療に関する自然科学」に寄せ、メディア事業やDX支援は手段として記載する。</li>
+<li>articles 154件、general_articles 34件のDBを、登壇者選定、論点整理、参加者マッチングに使う具体的な方法として示す。</li>
+<li>研究会後3カ月以内の成果報告を前提に、開催報告、収支、参加者分析の担当を決める。</li>
+<li>国際交流助成への展開は次段階とし、まず国内研究会で論点とネットワークを形成し、esse-sense Future Forumで国際発信する導線を設計する。</li>
+</ol>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

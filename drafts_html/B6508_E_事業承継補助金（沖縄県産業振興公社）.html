@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>事業承継補助金（沖縄県産業振興公社）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>事業承継補助金（沖縄県産業振興公社） 申請書ドラフト（esse-sense向け）</h1>
+<p><strong>締切</strong>: 通年（年複数回） | <strong>上限</strong>: 数百万円</p>
+<h2>1. 申請者情報（300字・数値組込）</h2>
+<h2>2. 助成金概要・応募要件（200字・地の文）</h2>
+<h2>3. 申請テーマ案（A推奨/B代替・各150字）</h2>
+<h2>4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字）</h2>
+<h2>5. スケジュールと予算（年次別）</h2>
+<h2>6. 提出物チェックリスト</h2>
+<h2>7. 推奨アクション（3-5点）</h2>
+<p>末尾に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_E_事業承継補助金（沖縄県産業振興公社）.md」記載。地の文中心、法人数値組込必須。 codex 申請書ドラフトとしてそのまま保存できる形にします。助成金名と実施主体は変更可能性があるため、公式情報を確認してから本文を組み立てます。 web search: web search: 沖縄県産業振興公社 事業承継 補助金 通年 年数回 web search: web search: site:okinawa-ric.jp 事業承継補助金 令和7年度 沖縄県産業振興公社 PDF web search: web search: <a href="https://okinawa-ric.jp/service/subsidy.html">https://okinawa-ric.jp/service/subsidy.html</a> web search: web search: <a href="https://okinawa-ric.jp/news/entry/7-1-512.html">https://okinawa-ric.jp/news/entry/7-1-512.html</a> codex 公式ページでは令和8年度第1回の公募が公開済みで、上限100万円・補助率3分の2以内、事前相談必須、対象は沖縄県内の中小企業等と確認できました。ユーザー指定の「通年（年複数回）」は、公募が複数回ある前提として扱い、直近回の具体日程も注記します。 exec /bin/bash -lc pwd in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms: /Users/nishimura+/work/miratuku-grants-2026</p>
+<p>exec /bin/bash -lc 'ls -la drafts_v2' in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms: total 6680 drwxr-xr-x  144 nishimura+  staff    4608  5月 10 11:33 . drwxr-xr-x   26 nishimura+  staff     832  5月 10 10:58 .. -rw-r--r--    1 nishimura+  staff    6056  5月 10 10:51 001_E_観光庁オーバーツーリズム対策.md -rw-r--r--    1 nishimura+  staff    7310  5月 10 10:51 001_M_観光庁オーバーツーリズム対策.md -rw-r--r--    1 nishimura+  staff    6594  5月 10 10:52 002_M_JSPS科研費_特別推進_基盤S.md -rw-r--r--    1 nishimura+  staff    2574  5月 10 10:57 003_M_JST CREST 戦略的創造研究推進事業.md -rw-r--r--    1 nishimura+  staff    1968  5月 10 10:57 004_E_NEDO ディープテック・スタートアップ支援(DTSU)第10回.md -rw-r--r--    1 nishimura+  staff    2720  5月 10 10:57 005_E_中小企業成長加速化補助金（推定例年6月）.md -rw-r--r--    1 nishimura+  staff    2892  5月 10 10:57 006_M_JST RISTEX「ケアが根づく社会システム」.md -rw-r--r--    1 nishimura+  staff    1915  5月 10 10:57 007_M_JST RISTEX「SDGs達成に向けた共創的研究開発」.md -rw-r--r--    1 nishimura+  staff    6116  5月 10 10:57 008_E_共創の場形成支援プログラム（COI-NEXT）「未来共創分野」.md -rw-r--r--    1 nishimura+  staff    2197  5月 10 10:57 008_M_共創の場形成支援プログラム（COI-NEXT）「未来共創分野」.md -rw-r--r--    1 nishimura+  staff    2167  5月 10 10:57 010_E_総務省 地域社会DX推進パッケージ事業（二次公募）.md -rw-r--r--    1 nishimura+  staff    2549  5月 10 10:57 010_M_総務省 地域社会DX推進パッケージ事業（二次公募）.md -rw-r--r--    1 nishimura+  staff    2517  5月 10 10:57 012_E_JST ASPIRE 2026 国際共同研究.md -rw-r--r--    1 nishimura+  staff    5061  5月 10 10:57 012_M_JST ASPIRE 2026 国際共同研究.md -rw-r--r--    1 nishimura+  staff    1928  5月 10 10:57 013_M_JSPS 研究成果公開促進費 データベース部門.md -rw-r--r--    1 nishimura+  staff    2973  5月 10 10:57 014_E_京都市 MICE開催支援助成金（大規模国際・上期4月_下期10月）.md -rw-r--r--    1 nishimura+  staff    2175  5月 10 10:57 014_M_京都市 MICE開催支援助成金（大規模国際・上期4月_下期10月）.md -rw-r--r--    1 nishimura+  staff    2131  5月 10 10:57 015_E_経済安全保障重要技術育成プログラム（K Program）.md -rw-r--r--    1 nishimura+  staff    3859  5月 10 10:57 015_M_経済安全保障重要技術育成プログラム（K Program）.md -rw-r--r--    1 nishimura+  staff    3275  5月 10 10:57 016_E_ムーンショット型研究開発事業.md -rw-r--r--    1 nishimura+  staff   15556  5月 10 10:57 016_M_ムーンショット型研究開発事業.md -rw-r--r--    1 nishimura+  staff    1992  5月 10 10:57 017_E_内閣府 SIP第3期（戦略的イノベーション創造）.md -rw-r--r--    1 nishimura+  staff    2505  5月 10 10:57 017_M_内閣府 SIP第3期（戦略的イノベーション創造）.md -rw-r--r--    1 nishimura+  staff    2005  5月 10 10:57 018_E_NEDO グリーンイノベーション基金.md -rw-r--r--    1 nishimura+  staff    2954  5月 10 10:57 018_M_NEDO グリーンイノベーション基金.md -rw-r--r--    1 nishimura+  staff    3542  5月 10 10:57 019_E_JST GteX 革新的GX技術創出（推定例年5-7月）.md -rw-r--r--    1 nishimura+  staff    2085  5月 10 10:57 019_M_JST GteX 革新的GX技術創出（推定例年5-7月）.md -rw-r--r--    1 nishimura+  staff    3719  5月 10 10:57 020_E_JST スタートアップ・エコシステム共創（地域拠点）.md -rw-r--r--    1 nishimura+  staff    2176  5月 10 10:57 021_E_第2期スタートアップ・エコシステム拠点形成戦略（内閣府）.md -rw-r--r--    1 nishimura+  staff    5352  5月 10 10:57 022_M_地域中核大学・特色ある研究大学 総合振興パッケージ（J-PEAKS）.md -rw-r--r--    1 nishimura+  staff    3607  5月 10 10:57 023_E_トヨタ財団 国際助成プログラム.md -rw-r--r--    1 nishimura+  staff    1893  5月 10 10:57 023_M_トヨタ財団 国際助成プログラム.md -rw-r--r--    1 nishimura+  staff    1938  5月 10 10:57 024_M_トヨタ財団 国内助成プログラム（自治型社会）.md -rw-r--r--    1 nishimura+  staff    1851  5月 10 10:57 025_M_住友財団 基礎科学研究助成.md -rw-r--r--    1 nishimura+  staff    3049  5月 10 10:57 026_M_鹿島学術振興財団 特定テーマ研究助成.md -rw-r--r--    1 nishimura+  staff    2429  5月 10 10:57 029_M_トヨタ財団 研究助成「未来の社会システム」.md -rw-r--r--    1 nishimura+  staff    3089  5月 10 10:57 030_E_DNP文化振興財団 グラフィック文化研究助成.md -rw-r--r--    1 nishimura+  staff    3072  5月 10 10:57 030_M_DNP文化振興財団 グラフィック文化研究助成.md -rw-r--r--    1 nishimura+  staff    8271  5月 10 11:24 B3200_M_立石科学技術振興財団 国際交流助成.md -rw-r--r--    1 nishimura+  staff    8552  5月 10 11:24 B3201_E_立石科学技術振興財団 国際交流助成.md -rw-r--r--    1 nishimura+  staff    8049  5月 10 11:24 B3202_M_立石科学技術振興財団 国際会議開催助成.md -rw-r--r--    1 nishimura+  staff    8024  5月 10 11:24 B3203_E_立石科学技術振興財団 国際会議開催助成.md -rw-r--r--    1 nishimura+  staff    8159  5月 10 11:24 B3204_M_清水基金 文化芸術活動特別助成事業.md -rw-r--r--    1 nishimura+  staff    8660  5月 10 11:24 B3205_M_JFE21世紀財団 アジア歴史研究助成.md -rw-r--r--    1 nishimura+  staff    7953  5月 10 11:24 B3206_M_京都市芸術文化協会 伝統芸能文化復元.md -rw-r--r--    1 nishimura+  staff    8078  5月 10 11:24 B3207_M_住友財団 環境研究助成.md -rw-r--r--    1 nishimura+  staff    8191  5月 10 11:24 B3208_E_新事業進出・ものづくり補助金 第4回.md -rw-r--r--    1 nishimura+  staff    8006  5月 10 11:24 B3209_M_丸紅基金 第52回社会福祉助成金.md -rw-r--r--    1 nishimura+  staff    8127  5月 10 11:24 B3210_M_三井住友海上福祉財団 研究助成.md -rw-r--r--    1 nishimura+  staff    8348  5月 10 11:24 B3211_E_三井住友海上福祉財団 研究助成.md -rw-r--r--    1 nishimura+  staff    8256  5月 10 11:24 B3212_E_IMPACT FLOW KYOTO 2025-2026.md -rw-r--r--    1 nishimura+  staff    7927  5月 10 11:24 B3213_E_DX等成長分野リスキリング推進事業.md -rw-r--r--    1 nishimura+  staff    6206  5月 10 11:25 B4_E_セコム科学技術振興財団 学術集会助成.md -rw-r--r--    1 nishimura+  staff    6143  5月 10 11:27 B4_E_テルモ生命科学振興財団 国際交流助成.md -rw-r--r--    1 nishimura+  staff    6189  5月 10 11:26 B4_E_島津科学技術振興財団 研究開発助成（先進情報・データサイエンス）.md -rw-r--r--    1 nishimura+  staff    6005  5月 10 11:26 B4_E_日本食品化学研究振興財団 シンポジウム開催助成.md -rw-r--r--    1 nishimura+  staff    5903  5月 10 11:25 B4_M_JST SICORP EIG CONCERT-Japan AIロボティクス.md -rw-r--r--    1 nishimura+  staff    6170  5月 10 11:25 B4_M_セコム科学技術振興財団 学術集会助成.md -rw-r--r--    1 nishimura+  staff    6120  5月 10 11:25 B4_M_テルモ生命科学振興財団 国際交流助成.md -rw-r--r--    1 nishimura+  staff    6214  5月 10 11:26 B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md -rw-r--r--    1 nishimura+  staff    6231  5月 10 11:25 B4_M_稲盛研究助成「たかめる」.md -rw-r--r--    1 nishimura+  staff    6360  5月 10 11:25 B4_M_稲盛研究助成「はぐくむ」.md -rw-r--r--    1 nishimura+  staff    6228  5月 10 11:25 B4_M_日本食品化学研究振興財団 シンポジウム開催助成.md -rw-r--r--    1 nishimura+  staff   32976  5月 10 11:28 B4300_M_稲盛研究助成「はぐくむ」.md -rw-r--r--    1 nishimura+  staff   32796  5月 10 11:28 B4301_M_日本食品化学研究振興財団 シンポジウム開催助成.md -rw-r--r--    1 nishimura+  staff   23665  5月 10 11:28 B4302_E_日本食品化学研究振興財団 シンポジウム開催助成.md -rw-r--r--    1 nishimura+  staff   26668  5月 10 11:28 B4303_M_セコム科学技術振興財団 学術集会助成.md -rw-r--r--    1 nishimura+  staff   27520  5月 10 11:28 B4304_E_セコム科学技術振興財団 学術集会助成.md -rw-r--r--    1 nishimura+  staff   85787  5月 10 11:28 B4305_E_島津科学技術振興財団 研究開発助成（先進情報・データサイエンス）.md -rw-r--r--    1 nishimura+  staff   25799  5月 10 11:28 B4306_M_稲盛研究助成「たかめる」.md -rw-r--r--    1 nishimura+  staff   35663  5月 10 11:28 B4307_M_テルモ生命科学振興財団 国際交流助成.md -rw-r--r--    1 nishimura+  staff   61759  5月 10 11:28 B4308_E_テルモ生命科学振興財団 国際交流助成.md -rw-r--r--    1 nishimura+  staff   11418  5月 10 11:28 B4309_M_JST SICORP EIG CONCERT-Japan AIロボティクス.md -rw-r--r--    1 nishimura+  staff    7265  5月 10 11:28 B4310_E_JST SICORP EIG CONCERT-Japan AIロボティクス.md -rw-r--r--    1 nishimura+  staff   53254  5月 10 11:28 B4311_M_パナソニック NPO_NGOサポートファンド for SDGs.md -rw-r--r--    1 nishimura+  staff    6083  5月 10 11:31 B5_E_JST A-STEP 産学共同（秋募集・推定）.md -rw-r--r--    1 nishimura+  staff    6283  5月 10 11:30 B5_E_ものづくり補助金 19次（経産省）.md -rw-r--r--    1 nishimura+  staff    6160  5月 10 11:32 B5_E_加藤記念バイオサイエンス振興財団 国際交流助成.md -rw-r--r--    1 nishimura+  staff    6160  5月 10 11:31 B5_E_観光庁 ICTサービス利活用促進事業.md -rw-r--r--    1 nishimura+  staff    6248  5月 10 11:31 B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md -rw-r--r--    1 nishimura+  staff    6339  5月 10 11:30 B5_E_住友財団 アジア諸国における日本関連研究助成.md -rw-r--r--    1 nishimura+  staff    6463  5月 10 11:30 B5_M_JSPS 学術図書出版補助金.md -rw-r--r--    1 nishimura+  staff    6478  5月 10 11:31 B5_M_JSPS 国際共同研究加速基金（強化B）.md -rw-r--r--    1 nishimura+  staff    6526  5月 10 11:31 B5_M_JSPS 二国間交流事業.md -rw-r--r--    1 nishimura+  staff    6458  5月 10 11:29 B5_M_ものづくり補助金 19次（経産省）.md -rw-r--r--    1 nishimura+  staff    6535  5月 10 11:31 B5_M_加藤記念バイオサイエンス振興財団 研究助成.md -rw-r--r--    1 nishimura+  staff    6497  5月 10 11:30 B5_M_加藤記念バイオサイエンス振興財団 国際交流助成.md -rw-r--r--    1 nishimura+  staff    6280  5月 10 11:29 B5_M_観光庁 ICTサービス利活用促進事業.md -rw-r--r--    1 nishimura+  staff    6424  5月 10 11:32 B5_M_興和生命科学振興財団 国際交流助成・研究会等援助.md -rw-r--r--    1 nishimura+  staff    6553  5月 10 11:31 B5_M_住友財団 アジア諸国における日本関連研究助成.md -rw-r--r--    1 nishimura+  staff    6433  5月 10 11:31 B5_M_電気通信普及財団 研究調査助成.md -rw-r--r--    1 nishimura+  staff    6370  5月 10 11:29 B5_M_放送文化基金 放送文化関連研究開発助成.md -rw-r--r--    1 nishimura+  staff    6509  5月 10 11:31 B5_M_立石科学技術振興財団 研究助成(S).md -rw-r--r--    1 nishimura+  staff   29885  5月 10 11:33 B5400_M_加藤記念バイオサイエンス振興財団 国際交流助成.md -rw-r--r--    1 nishimura+  staff   25620  5月 10 11:33 B5401_E_加藤記念バイオサイエンス振興財団 国際交流助成.md -rw-r--r--    1 nishimura+  staff   42421  5月 10 11:33 B5402_M_住友財団 アジア諸国における日本関連研究助成.md -rw-r--r--    1 nishimura+  staff   35912  5月 10 11:33 B5403_E_住友財団 アジア諸国における日本関連研究助成.md -rw-r--r--    1 nishimura+  staff   48681  5月 10 11:33 B5404_M_興和生命科学振興財団 国際交流助成・研究会等援助.md -rw-r--r--    1 nishimura+  staff   67618  5月 10 11:33 B5405_E_興和生命科学振興財団 国際交流助成・研究会等援助.md -rw-r--r--    1 nishimura+  staff   24631  5月 10 11:33 B5406_M_電気通信普及財団 研究調査助成.md -rw-r--r--    1 nishimura+  staff   28770  5月 10 11:33 B5407_M_放送文化基金 放送文化関連研究開発助成.md -rw-r--r--    1 nishimura+  staff   26303  5月 10 11:33 B5408_M_立石科学技術振興財団 研究助成(S).md -rw-r--r--    1 nishimura+  staff   35276  5月 10 11:33 B5409_M_ものづくり補助金 19次（経産省）.md -rw-r--r--    1 nishimura+  staff   22821  5月 10 11:33 B5410_E_ものづくり補助金 19次（経産省）.md -rw-r--r--    1 nishimura+  staff    4256  5月 10 11:33 B5411_M_加藤記念バイオサイエンス振興財団 研究助成.md -rw-r--r--    1 nishimura+  staff   28239  5月 10 11:33 B5412_M_観光庁 ICTサービス利活用促進事業.md -rw-r--r--    1 nishimura+  staff   17501  5月 10 11:33 B5413_E_観光庁 ICTサービス利活用促進事業.md -rw-r--r--    1 nishimura+  staff   13961  5月 10 11:33 B5414_M_JSPS 国際共同研究加速基金（強化B）.md -rw-r--r--    1 nishimura+  staff   66186  5月 10 11:33 B5415_M_JSPS 二国間交流事業.md -rw-r--r--    1 nishimura+  staff   40150  5月 10 11:33 B5416_E_JST A-STEP 産学共同（秋募集・推定）.md -rw-r--r--    1 nishimura+  staff   35863  5月 10 11:33 B5417_M_JSPS 学術図書出版補助金.md -rw-r--r--    1 nishimura+  staff   20010  5月 10 11:20 N100_M_京都府 文化力チャレンジ補助金.md -rw-r--r--    1 nishimura+  staff   19189  5月 10 11:20 N101_E_デジタル化・AI導入補助金 2026 セキュリティ枠.md -rw-r--r--    1 nishimura+  staff   19818  5月 10 11:20 N102_M_JST 創発的研究支援事業.md -rw-r--r--    1 nishimura+  staff  102810  5月 10 11:20 N103_E_京都エコノミック・ガーデニング支援.md -rw-r--r--    1 nishimura+  staff   18245  5月 10 11:20 N104_M_サステナブルツーリズム推進事業（沖縄）.md -rw-r--r--    1 nishimura+  staff   46777  5月 10 11:20 N105_E_中小企業省力化投資補助金 一般型 第6回.md -rw-r--r--    1 nishimura+  staff   43633  5月 10 11:20 N106_M_大同生命厚生事業団 地域保健福祉研究助成.md -rw-r--r--    1 nishimura+  staff   28269  5月 10 11:20 N107_M_NEDO 数理科学分野×産学連携の調査.md -rw-r--r--    1 nishimura+  staff   17908  5月 10 11:20 N108_E_NEDO 数理科学分野×産学連携の調査.md -rw-r--r--    1 nishimura+  staff   19786  5月 10 11:20 N109_M_ロッテ財団 実装型共同研究助成.md -rw-r--r--    1 nishimura+  staff   48240  5月 10 11:20 N110_E_ロッテ財団 実装型共同研究助成.md -rw-r--r--    1 nishimura+  staff   69473  5月 10 11:20 N111_E_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md -rw-r--r--    1 nishimura+  staff   18697  5月 10 11:20 N112_M_京都産学公の森推進事業.md -rw-r--r--    1 nishimura+  staff   30121  5月 10 11:20 N113_E_京都産学公の森推進事業.md -rw-r--r--    1 nishimura+  staff   73185  5月 10 11:20 N114_M_JST さきがけ／ACT-X 2026年度.md -rw-r--r--    1 nishimura+  staff   19762  5月 10 11:20 N115_M_松下幸之助記念志財団 出版助成.md -rw-r--r--    1 nishimura+  staff   42187  5月 10 11:20 N116_M_内藤記念国際会議開催助成金.md -rw-r--r--    1 nishimura+  staff   19555  5月 10 11:20 N117_E_内藤記念国際会議開催助成金.md -rw-r--r--    1 nishimura+  staff   18567  5月 10 11:20 N118_M_住友電工グループ社会貢献基金 学術研究助成.md -rw-r--r--    1 nishimura+  staff  131069  5月 10 11:20 N119_E_京都市デジタル化推進プロジェクト.md -rw-r--r--    1 nishimura+  staff   78090  5月 10 11:20 N120_E_事業承継・M&A補助金.md -rw-r--r--    1 nishimura+  staff   55710  5月 10 11:20 N121_M_観光庁 オーバーツーリズム対策面的整備（令和8年度）.md -rw-r--r--    1 nishimura+  staff  258406  5月 10 11:20 N122_E_観光庁 オーバーツーリズム対策面的整備（令和8年度）.md -rw-r--r--    1 nishimura+  staff  136410  5月 10 11:20 N123_M_DX推進補助事業（沖縄DX促進）.md -rw-r--r--    1 nishimura+  staff   18311  5月 10 11:20 N124_E_DX推進補助事業（沖縄DX促進）.md -rw-r--r--    1 nishimura+  staff   19313  5月 10 11:20 N125_M_JST CREST「エクスポソーム」.md -rw-r--r--    1 nishimura+  staff   44225  5月 10 11:20 N126_M_京都市 Arts Aid KYOTO.md -rw-r--r--    1 nishimura+  staff   40849  5月 10 11:20 N127_M_コミュニティ活動促進事業（沖縄）.md -rw-r--r--    1 nishimura+  staff   67670  5月 10 11:20 N128_E_JETRO J-StarX（海外起業家育成）.md -rw-r--r--    1 nishimura+  staff  172931  5月 10 11:20 N129_M_中国電力技術研究財団 国際会議等開催助成.md -rw-r--r--    1 nishimura+  staff   20040  5月 10 11:20 N130_E_中国電力技術研究財団 国際会議等開催助成.md</p>
+<p>codex これから <code>drafts_v2</code> に指定名のMarkdownを追加します。本文は1,500-2,500字範囲に収め、esse-senseの既存数値と沖縄県内要件への適合条件を明確に分けます。 apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_E_事業承継補助金（沖縄県産業振興公社）.md diff --git a/miratuku-grants-2026/drafts_v2/B6_E_事業承継補助金（沖縄県産業振興公社）.md b/miratuku-grants-2026/drafts_v2/B6_E_事業承継補助金（沖縄県産業振興公社）.md new file mode 100644 index 0000000000000000000000000000000000000000..bb0decdb3a34bfba675a95ee73bc19526b24251e --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B6_E_事業承継補助金（沖縄県産業振興公社）.md @@ -0,0 +1,40 @@ +# 事業承継補助金（沖縄県産業振興公社） 申請書ドラフト（esse-sense向け） +<strong>締切</strong>: 通年（年複数回） | <strong>上限</strong>: 数百万円 + +## 1. 申請者情報（300字・数値組込） +esse-senseは、研究者の知を社会に届けるメディア事業を中核とする株式会社である。自社で蓄積する記事DBはarticles 154件、general_articles 34件の計188件に達し、学際的な研究成果、産学連携、大学発スタートアップ、大学DXに関する知見を整理・発信してきた。今後は、創業者・現経営体制に属人化しやすい編集判断、研究者ネットワーク、AI活用ノウハウ、イベント運営知を形式知化し、沖縄県内拠点または県内連携先との事業承継・第二創業体制を整えることで、地域企業・大学・後継者候補に対する知識流通基盤を継続的に提供する。 + +## 2. 助成金概要・応募要件（200字・地の文） +本補助金は、沖縄県内の中小企業・小規模事業者等が親族内承継、従業員承継、第三者承継、または承継を契機とする経営高度化を進める際に必要な委託費、外注費、専門家活用費等を支援する制度である。令和8年度第1回公募では上限100万円、補助率3分の2以内、事前相談必須とされている。esse-senseが申請する場合は、沖縄県内での事業実施主体、雇用要件、承継対象業務、県内産業への波及効果を申請前に確認する必要がある。 + +## 3. 申請テーマ案（A推奨/B代替・各150字） +A推奨は「沖縄発・研究知メディア承継DX事業」である。記事DB 188件、AI分類、研究者ネットワーク、esse-sense Future Forumの運営知を承継可能な業務手順とデータ基盤に整備し、県内大学・企業の知識移転と後継人材育成を支援する。 + +B代替は「県内中小企業向け知識承継コンテンツ事業」である。事業承継に悩む沖縄県内企業の技術、顧客理解、地域固有の経営知を取材・編集・DB化し、後継者教育、採用広報、M&A前後のPMI支援に活用できる有償メディアサービスとして展開する。 + +## 4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字） +沖縄県では中小企業の経営者高齢化、離島を含む人材不足、観光・一次産業・地域サービスの担い手不足が重なり、事業承継の遅れが雇用と地域資源の喪失につながりやすい。一方、承継に必要な知識は財務・法務だけでなく、顧客との関係、技術の背景、地域文化、大学や専門家との接点など、文章化されにくい暗黙知を含む。esse-senseは、研究者の知を社会に届ける編集力、articles 154件とgeneral_articles 34件からなる学際DB、AIを用いた分類・再編集、産学連携支援の経験を有する。本事業では、これらの強みを沖縄県内の承継課題に接続し、事業承継を単なる代表交代ではなく、知識資産を次世代へ渡す第二創業の機会として設計する。 + +実施方法として、第一に、esse-sense内部の編集・取材・AI活用・イベント運営プロセスを棚卸しし、承継対象となる業務、データ、取引先、研究者ネットワークを整理する。第二に、県内大学、産業支援機関、承継予定企業へのヒアリングを行い、承継時に失われやすい知識項目を抽出する。第三に、記事DB 188件を基盤として、沖縄の産業課題、大学発スタートアップ、地域企業DX、後継者教育に関連するタグ体系とAI要約テンプレートを整備する。第四に、esse-sense Future Forumを県内向けの小規模実証版として企画し、研究者、後継者、支援機関、大学発SUをつなぐ対話機会を設ける。補助対象経費は、承継計画策定支援、専門家委託、HP・LP整備、DB設計、広報物制作、実証イベント運営に充当する。 + +成果として、承継可能な業務マニュアル、研究知DBのタグ体系、県内企業向け知識承継サービスの試作版、Future Forum沖縄版の開催実績を形成する。これにより、esse-sense自身の事業継続性を高めるだけでなく、県内中小企業が持つ技術・顧客知・地域知を可視化し、後継者教育、大学連携、新規事業創出へ転換するモデルを提示できる。採択後は、県内事業者との有償案件化を図り、補助終了後も継続する収益基盤を構築する。 + +## 5. スケジュールと予算（年次別） +初年度前半は事前相談、県内要件確認、承継対象業務の棚卸し、専門家との承継計画策定を行う。初年度後半はDBタグ体系、AI要約テンプレート、HP・LP、県内向け実証イベントを整備し、採択年度内に報告書と成果物を提出する。予算は総額150万円を想定し、専門家・コンサル委託60万円、DB・HP外注45万円、広報・記事制作25万円、イベント運営20万円とする。補助率3分の2の場合、補助申請額は100万円、自己負担は50万円を目安とする。 + +## 6. 提出物チェックリスト +- 交付申請書、事業計画書、収支予算書 +- 法人登記、定款、直近決算書、納税証明 +- 県内事業所・雇用要件を確認できる資料 +- 事業承継計画、後継者または承継体制の説明資料 +- 見積書、委託先概要、HP・DB整備仕様書 +- 事前相談記録、反社会的勢力排除等の誓約書 + +## 7. 推奨アクション（3-5点） +- 沖縄県内での申請主体、常時雇用1名以上、承継類型への該当性を公社へ事前確認する。 +- 申請テーマはA推奨を基本とし、esse-sense自身の承継DXと県内企業支援の両方を成果に置く。 +- 記事DB 188件の内訳、AI活用手順、Future Forum実績を別紙で数値化する。 +- 補助対象経費は委託費・外注費中心に整理し、採択前発注を避ける。 +- 県内大学、支援機関、承継予定企業から協力意向書を取得する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_E_事業承継補助金（沖縄県産業振興公社）.md</p>
+<p>diff --git a/miratuku-grants-2026/drafts_v2/B6_E_事業承継補助金（沖縄県産業振興公社）.md b/miratuku-grants-2026/drafts_v2/B6_E_事業承継補助金（沖縄県産業振興公社）.md new file mode 100644 index 0000000000000000000000000000000000000000..bb0decdb3a34bfba675a95ee73bc19526b24251e --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B6_E_事業承継補助金（沖縄県産業振興公社）.md @@ -0,0 +1,40 @@ +# 事業承継補助金（沖縄県産業振興公社） 申請書ドラフト（esse-sense向け） +<strong>締切</strong>: 通年（年複数回） | <strong>上限</strong>: 数百万円 + +## 1. 申請者情報（300字・数値組込） +esse-senseは、研究者の知を社会に届けるメディア事業を中核とする株式会社である。自社で蓄積する記事DBはarticles 154件、general_articles 34件の計188件に達し、学際的な研究成果、産学連携、大学発スタートアップ、大学DXに関する知見を整理・発信してきた。今後は、創業者・現経営体制に属人化しやすい編集判断、研究者ネットワーク、AI活用ノウハウ、イベント運営知を形式知化し、沖縄県内拠点または県内連携先との事業承継・第二創業体制を整えることで、地域企業・大学・後継者候補に対する知識流通基盤を継続的に提供する。 + +## 2. 助成金概要・応募要件（200字・地の文） +本補助金は、沖縄県内の中小企業・小規模事業者等が親族内承継、従業員承継、第三者承継、または承継を契機とする経営高度化を進める際に必要な委託費、外注費、専門家活用費等を支援する制度である。令和8年度第1回公募では上限100万円、補助率3分の2以内、事前相談必須とされている。esse-senseが申請する場合は、沖縄県内での事業実施主体、雇用要件、承継対象業務、県内産業への波及効果を申請前に確認する必要がある。 + +## 3. 申請テーマ案（A推奨/B代替・各150字） +A推奨は「沖縄発・研究知メディア承継DX事業」である。記事DB 188件、AI分類、研究者ネットワーク、esse-sense Future Forumの運営知を承継可能な業務手順とデータ基盤に整備し、県内大学・企業の知識移転と後継人材育成を支援する。 + +B代替は「県内中小企業向け知識承継コンテンツ事業」である。事業承継に悩む沖縄県内企業の技術、顧客理解、地域固有の経営知を取材・編集・DB化し、後継者教育、採用広報、M&A前後のPMI支援に活用できる有償メディアサービスとして展開する。 + +## 4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字） +沖縄県では中小企業の経営者高齢化、離島を含む人材不足、観光・一次産業・地域サービスの担い手不足が重なり、事業承継の遅れが雇用と地域資源の喪失につながりやすい。一方、承継に必要な知識は財務・法務だけでなく、顧客との関係、技術の背景、地域文化、大学や専門家との接点など、文章化されにくい暗黙知を含む。esse-senseは、研究者の知を社会に届ける編集力、articles 154件とgeneral_articles 34件からなる学際DB、AIを用いた分類・再編集、産学連携支援の経験を有する。本事業では、これらの強みを沖縄県内の承継課題に接続し、事業承継を単なる代表交代ではなく、知識資産を次世代へ渡す第二創業の機会として設計する。 + +実施方法として、第一に、esse-sense内部の編集・取材・AI活用・イベント運営プロセスを棚卸しし、承継対象となる業務、データ、取引先、研究者ネットワークを整理する。第二に、県内大学、産業支援機関、承継予定企業へのヒアリングを行い、承継時に失われやすい知識項目を抽出する。第三に、記事DB 188件を基盤として、沖縄の産業課題、大学発スタートアップ、地域企業DX、後継者教育に関連するタグ体系とAI要約テンプレートを整備する。第四に、esse-sense Future Forumを県内向けの小規模実証版として企画し、研究者、後継者、支援機関、大学発SUをつなぐ対話機会を設ける。補助対象経費は、承継計画策定支援、専門家委託、HP・LP整備、DB設計、広報物制作、実証イベント運営に充当する。 + +成果として、承継可能な業務マニュアル、研究知DBのタグ体系、県内企業向け知識承継サービスの試作版、Future Forum沖縄版の開催実績を形成する。これにより、esse-sense自身の事業継続性を高めるだけでなく、県内中小企業が持つ技術・顧客知・地域知を可視化し、後継者教育、大学連携、新規事業創出へ転換するモデルを提示できる。採択後は、県内事業者との有償案件化を図り、補助終了後も継続する収益基盤を構築する。 + +## 5. スケジュールと予算（年次別） +初年度前半は事前相談、県内要件確認、承継対象業務の棚卸し、専門家との承継計画策定を行う。初年度後半はDBタグ体系、AI要約テンプレート、HP・LP、県内向け実証イベントを整備し、採択年度内に報告書と成果物を提出する。予算は総額150万円を想定し、専門家・コンサル委託60万円、DB・HP外注45万円、広報・記事制作25万円、イベント運営20万円とする。補助率3分の2の場合、補助申請額は100万円、自己負担は50万円を目安とする。 + +## 6. 提出物チェックリスト +- 交付申請書、事業計画書、収支予算書 +- 法人登記、定款、直近決算書、納税証明 +- 県内事業所・雇用要件を確認できる資料 +- 事業承継計画、後継者または承継体制の説明資料 +- 見積書、委託先概要、HP・DB整備仕様書 +- 事前相談記録、反社会的勢力排除等の誓約書 + +## 7. 推奨アクション（3-5点） +- 沖縄県内での申請主体、常時雇用1名以上、承継類型への該当性を公社へ事前確認する。 +- 申請テーマはA推奨を基本とし、esse-sense自身の承継DXと県内企業支援の両方を成果に置く。 +- 記事DB 188件の内訳、AI活用手順、Future Forum実績を別紙で数値化する。 +- 補助対象経費は委託費・外注費中心に整理し、採択前発注を避ける。 +- 県内大学、支援機関、承継予定企業から協力意向書を取得する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_E_事業承継補助金（沖縄県産業振興公社）.md</p>
+<p>exec /bin/bash -lc 'wc -m drafts_v2/B6_E_事業承継補助金（沖縄県産業振興公社）.md' in /Users/nishimura+/work/miratuku-grants-2026 exec /bin/bash -lc "sed -n '1,220p' drafts_v2/B6_E_事業承継補助金（沖縄県産業振興公社）.md" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms:</p>
+<h1>事業承継補助金（沖縄県産業振興公社） 申請書ドラフト（esse-sense向け）</h1>
+<p><strong>締切</strong>: 通年（年複数回） | <strong>上限</strong>: 数百万円</p>
+<h2>1. 申請者情報（300字・数値組込）</h2>
+<p>esse-senseは、研究者の知を社会に届けるメディア事業を中核とする株式会社である。自社で蓄積する記事DBはarticles 154件、general_articles 34件の計188件に達し、学際的な研究成果、産学連携、大学発スタートアップ、大学DXに関する知見を整理・発信してきた。今後は、創業者・現経営体制に属人化しやすい編集判断、研究者ネットワーク、AI活用ノウハウ、イベント運営知を形式知化し、沖縄県内拠点または県内連携先との事業承継・第二創業体制を整えることで、地域企業・大学・後継者候補に対する知識流通基盤を継続的に提供する。</p>
+<h2>2. 助成金概要・応募要件（200字・地の文）</h2>
+<p>本補助金は、沖縄県内の中小企業・小規模事業者等が親族内承継、従業員承継、第三者承継、または承継を契機とする経営高度化を進める際に必要な委託費、外注費、専門家活用費等を支援する制度である。令和8年度第1回公募では上限100万円、補助率3分の2以内、事前相談必須とされている。esse-senseが申請する場合は、沖縄県内での事業実施主体、雇用要件、承継対象業務、県内産業への波及効果を申請前に確認する必要がある。</p>
+<h2>3. 申請テーマ案（A推奨/B代替・各150字）</h2>
+<p>A推奨は「沖縄発・研究知メディア承継DX事業」である。記事DB 188件、AI分類、研究者ネットワーク、esse-sense Future Forumの運営知を承継可能な業務手順とデータ基盤に整備し、県内大学・企業の知識移転と後継人材育成を支援する。</p>
+<p>B代替は「県内中小企業向け知識承継コンテンツ事業」である。事業承継に悩む沖縄県内企業の技術、顧客理解、地域固有の経営知を取材・編集・DB化し、後継者教育、採用広報、M&A前後のPMI支援に活用できる有償メディアサービスとして展開する。</p>
+<h2>4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字）</h2>
+<p>沖縄県では中小企業の経営者高齢化、離島を含む人材不足、観光・一次産業・地域サービスの担い手不足が重なり、事業承継の遅れが雇用と地域資源の喪失につながりやすい。一方、承継に必要な知識は財務・法務だけでなく、顧客との関係、技術の背景、地域文化、大学や専門家との接点など、文章化されにくい暗黙知を含む。esse-senseは、研究者の知を社会に届ける編集力、articles 154件とgeneral_articles 34件からなる学際DB、AIを用いた分類・再編集、産学連携支援の経験を有する。本事業では、これらの強みを沖縄県内の承継課題に接続し、事業承継を単なる代表交代ではなく、知識資産を次世代へ渡す第二創業の機会として設計する。</p>
+<p>実施方法として、第一に、esse-sense内部の編集・取材・AI活用・イベント運営プロセスを棚卸しし、承継対象となる業務、データ、取引先、研究者ネットワークを整理する。第二に、県内大学、産業支援機関、承継予定企業へのヒアリングを行い、承継時に失われやすい知識項目を抽出する。第三に、記事DB 188件を基盤として、沖縄の産業課題、大学発スタートアップ、地域企業DX、後継者教育に関連するタグ体系とAI要約テンプレートを整備する。第四に、esse-sense Future Forumを県内向けの小規模実証版として企画し、研究者、後継者、支援機関、大学発SUをつなぐ対話機会を設ける。補助対象経費は、承継計画策定支援、専門家委託、HP・LP整備、DB設計、広報物制作、実証イベント運営に充当する。</p>
+<p>成果として、承継可能な業務マニュアル、研究知DBのタグ体系、県内企業向け知識承継サービスの試作版、Future Forum沖縄版の開催実績を形成する。これにより、esse-sense自身の事業継続性を高めるだけでなく、県内中小企業が持つ技術・顧客知・地域知を可視化し、後継者教育、大学連携、新規事業創出へ転換するモデルを提示できる。採択後は、県内事業者との有償案件化を図り、補助終了後も継続する収益基盤を構築する。</p>
+<h2>5. スケジュールと予算（年次別）</h2>
+<p>初年度前半は事前相談、県内要件確認、承継対象業務の棚卸し、専門家との承継計画策定を行う。初年度後半はDBタグ体系、AI要約テンプレート、HP・LP、県内向け実証イベントを整備し、採択年度内に報告書と成果物を提出する。予算は総額150万円を想定し、専門家・コンサル委託60万円、DB・HP外注45万円、広報・記事制作25万円、イベント運営20万円とする。補助率3分の2の場合、補助申請額は100万円、自己負担は50万円を目安とする。</p>
+<h2>6. 提出物チェックリスト</h2>
+<ul>
+<li>交付申請書、事業計画書、収支予算書</li>
+<li>法人登記、定款、直近決算書、納税証明</li>
+<li>県内事業所・雇用要件を確認できる資料</li>
+<li>事業承継計画、後継者または承継体制の説明資料</li>
+<li>見積書、委託先概要、HP・DB整備仕様書</li>
+<li>事前相談記録、反社会的勢力排除等の誓約書</li>
+</ul>
+<h2>7. 推奨アクション（3-5点）</h2>
+<ul>
+<li>沖縄県内での申請主体、常時雇用1名以上、承継類型への該当性を公社へ事前確認する。</li>
+<li>申請テーマはA推奨を基本とし、esse-sense自身の承継DXと県内企業支援の両方を成果に置く。</li>
+<li>記事DB 188件の内訳、AI活用手順、Future Forum実績を別紙で数値化する。</li>
+<li>補助対象経費は委託費・外注費中心に整理し、採択前発注を避ける。</li>
+<li>県内大学、支援機関、承継予定企業から協力意向書を取得する。</li>
+</ul>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>テルモ生命科学振興財団 国際交流助成</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>テルモ生命科学振興財団 国際交流助成 申請書ドラフト（esse-sense向け）</h1>
+<p><strong>締切</strong>: 2026-08-07 | <strong>上限</strong>: —</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>法人プロフィールを基に当該助成金との適合性を強調。営業収益・コミュニティ規模・DB数・連載数等の数値を本文に組み込む。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>目的・要件・評価ポイントを地の文で。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 強み（⑦）に合致するテーマ・要旨150字 <strong>案B（代替）</strong>: 別角度・要旨150字</p>
+<h2>4. 事業/研究計画書本文</h2>
+<h3>背景・目的（300-400字）</h3>
+<h3>研究/事業の方法（300-400字）</h3>
+<h3>期待される成果（200-300字）</h3>
+<h2>5. スケジュールと予算</h2>
+<p>年次別予算内訳・実施計画。総事業費・補助申請額。</p>
+<h2>6. 提出物チェックリスト</h2>
+<p>申請書類のチェックボックス。</p>
+<h2>7. 推奨アクション</h2>
+<p>即時行動3-5点。</p>
+<p>末尾に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B4_E_テルモ生命科学振興財団 国際交流助成.md」と1行記載。</p>
+<p>codex 助成金の目的・対象要件だけ確認してから、指定パスにドラフトを作成します。本文は営利法人としての適合性が弱く見えないよう、国際交流の公益性と研究者コミュニティへの波及で組み立てます。 web search: web search: テルモ生命科学振興財団 国際交流助成 2026 募集要項 codex 公式ページでは、2026年度後期分は2026年7月1日から8月7日、対象は2026年10月から2027年3月開催の生命科学系研究集会で、助成額は1件50万円まででした。この条件に合わせ、申請テーマは「小規模研究会助成」として設計します。 exec /bin/bash -lc ls in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms: 00_summary.md 01_松下幸之助記念志財団_研究助成.md 02_野村グループ基金_みらい助成.md 03_ものづくり補助金_19次.md 04_企業メセナ協議会_助成認定.md 05_JSPS_人文社会研究.md 06_お金をまわそう基金.md 07_esse-sense_補助金候補.md 08_統合実行計画.md 09_提出スケジュール_5月-9月.md 09a_提出スケジュール_ミラツク.md 09b_提出スケジュール_esse-sense.md 10_沖縄県特有助成金.md 11_京都府特有助成金.md 12_国・NEDO・総務省系助成金.md build_schedule_csv.py build_schedule_xlsx.py csv drafts_html drafts_v2 site 提出スケジュール_2026年5-9月.xlsx 提出スケジュール.html</p>
+<p>exec /bin/bash -lc "find drafts_v2 -maxdepth 1 -type f | sed 's#"'^#/#'"' | head -50" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms: /drafts_v2/B3201_E_立石科学技術振興財団 国際交流助成.md /drafts_v2/N130_E_中国電力技術研究財団 国際会議等開催助成.md /drafts_v2/004_E_NEDO ディープテック・スタートアップ支援(DTSU)第10回.md /drafts_v2/N104_M_サステナブルツーリズム推進事業（沖縄）.md /drafts_v2/B3204_M_清水基金 文化芸術活動特別助成事業.md /drafts_v2/B3210_M_三井住友海上福祉財団 研究助成.md /drafts_v2/015_E_経済安全保障重要技術育成プログラム（K Program）.md /drafts_v2/N119_E_京都市デジタル化推進プロジェクト.md /drafts_v2/023_M_トヨタ財団 国際助成プログラム.md /drafts_v2/B3211_E_三井住友海上福祉財団 研究助成.md /drafts_v2/N118_M_住友電工グループ社会貢献基金 学術研究助成.md /drafts_v2/N102_M_JST 創発的研究支援事業.md /drafts_v2/N112_M_京都産学公の森推進事業.md /drafts_v2/003_M_JST CREST 戦略的創造研究推進事業.md /drafts_v2/016_E_ムーンショット型研究開発事業.md /drafts_v2/N124_E_DX推進補助事業（沖縄DX促進）.md /drafts_v2/N122_E_観光庁 オーバーツーリズム対策面的整備（令和8年度）.md /drafts_v2/017_E_内閣府 SIP第3期（戦略的イノベーション創造）.md /drafts_v2/001_E_観光庁オーバーツーリズム対策.md /drafts_v2/B3206_M_京都市芸術文化協会 伝統芸能文化復元.md /drafts_v2/N120_E_事業承継・M&A補助金.md /drafts_v2/007_M_JST RISTEX「SDGs達成に向けた共創的研究開発」.md /drafts_v2/020_E_JST スタートアップ・エコシステム共創（地域拠点）.md /drafts_v2/010_E_総務省 地域社会DX推進パッケージ事業（二次公募）.md /drafts_v2/B3205_M_JFE21世紀財団 アジア歴史研究助成.md /drafts_v2/B3209_M_丸紅基金 第52回社会福祉助成金.md /drafts_v2/012_M_JST ASPIRE 2026 国際共同研究.md /drafts_v2/017_M_内閣府 SIP第3期（戦略的イノベーション創造）.md /drafts_v2/013_M_JSPS 研究成果公開促進費 データベース部門.md /drafts_v2/012_E_JST ASPIRE 2026 国際共同研究.md /drafts_v2/N128_E_JETRO J-StarX（海外起業家育成）.md /drafts_v2/008_E_共創の場形成支援プログラム（COI-NEXT）「未来共創分野」.md /drafts_v2/N116_M_内藤記念国際会議開催助成金.md /drafts_v2/N113_E_京都産学公の森推進事業.md /drafts_v2/030_M_DNP文化振興財団 グラフィック文化研究助成.md /drafts_v2/B3202_M_立石科学技術振興財団 国際会議開催助成.md /drafts_v2/N107_M_NEDO 数理科学分野×産学連携の調査.md /drafts_v2/N114_M_JST さきがけ／ACT-X 2026年度.md /drafts_v2/014_M_京都市 MICE開催支援助成金（大規模国際・上期4月_下期10月）.md /drafts_v2/N117_E_内藤記念国際会議開催助成金.md /drafts_v2/001_M_観光庁オーバーツーリズム対策.md /drafts_v2/B3208_E_新事業進出・ものづくり補助金 第4回.md /drafts_v2/N121_M_観光庁 オーバーツーリズム対策面的整備（令和8年度）.md /drafts_v2/B3203_E_立石科学技術振興財団 国際会議開催助成.md /drafts_v2/N106_M_大同生命厚生事業団 地域保健福祉研究助成.md /drafts_v2/N108_E_NEDO 数理科学分野×産学連携の調査.md /drafts_v2/026_M_鹿島学術振興財団 特定テーマ研究助成.md /drafts_v2/025_M_住友財団 基礎科学研究助成.md /drafts_v2/N123_M_DX推進補助事業（沖縄DX促進）.md /drafts_v2/005_E_中小企業成長加速化補助金（推定例年6月）.md</p>
+<p>exec /bin/bash -lc "sed -n '1,220p' 'drafts_v2/N117_E_内藤記念国際会議開催助成金.md'" in /Users/nishimura+/work/miratuku-grants-2026 exec /bin/bash -lc "sed -n '1,220p' 'drafts_v2/N130_E_中国電力技術研究財団 国際会議等開催助成.md'" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms:</p>
+<h1>内藤記念国際会議開催助成金 申請書ドラフト（esse-sense向け）</h1>
+<p><strong>締切</strong>: 2026-05-29 | <strong>上限</strong>: —</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>法人プロフィールを基に、当該助成金との適合性を強調する自然な文章。営業収益・コミュニティ規模・DB数・連載数等の数値を本文に組み込む。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>助成金の目的・要件・評価ポイントを地の文で整理。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 法人の強み（⑦）と評価軸に最も合致するテーマ <strong>案B（代替）</strong>: 別角度からのアプローチ （各案にタイトルと150字の要旨）</p>
+<h2>4. 事業/研究計画書本文（推奨案A）</h2>
+<h3>背景・目的（300-400字）</h3>
+<p>社会的・学術的意義を地の文で記述。法人の実績・数値を引用。</p>
+<h3>研究/事業の方法（300-400字）</h3>
+<p>具体的アプローチ、段階的実施計画。</p>
+<h3>期待される成果（200-300字）</h3>
+<p>定量・定性の両面で。</p>
+<h2>5. スケジュールと予算</h2>
+<p>年次別の予算内訳・実施計画。総事業費・補助申請額を明示。</p>
+<h2>6. 提出物チェックリスト</h2>
+<p>申請書類のチェックボックスリスト。</p>
+<h2>7. 推奨アクション</h2>
+<p>即時に行うべき次のステップを箇条書き3-5点。</p>
+<p>【重要】</p>
+<ul>
+<li>地の文中心、箇条書きは補助的に</li>
+<li>法人の数値・実績を本文に組み込む</li>
+<li>1,500-2,500字</li>
+<li>出力の最後に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_内藤記念国際会議開催助成金.md」と1行で報告</li>
+</ul>
+<p>【ファイル保存】 最終Markdownを完成させたら、以下のパスに保存してください（書き込み権限がない場合はログ末尾に保存対象を明記してください）: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_内藤記念国際会議開催助成金.md</p>
+<p>codex 指定パスが現在の書き込み許可範囲の外にあるため、まず保存先ディレクトリの状態を確認します。保存できない場合は、指示どおり保存対象パスを明記してドラフトを提示します。 exec /bin/bash -lc 'ls -ld /Users/nishimura+/work/miratuku-grants-2026 /Users/nishimura+/work/miratuku-grants-2026/drafts_v2' in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms: drwxr-xr-x  26 nishimura+  staff   832  5月 10 10:58 /Users/nishimura+/work/miratuku-grants-2026 drwxr-xr-x  40 nishimura+  staff  1280  5月 10 10:57 /Users/nishimura+/work/miratuku-grants-2026/drafts_v2</p>
+<p>web search: web search: 内藤記念国際会議開催助成金 2026 募集要項 codex 募集要項を確認し、前期締切が2026年5月29日、対象会議の開始日が2027年1月1日から6月30日、助成上限が50万円である点を反映します。これから指定構成のMarkdownを作成し、指定パスへの保存を試みます。 2026-05-10T02:10:02.368160Z ERROR codex_core::tools::router: error=patch rejected: writing outside of the project; rejected by user approval settings codex 指定パスへの書き込みはサンドボックスで拒否されました。作業可能な範囲内に同名ドラフトを保存し、最終報告で指定の保存対象パスも明記します。 exec /bin/bash -lc 'mkdir -p drafts_v2' in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms: apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/site/drafts_v2/NE_内藤記念国際会議開催助成金.md diff --git a/drafts_v2/NE_内藤記念国際会議開催助成金.md b/drafts_v2/NE_内藤記念国際会議開催助成金.md new file mode 100644 index 0000000000000000000000000000000000000000..002bf3e77887ea68c9916dc0a038fd79161d8b74 --- /dev/null +++ b/drafts_v2/NE_内藤記念国際会議開催助成金.md @@ -0,0 +1,62 @@ +# 内藤記念国際会議開催助成金 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-05-29 | <strong>上限</strong>: 500,000円 + +## 1. 申請者情報（300字） + +esse-senseは、研究者の知を社会に届けることを主要事業とする営利法人であり、学際的知見の編集・発信、研究広報、産学連携支援、大学発スタートアップ支援、大学・学術機関DXに強みを有する。自社で蓄積する記事データベースはarticles 154件、general_articles 34件の計188件に達し、研究成果を社会実装や国際対話につなげるための編集・データ活用基盤を整備している。AI、大規模解析、テキスト解析を用いた知見整理に加え、esse-sense Future Forumを通じた国際的な研究交流の運営経験を持つ点は、自然科学の基礎研究をめぐる小規模国際会議の企画・発信に適合する。本申請では、連携大学の研究者を開催責任者とし、ミラツクとの共同応募実績を生かして、研究者・学生・産業界を接続する会議設計を担う。 + +## 2. 助成金概要・応募要件（200字） + +本助成金は、国内で開催される自然科学の基礎的研究に関する国際会議のうち、新しい研究分野や挑戦的課題を扱う比較的小規模な会議の開催費を補助する制度である。2026年度前期は、2027年1月1日から6月30日までに開始される会議が対象で、参加者総数50名以上500名以下、日本を含む2カ国以上の参加が要件となる。申請者は日本の研究機関に所属する開催責任者である必要があるため、esse-senseは連携大学と共同し、企画・広報・記録・成果発信を担う体制が望ましい。 + +## 3. 申請テーマ案 + +<strong>案A（推奨）</strong>: 「AI時代の基礎生命科学と知識循環に関する国際会議」 + +生命科学・情報科学・研究DXの研究者を国内外から招き、基礎研究の発見をAIとデータベースにより再利用可能な知識へ転換する方法を議論する。esse-senseの188件の記事DBとテキスト解析力を活用し、会議後の知見発信まで一体化する。 + +<strong>案B（代替）</strong>: 「大学発研究成果の国際共創と社会実装に関する若手研究者会議」 + +大学発スタートアップ支援と産学連携の経験を軸に、基礎研究を国際共同研究や事業化の入口へつなげる小規模会議を開催する。若手研究者の発表、海外研究者との討議、社会実装支援者との対話を組み合わせる。 + +## 4. 事業/研究計画書本文（推奨案A） + +### 背景・目的（300-400字） + +自然科学の基礎研究は、生命現象の理解、新規技術の創出、医療・環境・産業への波及を支える一方、研究領域の細分化と情報量の増大により、異分野間で知識を接続する機会が不足している。特にAIと大規模テキスト解析の進展により、論文・講演・研究者インタビューを横断的に整理し、国際的な研究課題を可視化することが可能になりつつある。本会議は、連携大学の基礎生命科学研究者を開催責任者とし、国内外の研究者50名以上を集め、AI時代における基礎研究の知識循環と国際共同研究の形成を目的として開催する。esse-senseはarticles 154件、general_articles 34件の計188件の研究発信資産を持ち、学際的知見DB、AI、データ活用、大学・学術機関DXの経験を通じて、会議の議論を社会に届く形で記録・編集・公開する。 + +### 研究/事業の方法（300-400字） + +実施方法は三段階とする。第一に、連携大学の開催責任者、海外招へい研究者、esse-sense、ミラツクで企画委員会を設置し、基礎生命科学、AI、知識基盤、研究広報の4領域から登壇者を選定する。第二に、2027年前期に国内会場で2日間の国際会議を開催し、基調講演、若手研究者発表、ラウンドテーブル、共同研究テーマ形成ワークショップを組み合わせる。参加規模は80名程度、日本を含む3カ国以上を想定する。第三に、会議前後の発表要旨、討議記録、参加者アンケートをテキスト解析し、主要論点、共同研究候補、社会発信可能な研究ストーリーを整理する。esse-senseは編集・DB化・記事化を担い、会議終了後も研究者間の接続と成果発信を継続する。 + +### 期待される成果（200-300字） + +定量的には、国内外研究者80名程度の参加、招へい講演6件、若手発表12件、国際共同研究候補3件、会議記録記事5件以上の公開を目標とする。定性的には、基礎生命科学とAI・データ活用の接点を整理し、研究者が相互に参照できる知識基盤を形成することで、新しい研究分野や挑戦的課題の可視化を進める。さらに、esse-sense Future Forum等の国際展開経験を活用し、会議を一過性のイベントにせず、継続的な共同研究と社会発信の起点とする。 + +## 5. スケジュールと予算 + +2026年6月から9月に企画委員会を設置し、テーマ確定、招へい候補者選定、会場仮予約を行う。2026年10月から12月にプログラム、アブストラクト、参加者募集、広報計画を確定し、2027年1月から6月の間に国際会議を開催する。会議後1カ月以内に記録整理とアンケート分析を行い、3カ月以内に成果記事と共同研究候補リストを公開する。総事業費は1,500,000円を想定し、内訳は海外招へい旅費600,000円、会場・配信費300,000円、通訳・翻訳費250,000円、記録編集・広報費250,000円、事務費100,000円とする。補助申請額は上限の500,000円とし、主に海外招へい旅費および通訳・翻訳費に充当する。 + +## 6. 提出物チェックリスト + +- <input type="checkbox" disabled> 申請Webサイトへの登録情報 +- <input type="checkbox" disabled> 開催責任者の所属・職位・連絡先 +- <input type="checkbox" disabled> 開催趣意書 +- <input type="checkbox" disabled> 収支予算書 +- <input type="checkbox" disabled> プログラム案 +- <input type="checkbox" disabled> アブストラクトまたは講演要旨 +- <input type="checkbox" disabled> 会議概要・規模が分かる資料 +- <input type="checkbox" disabled> 参加者数50名以上500名以下、日本を含む2カ国以上の確認資料 +- <input type="checkbox" disabled> 連携大学、esse-sense、ミラツクの役割分担表 +- <input type="checkbox" disabled> 学内または学会推薦が必要な場合の推薦手続き確認 + +## 7. 推奨アクション + +- 連携大学側の開催責任者を確定し、申請者資格を満たすことを確認する。 +- 会議開始日を2027年1月1日から6月30日の範囲で確定し、会場を仮押さえする。 +- 海外招へい候補者と参加国数を早急に整理し、50名以上の参加見込みを文書化する。 +- esse-senseの188件の記事DB、AI・テキスト解析、Future Forum実績を補足資料に落とし込む。 +- 2026年5月29日の締切から逆算し、開催趣意書、予算書、プログラム案を1週間以内に初稿化する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_内藤記念国際会議開催助成金.md</p>
+<p>diff --git a/drafts_v2/NE_内藤記念国際会議開催助成金.md b/drafts_v2/NE_内藤記念国際会議開催助成金.md new file mode 100644 index 0000000000000000000000000000000000000000..002bf3e77887ea68c9916dc0a038fd79161d8b74 --- /dev/null +++ b/drafts_v2/NE_内藤記念国際会議開催助成金.md @@ -0,0 +1,62 @@ +# 内藤記念国際会議開催助成金 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-05-29 | <strong>上限</strong>: 500,000円 + +## 1. 申請者情報（300字） + +esse-senseは、研究者の知を社会に届けることを主要事業とする営利法人であり、学際的知見の編集・発信、研究広報、産学連携支援、大学発スタートアップ支援、大学・学術機関DXに強みを有する。自社で蓄積する記事データベースはarticles 154件、general_articles 34件の計188件に達し、研究成果を社会実装や国際対話につなげるための編集・データ活用基盤を整備している。AI、大規模解析、テキスト解析を用いた知見整理に加え、esse-sense Future Forumを通じた国際的な研究交流の運営経験を持つ点は、自然科学の基礎研究をめぐる小規模国際会議の企画・発信に適合する。本申請では、連携大学の研究者を開催責任者とし、ミラツクとの共同応募実績を生かして、研究者・学生・産業界を接続する会議設計を担う。 + +## 2. 助成金概要・応募要件（200字） + +本助成金は、国内で開催される自然科学の基礎的研究に関する国際会議のうち、新しい研究分野や挑戦的課題を扱う比較的小規模な会議の開催費を補助する制度である。2026年度前期は、2027年1月1日から6月30日までに開始される会議が対象で、参加者総数50名以上500名以下、日本を含む2カ国以上の参加が要件となる。申請者は日本の研究機関に所属する開催責任者である必要があるため、esse-senseは連携大学と共同し、企画・広報・記録・成果発信を担う体制が望ましい。 + +## 3. 申請テーマ案 + +<strong>案A（推奨）</strong>: 「AI時代の基礎生命科学と知識循環に関する国際会議」 + +生命科学・情報科学・研究DXの研究者を国内外から招き、基礎研究の発見をAIとデータベースにより再利用可能な知識へ転換する方法を議論する。esse-senseの188件の記事DBとテキスト解析力を活用し、会議後の知見発信まで一体化する。 + +<strong>案B（代替）</strong>: 「大学発研究成果の国際共創と社会実装に関する若手研究者会議」 + +大学発スタートアップ支援と産学連携の経験を軸に、基礎研究を国際共同研究や事業化の入口へつなげる小規模会議を開催する。若手研究者の発表、海外研究者との討議、社会実装支援者との対話を組み合わせる。 + +## 4. 事業/研究計画書本文（推奨案A） + +### 背景・目的（300-400字） + +自然科学の基礎研究は、生命現象の理解、新規技術の創出、医療・環境・産業への波及を支える一方、研究領域の細分化と情報量の増大により、異分野間で知識を接続する機会が不足している。特にAIと大規模テキスト解析の進展により、論文・講演・研究者インタビューを横断的に整理し、国際的な研究課題を可視化することが可能になりつつある。本会議は、連携大学の基礎生命科学研究者を開催責任者とし、国内外の研究者50名以上を集め、AI時代における基礎研究の知識循環と国際共同研究の形成を目的として開催する。esse-senseはarticles 154件、general_articles 34件の計188件の研究発信資産を持ち、学際的知見DB、AI、データ活用、大学・学術機関DXの経験を通じて、会議の議論を社会に届く形で記録・編集・公開する。 + +### 研究/事業の方法（300-400字） + +実施方法は三段階とする。第一に、連携大学の開催責任者、海外招へい研究者、esse-sense、ミラツクで企画委員会を設置し、基礎生命科学、AI、知識基盤、研究広報の4領域から登壇者を選定する。第二に、2027年前期に国内会場で2日間の国際会議を開催し、基調講演、若手研究者発表、ラウンドテーブル、共同研究テーマ形成ワークショップを組み合わせる。参加規模は80名程度、日本を含む3カ国以上を想定する。第三に、会議前後の発表要旨、討議記録、参加者アンケートをテキスト解析し、主要論点、共同研究候補、社会発信可能な研究ストーリーを整理する。esse-senseは編集・DB化・記事化を担い、会議終了後も研究者間の接続と成果発信を継続する。 + +### 期待される成果（200-300字） + +定量的には、国内外研究者80名程度の参加、招へい講演6件、若手発表12件、国際共同研究候補3件、会議記録記事5件以上の公開を目標とする。定性的には、基礎生命科学とAI・データ活用の接点を整理し、研究者が相互に参照できる知識基盤を形成することで、新しい研究分野や挑戦的課題の可視化を進める。さらに、esse-sense Future Forum等の国際展開経験を活用し、会議を一過性のイベントにせず、継続的な共同研究と社会発信の起点とする。 + +## 5. スケジュールと予算 + +2026年6月から9月に企画委員会を設置し、テーマ確定、招へい候補者選定、会場仮予約を行う。2026年10月から12月にプログラム、アブストラクト、参加者募集、広報計画を確定し、2027年1月から6月の間に国際会議を開催する。会議後1カ月以内に記録整理とアンケート分析を行い、3カ月以内に成果記事と共同研究候補リストを公開する。総事業費は1,500,000円を想定し、内訳は海外招へい旅費600,000円、会場・配信費300,000円、通訳・翻訳費250,000円、記録編集・広報費250,000円、事務費100,000円とする。補助申請額は上限の500,000円とし、主に海外招へい旅費および通訳・翻訳費に充当する。 + +## 6. 提出物チェックリスト + +- <input type="checkbox" disabled> 申請Webサイトへの登録情報 +- <input type="checkbox" disabled> 開催責任者の所属・職位・連絡先 +- <input type="checkbox" disabled> 開催趣意書 +- <input type="checkbox" disabled> 収支予算書 +- <input type="checkbox" disabled> プログラム案 +- <input type="checkbox" disabled> アブストラクトまたは講演要旨 +- <input type="checkbox" disabled> 会議概要・規模が分かる資料 +- <input type="checkbox" disabled> 参加者数50名以上500名以下、日本を含む2カ国以上の確認資料 +- <input type="checkbox" disabled> 連携大学、esse-sense、ミラツクの役割分担表 +- <input type="checkbox" disabled> 学内または学会推薦が必要な場合の推薦手続き確認 + +## 7. 推奨アクション + +- 連携大学側の開催責任者を確定し、申請者資格を満たすことを確認する。 +- 会議開始日を2027年1月1日から6月30日の範囲で確定し、会場を仮押さえする。 +- 海外招へい候補者と参加国数を早急に整理し、50名以上の参加見込みを文書化する。 +- esse-senseの188件の記事DB、AI・テキスト解析、Future Forum実績を補足資料に落とし込む。 +- 2026年5月29日の締切から逆算し、開催趣意書、予算書、プログラム案を1週間以内に初稿化する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_内藤記念国際会議開催助成金.md</p>
+<p>exec /bin/bash -lc 'wc -m drafts_v2/NE_内藤記念国際会議開催助成金.md' in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms:     2928 drafts_v2/NE_内藤記念国際会議開催助成金.md</p>
+<p>exec /bin/bash -lc 'tail -n 3 drafts_v2/NE_内藤記念国際会議開催助成金.md' in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms:</p>
+<ul>
+<li>2026年5月29日の締切から逆算し、開催趣意書、予算書、プログラム案を1週間以内に初稿化する。</li>
+<p>succeeded in 0ms:</p>
+</ul>
+<h1>中国電力技術研究財団 国際会議等開催助成 申請書ドラフト（esse-sense向け）</h1>
+<p><strong>締切</strong>: 2026-06-10 | <strong>上限</strong>: —</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>法人プロフィールを基に、当該助成金との適合性を強調する自然な文章。営業収益・コミュニティ規模・DB数・連載数等の数値を本文に組み込む。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>助成金の目的・要件・評価ポイントを地の文で整理。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 法人の強み（⑦）と評価軸に最も合致するテーマ <strong>案B（代替）</strong>: 別角度からのアプローチ （各案にタイトルと150字の要旨）</p>
+<h2>4. 事業/研究計画書本文（推奨案A）</h2>
+<h3>背景・目的（300-400字）</h3>
+<p>社会的・学術的意義を地の文で記述。法人の実績・数値を引用。</p>
+<h3>研究/事業の方法（300-400字）</h3>
+<p>具体的アプローチ、段階的実施計画。</p>
+<h3>期待される成果（200-300字）</h3>
+<p>定量・定性の両面で。</p>
+<h2>5. スケジュールと予算</h2>
+<p>年次別の予算内訳・実施計画。総事業費・補助申請額を明示。</p>
+<h2>6. 提出物チェックリスト</h2>
+<p>申請書類のチェックボックスリスト。</p>
+<h2>7. 推奨アクション</h2>
+<p>即時に行うべき次のステップを箇条書き3-5点。</p>
+<p>【重要】</p>
+<ul>
+<li>地の文中心、箇条書きは補助的に</li>
+<li>法人の数値・実績を本文に組み込む</li>
+<li>1,500-2,500字</li>
+<li>出力の最後に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_中国電力技術研究財団 国際会議等開催助成.md」と1行で報告</li>
+</ul>
+<p>【ファイル保存】 最終Markdownを完成させたら、以下のパスに保存してください（書き込み権限がない場合はログ末尾に保存対象を明記してください）: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_中国電力技術研究財団 国際会議等開催助成.md</p>
+<p>codex 指定パスは現在の書き込み許可範囲の外にある可能性があります。まず保存先ディレクトリの状態を確認し、可能ならそのまま作成します。 exec /bin/bash -lc 'pwd && ls -ld /Users/nishimura+/work/miratuku-grants-2026 /Users/nishimura+/work/miratuku-grants-2026/drafts_v2 2>/dev/null || true' in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms: /Users/nishimura+/work/miratuku-grants-2026/site drwxr-xr-x  26 nishimura+  staff   832  5月 10 10:58 /Users/nishimura+/work/miratuku-grants-2026 drwxr-xr-x  40 nishimura+  staff  1280  5月 10 10:57 /Users/nishimura+/work/miratuku-grants-2026/drafts_v2</p>
+<p>exec /bin/bash -lc 'git status --short' in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms: codex ドラフト本文を作成して、指定の <code>drafts_v2</code> パスへ直接保存します。内容は提供情報に基づき、要件部分は過度に断定せず「国際会議等開催助成」として自然に整理します。 2026-05-10T02:10:01.622879Z ERROR codex_core::tools::router: error=patch rejected: writing outside of the project; rejected by user approval settings codex 指定パスへの直接書き込みはサンドボックスで拒否されました。内容はワークスペース内の書き込み可能な場所に保存し、最終報告で本来の保存対象パスも明記します。 apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/site/drafts_v2/NE_中国電力技術研究財団 国際会議等開催助成.md diff --git a/drafts_v2/NE_中国電力技術研究財団 国際会議等開催助成.md b/drafts_v2/NE_中国電力技術研究財団 国際会議等開催助成.md new file mode 100644 index 0000000000000000000000000000000000000000..f5c77303544b05df4eff4f2d0565b41ee64f15f5 --- /dev/null +++ b/drafts_v2/NE_中国電力技術研究財団 国際会議等開催助成.md @@ -0,0 +1,51 @@ +# 中国電力技術研究財団 国際会議等開催助成 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-06-10 | <strong>上限</strong>: — + +## 1. 申請者情報（300字） +esse-senseは、研究者の知を社会に届けることを主要事業とする株式会社であり、学術知見を一般社会、産業界、行政、次世代人材へ翻訳・流通させるメディア事業を展開している。現在、専門性の高いarticles 154件、幅広い読者に向けたgeneral_articles 34件を蓄積し、研究テーマ、研究者、社会課題、産学連携ニーズを横断的に接続できる知見データベースを形成してきた。AI、データ活用、大規模解析、テキスト解析を強みとし、大学発スタートアップ支援、大学・学術機関DX、産学連携支援にも実績を有する。国際展開ではesse-sense Future Forumを通じて海外研究者・実務家との対話基盤を育てており、ミラツクとの共同応募実績を活かして、公益性と事業実装力を両立した国際シンポジウムを企画できる点が本助成と適合する。 + +## 2. 助成金概要・応募要件（200字） +中国電力技術研究財団の国際会議等開催助成は、学術的・技術的意義を有する国際会議、シンポジウム等の開催を支援し、研究交流の促進と知見の社会的還元を後押しする制度と位置づけられる。本件では「D シンポジウム」として、単なる発表会ではなく、研究者、企業、大学、NPO、地域の実践者が参加し、国際的な知見をもとに社会実装へつなげる設計が重要となる。評価上は、開催目的の明確性、国際性、学術・社会的波及効果、運営体制、成果公開の具体性を示すことが求められる。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 研究知の社会実装を加速する国際シンポジウム「AI時代の学際知データベースと産学連携」 + +要旨: esse-senseが蓄積するarticles 154件、general_articles 34件の知見DBを基盤に、AI・テキスト解析を用いた研究知の可視化、産学連携、大学発スタートアップ支援の国際的可能性を議論する。国内外の研究者、大学関係者、企業、NPOが参加し、研究成果を社会に届ける新しいメディア・連携モデルを検討する。 + +<strong>案B（代替）</strong>: 大学・学術機関DXと地域イノベーションをつなぐ国際対話フォーラム + +要旨: 大学・学術機関DXを起点に、研究データ、広報、産学連携、地域課題解決を統合する国際シンポジウムを開催する。esse-senseのメディア運営とミラツクとの共同実績を活かし、海外事例と国内実践を比較しながら、研究機関が社会との接点を拡張するための実務的指針を整理する。 + +## 4. 事業/研究計画書本文（推奨案A） +### 背景・目的（300-400字） +研究成果は社会課題解決や新産業創出の源泉である一方、専門領域ごとに分断され、一般社会や企業、地域の実践者に届きにくいという課題がある。特にAI、環境、医療、教育、地域政策など複合的な課題では、単一分野の知見だけでなく、学際的な知の編集、翻訳、接続が不可欠である。esse-senseは、研究者の知を社会に届けるメディアとして、articles 154件、general_articles 34件を蓄積し、研究テーマと社会課題を結ぶデータ基盤を形成してきた。本シンポジウムでは、この知見DBとAI・大規模テキスト解析の活用を軸に、国内外の研究者、大学関係者、企業、NPOが対話し、研究知の社会実装と産学連携を加速する方法論を共有することを目的とする。 + +### 研究/事業の方法（300-400字） +事業は三段階で実施する。第一段階では、既存の記事DBを対象に研究領域、社会課題、連携可能な産業分野を整理し、シンポジウムの論点を設計する。AIとテキスト解析を用いて、複数領域にまたがるテーマ、注目研究者、社会実装上の課題を抽出し、登壇候補者と討議テーマを選定する。第二段階では、esse-sense Future Forumの国際展開の経験を活かし、海外研究者、大学関係者、産学連携支援者を招聘またはオンライン参加で接続し、基調講演、パネルディスカッション、実務セッションを行う。第三段階では、議論内容を記事、レポート、公開アーカイブとして編集し、ミラツクとの連携によりNPO、地域、大学発スタートアップ支援の現場へ展開する。 + +### 期待される成果（200-300字） +定量面では、国際シンポジウム1回の開催、国内外登壇者5-8名、参加者80-120名、開催後レポート1本、関連記事3本以上の公開を目標とする。既存のarticles 154件、general_articles 34件を活用することで、単発イベントにとどまらず、知見DBの再編集と継続的な発信につなげる。定性面では、研究者と企業・大学・NPOの間に新たな対話接点を生み、AI時代における研究知の翻訳、可視化、社会実装の実践モデルを提示する。将来的には大学発スタートアップ支援や学術機関DXの協働案件創出も期待される。 + +## 5. スケジュールと予算 +2026年6月の採択準備後、7-8月に企画設計、登壇者調整、記事DB分析を行う。9-10月に国内外登壇者との事前打合せ、広報、参加者募集を進め、11月を目途に国際シンポジウムを開催する。12月には記録編集、成果記事、報告書、アーカイブ公開を完了する。総事業費は概算1,500,000円、補助申請額は1,000,000円を想定する。内訳は、登壇者謝金・旅費500,000円、会場・配信費300,000円、通訳・翻訳費250,000円、記事DB分析・企画編集費250,000円、広報・記録制作費200,000円とする。助成上限が未公表または個別確認事項であるため、最終申請額は募集要項確認後に調整する。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> 申請書様式 +- <input type="checkbox" disabled> 事業計画書・開催趣旨書 +- <input type="checkbox" disabled> 収支予算書 +- <input type="checkbox" disabled> 登壇予定者・招聘者一覧 +- <input type="checkbox" disabled> 法人概要資料 +- <input type="checkbox" disabled> esse-senseの実績資料、記事DB件数、既存記事例 +- <input type="checkbox" disabled> ミラツクとの連携実績説明資料 +- <input type="checkbox" disabled> 国際性を示す資料、esse-sense Future Forum関連資料 +- <input type="checkbox" disabled> 成果公開計画、広報計画 + +## 7. 推奨アクション +- 募集要項で助成対象経費、申請上限、対象地域・分野、営利法人の申請可否を確認する。 +- 案Aを基軸に、登壇候補者5-8名と海外参加者候補を早急に整理する。 +- articles 154件、general_articles 34件からシンポジウムに接続する代表記事を10件程度抽出する。 +- ミラツクとの共同応募・共同実施実績を、公益性と運営体制の補強資料として整理する。 +- 予算額は募集要項確認後、助成対象外経費を除いて再積算する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_中国電力技術研究財団 国際会議等開催助成.md</p>
+<p>diff --git a/drafts_v2/NE_中国電力技術研究財団 国際会議等開催助成.md b/drafts_v2/NE_中国電力技術研究財団 国際会議等開催助成.md new file mode 100644 index 0000000000000000000000000000000000000000..f5c77303544b05df4eff4f2d0565b41ee64f15f5 --- /dev/null +++ b/drafts_v2/NE_中国電力技術研究財団 国際会議等開催助成.md @@ -0,0 +1,51 @@ +# 中国電力技術研究財団 国際会議等開催助成 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-06-10 | <strong>上限</strong>: — + +## 1. 申請者情報（300字） +esse-senseは、研究者の知を社会に届けることを主要事業とする株式会社であり、学術知見を一般社会、産業界、行政、次世代人材へ翻訳・流通させるメディア事業を展開している。現在、専門性の高いarticles 154件、幅広い読者に向けたgeneral_articles 34件を蓄積し、研究テーマ、研究者、社会課題、産学連携ニーズを横断的に接続できる知見データベースを形成してきた。AI、データ活用、大規模解析、テキスト解析を強みとし、大学発スタートアップ支援、大学・学術機関DX、産学連携支援にも実績を有する。国際展開ではesse-sense Future Forumを通じて海外研究者・実務家との対話基盤を育てており、ミラツクとの共同応募実績を活かして、公益性と事業実装力を両立した国際シンポジウムを企画できる点が本助成と適合する。 + +## 2. 助成金概要・応募要件（200字） +中国電力技術研究財団の国際会議等開催助成は、学術的・技術的意義を有する国際会議、シンポジウム等の開催を支援し、研究交流の促進と知見の社会的還元を後押しする制度と位置づけられる。本件では「D シンポジウム」として、単なる発表会ではなく、研究者、企業、大学、NPO、地域の実践者が参加し、国際的な知見をもとに社会実装へつなげる設計が重要となる。評価上は、開催目的の明確性、国際性、学術・社会的波及効果、運営体制、成果公開の具体性を示すことが求められる。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 研究知の社会実装を加速する国際シンポジウム「AI時代の学際知データベースと産学連携」 + +要旨: esse-senseが蓄積するarticles 154件、general_articles 34件の知見DBを基盤に、AI・テキスト解析を用いた研究知の可視化、産学連携、大学発スタートアップ支援の国際的可能性を議論する。国内外の研究者、大学関係者、企業、NPOが参加し、研究成果を社会に届ける新しいメディア・連携モデルを検討する。 + +<strong>案B（代替）</strong>: 大学・学術機関DXと地域イノベーションをつなぐ国際対話フォーラム + +要旨: 大学・学術機関DXを起点に、研究データ、広報、産学連携、地域課題解決を統合する国際シンポジウムを開催する。esse-senseのメディア運営とミラツクとの共同実績を活かし、海外事例と国内実践を比較しながら、研究機関が社会との接点を拡張するための実務的指針を整理する。 + +## 4. 事業/研究計画書本文（推奨案A） +### 背景・目的（300-400字） +研究成果は社会課題解決や新産業創出の源泉である一方、専門領域ごとに分断され、一般社会や企業、地域の実践者に届きにくいという課題がある。特にAI、環境、医療、教育、地域政策など複合的な課題では、単一分野の知見だけでなく、学際的な知の編集、翻訳、接続が不可欠である。esse-senseは、研究者の知を社会に届けるメディアとして、articles 154件、general_articles 34件を蓄積し、研究テーマと社会課題を結ぶデータ基盤を形成してきた。本シンポジウムでは、この知見DBとAI・大規模テキスト解析の活用を軸に、国内外の研究者、大学関係者、企業、NPOが対話し、研究知の社会実装と産学連携を加速する方法論を共有することを目的とする。 + +### 研究/事業の方法（300-400字） +事業は三段階で実施する。第一段階では、既存の記事DBを対象に研究領域、社会課題、連携可能な産業分野を整理し、シンポジウムの論点を設計する。AIとテキスト解析を用いて、複数領域にまたがるテーマ、注目研究者、社会実装上の課題を抽出し、登壇候補者と討議テーマを選定する。第二段階では、esse-sense Future Forumの国際展開の経験を活かし、海外研究者、大学関係者、産学連携支援者を招聘またはオンライン参加で接続し、基調講演、パネルディスカッション、実務セッションを行う。第三段階では、議論内容を記事、レポート、公開アーカイブとして編集し、ミラツクとの連携によりNPO、地域、大学発スタートアップ支援の現場へ展開する。 + +### 期待される成果（200-300字） +定量面では、国際シンポジウム1回の開催、国内外登壇者5-8名、参加者80-120名、開催後レポート1本、関連記事3本以上の公開を目標とする。既存のarticles 154件、general_articles 34件を活用することで、単発イベントにとどまらず、知見DBの再編集と継続的な発信につなげる。定性面では、研究者と企業・大学・NPOの間に新たな対話接点を生み、AI時代における研究知の翻訳、可視化、社会実装の実践モデルを提示する。将来的には大学発スタートアップ支援や学術機関DXの協働案件創出も期待される。 + +## 5. スケジュールと予算 +2026年6月の採択準備後、7-8月に企画設計、登壇者調整、記事DB分析を行う。9-10月に国内外登壇者との事前打合せ、広報、参加者募集を進め、11月を目途に国際シンポジウムを開催する。12月には記録編集、成果記事、報告書、アーカイブ公開を完了する。総事業費は概算1,500,000円、補助申請額は1,000,000円を想定する。内訳は、登壇者謝金・旅費500,000円、会場・配信費300,000円、通訳・翻訳費250,000円、記事DB分析・企画編集費250,000円、広報・記録制作費200,000円とする。助成上限が未公表または個別確認事項であるため、最終申請額は募集要項確認後に調整する。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> 申請書様式 +- <input type="checkbox" disabled> 事業計画書・開催趣旨書 +- <input type="checkbox" disabled> 収支予算書 +- <input type="checkbox" disabled> 登壇予定者・招聘者一覧 +- <input type="checkbox" disabled> 法人概要資料 +- <input type="checkbox" disabled> esse-senseの実績資料、記事DB件数、既存記事例 +- <input type="checkbox" disabled> ミラツクとの連携実績説明資料 +- <input type="checkbox" disabled> 国際性を示す資料、esse-sense Future Forum関連資料 +- <input type="checkbox" disabled> 成果公開計画、広報計画 + +## 7. 推奨アクション +- 募集要項で助成対象経費、申請上限、対象地域・分野、営利法人の申請可否を確認する。 +- 案Aを基軸に、登壇候補者5-8名と海外参加者候補を早急に整理する。 +- articles 154件、general_articles 34件からシンポジウムに接続する代表記事を10件程度抽出する。 +- ミラツクとの共同応募・共同実施実績を、公益性と運営体制の補強資料として整理する。 +- 予算額は募集要項確認後、助成対象外経費を除いて再積算する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_中国電力技術研究財団 国際会議等開催助成.md</p>
+<p>codex 保存できたドラフトを読み返して、構成と末尾の保存対象パスが指示通り入っているか確認します。 exec /bin/bash -lc "wc -m drafts_v2/NE_中国電力技術研究財団\\ 国際会議等開催助成.md" in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms:     2976 drafts_v2/NE_中国電力技術研究財団 国際会議等開催助成.md</p>
+<p>exec /bin/bash -lc "tail -n 3 drafts_v2/NE_中国電力技術研究財団\\ 国際会議等開催助成.md" in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms:</p>
+<ul>
+<li>予算額は募集要項確認後、助成対象外経費を除いて再積算する。</li>
+<p>codex 指定構成に沿ってMarkdownを追加します。公募情報は公式ページの確認値を本文に反映し、ヘッダーの「上限: —」は元データを残しつつ、予算欄で「公式確認では50万円まで」と補正します。 apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B4_E_テルモ生命科学振興財団 国際交流助成.md diff --git a/miratuku-grants-2026/drafts_v2/B4_E_テルモ生命科学振興財団 国際交流助成.md b/miratuku-grants-2026/drafts_v2/B4_E_テルモ生命科学振興財団 国際交流助成.md new file mode 100644 index 0000000000000000000000000000000000000000..b6cc08ff0534d27e9aec060630d05460664f1091 --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B4_E_テルモ生命科学振興財団 国際交流助成.md @@ -0,0 +1,51 @@ +# テルモ生命科学振興財団 国際交流助成 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-08-07 | <strong>上限</strong>: — + +## 1. 申請者情報（300字） +esse-senseは、研究者の知を社会に届けることを主要事業とする株式会社であり、学術知の編集、発信、データ活用、産学連携支援を一体で担う。専門記事DBとしてarticles 154件、一般向けgeneral_articles 34件の計188件を蓄積し、研究テーマ、研究者、社会課題、企業ニーズを横断的に接続できる基盤を形成してきた。AI、大規模解析、学際DB、大学発スタートアップ支援、大学DXに強みを持ち、国際展開ではesse-sense Future Forumを通じて海外研究者・実務家との対話を進めている。本助成では、生命科学に関する国際的研究交流を、閉じた学会運営にとどめず、社会に届く知識循環へ展開できる点を訴求する。 + +## 2. 助成金概要・応募要件（200字） +テルモ生命科学振興財団の国際交流助成は、生命科学にかかる科学技術の研究等を目的として開催される学会、研究会、シンポジウム等を支援する制度であり、看護学、リハビリテーション学等も対象に含む。2026年度後期は2026年10月から2027年3月開催分が対象で、募集期間は2026年7月1日から8月7日。300名以上の集会助成と300名未満の小規模研究会助成があり、外部参加を認める公開性、海外参加を含む国際性、研究交流としての明確な目的が重要となる。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 生命科学研究を社会実装へつなぐ国際小規模研究会「AI時代の知識循環と産学連携」 + +要旨: esse-senseの188件の記事DB、AI・データ活用、Future Forumの国際対話基盤を活かし、生命科学、医療技術、研究DX、大学発スタートアップ支援を横断する研究交流を行う。国内外研究者、大学、企業、NPOが参加し、研究知を社会に届ける方法論を共有する。 + +<strong>案B（代替）</strong>: 若手生命科学研究者の国際発信力を高めるメディア連携型研究会 + +要旨: 若手研究者が海外研究者・産学連携支援者と対話し、生命科学研究の国際共同研究化、社会発信、事業化の可能性を検討する。研究会後はesse-senseの記事化・アーカイブ化により、成果を参加者外にも波及させる。 + +## 4. 事業/研究計画書本文 +### 背景・目的（300-400字） +生命科学の研究成果は、医療、予防、リハビリテーション、福祉、ヘルスケア産業に大きな波及可能性を持つ。一方で、専門分野ごとに議論が閉じやすく、海外の研究動向、社会実装の担い手、大学発スタートアップ支援、一般社会への発信が分断される課題がある。esse-senseは、articles 154件、general_articles 34件を通じて研究者の知を編集・発信してきた実績を持ち、AIと学際DBにより研究テーマ間の接続を可視化できる。本研究会は、国内外の生命科学研究者と産学連携支援者が参加し、AI時代における研究知の翻訳、国際共同研究、社会実装の接点を形成することを目的とする。 + +### 研究/事業の方法（300-400字） +小規模研究会として、2026年11月から2027年2月の間に国内会場とオンライン併用で開催する。事前準備では、既存の記事DB188件から生命科学、医療技術、研究DX、産学連携に関わる記事を抽出し、登壇候補者、論点、海外事例を整理する。研究会当日は、海外研究者による基調報告、国内研究者の話題提供、大学発スタートアップ支援者を交えたパネル討議、少人数ラウンドテーブルを組み合わせる。参加者は100-150名を想定し、外部参加を認める公開型とする。終了後は討議内容をレポート、記事、公開アーカイブとして編集し、研究者、大学、企業、NPOが継続的に参照できる形で発信する。 + +### 期待される成果（200-300字） +定量的には、国際小規模研究会1回、国内外登壇者6-8名、参加者100-150名、成果レポート1本、関連記事3本以上の公開を目標とする。定性的には、生命科学研究者と社会実装の担い手の間に新たな接点をつくり、研究成果を国際共同研究、産学連携、大学発スタートアップ支援へ展開する道筋を示す。助成終了後もesse-sense Future Forumと記事DBを活用し、継続的な国際交流の土台を維持する。 + +## 5. スケジュールと予算 +2026年7月に申請、8-9月に登壇者調整とプログラム設計、10月に広報・参加者募集、11月から2027年2月の間に研究会を開催し、開催後1カ月以内に成果記事と報告書を公開する。総事業費は800,000円、助成申請額は公式確認上限の500,000円を想定する。内訳は、登壇者謝金・旅費250,000円、会場・配信費180,000円、通訳・翻訳費150,000円、記録編集・記事化費150,000円、広報・事務費70,000円とする。助成対象外または営利法人単独申請が難しい場合は、連携大学・研究者を開催責任者に置き、esse-senseは企画運営・成果発信を担う。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> 国際交流助成Webシステム登録 +- <input type="checkbox" disabled> 申請書 +- <input type="checkbox" disabled> 開催趣旨・研究会概要 +- <input type="checkbox" disabled> プログラム案 +- <input type="checkbox" disabled> 登壇者・海外参加者候補一覧 +- <input type="checkbox" disabled> 参加者見込、外部参加を認める公開性の説明 +- <input type="checkbox" disabled> 収支予算書 +- <input type="checkbox" disabled> 法人概要、記事DB件数、Future Forum実績資料 +- <input type="checkbox" disabled> 連携大学・研究者との役割分担表 + +## 7. 推奨アクション +- 営利法人単独での申請可否と、開催責任者の要件を財団に確認する。 +- 小規模研究会助成として、開催日を2026年10月から2027年3月内で確定する。 +- 海外登壇者2-3名、国内登壇者4-5名の候補を早急にリスト化する。 +- 生命科学関連の記事DB代表例を10件抽出し、申請添付資料に整える。 +- 助成対象経費に合わせ、500,000円申請ベースで予算を再精査する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B4_E_テルモ生命科学振興財団 国際交流助成.md</p>
+</ul>
+<p>diff --git a/miratuku-grants-2026/drafts_v2/B4_E_テルモ生命科学振興財団 国際交流助成.md b/miratuku-grants-2026/drafts_v2/B4_E_テルモ生命科学振興財団 国際交流助成.md new file mode 100644 index 0000000000000000000000000000000000000000..b6cc08ff0534d27e9aec060630d05460664f1091 --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B4_E_テルモ生命科学振興財団 国際交流助成.md @@ -0,0 +1,51 @@ +# テルモ生命科学振興財団 国際交流助成 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-08-07 | <strong>上限</strong>: — + +## 1. 申請者情報（300字） +esse-senseは、研究者の知を社会に届けることを主要事業とする株式会社であり、学術知の編集、発信、データ活用、産学連携支援を一体で担う。専門記事DBとしてarticles 154件、一般向けgeneral_articles 34件の計188件を蓄積し、研究テーマ、研究者、社会課題、企業ニーズを横断的に接続できる基盤を形成してきた。AI、大規模解析、学際DB、大学発スタートアップ支援、大学DXに強みを持ち、国際展開ではesse-sense Future Forumを通じて海外研究者・実務家との対話を進めている。本助成では、生命科学に関する国際的研究交流を、閉じた学会運営にとどめず、社会に届く知識循環へ展開できる点を訴求する。 + +## 2. 助成金概要・応募要件（200字） +テルモ生命科学振興財団の国際交流助成は、生命科学にかかる科学技術の研究等を目的として開催される学会、研究会、シンポジウム等を支援する制度であり、看護学、リハビリテーション学等も対象に含む。2026年度後期は2026年10月から2027年3月開催分が対象で、募集期間は2026年7月1日から8月7日。300名以上の集会助成と300名未満の小規模研究会助成があり、外部参加を認める公開性、海外参加を含む国際性、研究交流としての明確な目的が重要となる。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 生命科学研究を社会実装へつなぐ国際小規模研究会「AI時代の知識循環と産学連携」 + +要旨: esse-senseの188件の記事DB、AI・データ活用、Future Forumの国際対話基盤を活かし、生命科学、医療技術、研究DX、大学発スタートアップ支援を横断する研究交流を行う。国内外研究者、大学、企業、NPOが参加し、研究知を社会に届ける方法論を共有する。 + +<strong>案B（代替）</strong>: 若手生命科学研究者の国際発信力を高めるメディア連携型研究会 + +要旨: 若手研究者が海外研究者・産学連携支援者と対話し、生命科学研究の国際共同研究化、社会発信、事業化の可能性を検討する。研究会後はesse-senseの記事化・アーカイブ化により、成果を参加者外にも波及させる。 + +## 4. 事業/研究計画書本文 +### 背景・目的（300-400字） +生命科学の研究成果は、医療、予防、リハビリテーション、福祉、ヘルスケア産業に大きな波及可能性を持つ。一方で、専門分野ごとに議論が閉じやすく、海外の研究動向、社会実装の担い手、大学発スタートアップ支援、一般社会への発信が分断される課題がある。esse-senseは、articles 154件、general_articles 34件を通じて研究者の知を編集・発信してきた実績を持ち、AIと学際DBにより研究テーマ間の接続を可視化できる。本研究会は、国内外の生命科学研究者と産学連携支援者が参加し、AI時代における研究知の翻訳、国際共同研究、社会実装の接点を形成することを目的とする。 + +### 研究/事業の方法（300-400字） +小規模研究会として、2026年11月から2027年2月の間に国内会場とオンライン併用で開催する。事前準備では、既存の記事DB188件から生命科学、医療技術、研究DX、産学連携に関わる記事を抽出し、登壇候補者、論点、海外事例を整理する。研究会当日は、海外研究者による基調報告、国内研究者の話題提供、大学発スタートアップ支援者を交えたパネル討議、少人数ラウンドテーブルを組み合わせる。参加者は100-150名を想定し、外部参加を認める公開型とする。終了後は討議内容をレポート、記事、公開アーカイブとして編集し、研究者、大学、企業、NPOが継続的に参照できる形で発信する。 + +### 期待される成果（200-300字） +定量的には、国際小規模研究会1回、国内外登壇者6-8名、参加者100-150名、成果レポート1本、関連記事3本以上の公開を目標とする。定性的には、生命科学研究者と社会実装の担い手の間に新たな接点をつくり、研究成果を国際共同研究、産学連携、大学発スタートアップ支援へ展開する道筋を示す。助成終了後もesse-sense Future Forumと記事DBを活用し、継続的な国際交流の土台を維持する。 + +## 5. スケジュールと予算 +2026年7月に申請、8-9月に登壇者調整とプログラム設計、10月に広報・参加者募集、11月から2027年2月の間に研究会を開催し、開催後1カ月以内に成果記事と報告書を公開する。総事業費は800,000円、助成申請額は公式確認上限の500,000円を想定する。内訳は、登壇者謝金・旅費250,000円、会場・配信費180,000円、通訳・翻訳費150,000円、記録編集・記事化費150,000円、広報・事務費70,000円とする。助成対象外または営利法人単独申請が難しい場合は、連携大学・研究者を開催責任者に置き、esse-senseは企画運営・成果発信を担う。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> 国際交流助成Webシステム登録 +- <input type="checkbox" disabled> 申請書 +- <input type="checkbox" disabled> 開催趣旨・研究会概要 +- <input type="checkbox" disabled> プログラム案 +- <input type="checkbox" disabled> 登壇者・海外参加者候補一覧 +- <input type="checkbox" disabled> 参加者見込、外部参加を認める公開性の説明 +- <input type="checkbox" disabled> 収支予算書 +- <input type="checkbox" disabled> 法人概要、記事DB件数、Future Forum実績資料 +- <input type="checkbox" disabled> 連携大学・研究者との役割分担表 + +## 7. 推奨アクション +- 営利法人単独での申請可否と、開催責任者の要件を財団に確認する。 +- 小規模研究会助成として、開催日を2026年10月から2027年3月内で確定する。 +- 海外登壇者2-3名、国内登壇者4-5名の候補を早急にリスト化する。 +- 生命科学関連の記事DB代表例を10件抽出し、申請添付資料に整える。 +- 助成対象経費に合わせ、500,000円申請ベースで予算を再精査する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B4_E_テルモ生命科学振興財団 国際交流助成.md</p>
+<p>codex ドラフトを保存しました。念のため文字数と末尾行を確認し、指定範囲と保存対象パスの整合だけチェックします。 exec /bin/bash -lc "tail -n 5 'drafts_v2/B4_E_テルモ生命科学振興財団 国際交流助成.md'" in /Users/nishimura+/work/miratuku-grants-2026 exec /bin/bash -lc "wc -m 'drafts_v2/B4_E_テルモ生命科学振興財団 国際交流助成.md'" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms:     2665 drafts_v2/B4_E_テルモ生命科学振興財団 国際交流助成.md</p>
+<p>succeeded in 0ms:</p>
+<ul>
+<li>海外登壇者2-3名、国内登壇者4-5名の候補を早急にリスト化する。</li>
+<li>生命科学関連の記事DB代表例を10件抽出し、申請添付資料に整える。</li>
+<li>助成対象経費に合わせ、500,000円申請ベースで予算を再精査する。</li>
+</ul>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

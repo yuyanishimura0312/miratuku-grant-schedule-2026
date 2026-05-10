@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>事業承継補助金（沖縄県産業振興公社）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>事業承継補助金（沖縄県産業振興公社） 申請書ドラフト（esse-sense向け）</h1>
+<p><strong>締切</strong>: 通年（年複数回） | <strong>上限</strong>: 数百万円</p>
+<h2>1. 申請者情報（300字・数値組込）</h2>
+<p>esse-senseは、研究者の知を社会に届けるメディア事業を中核とする株式会社である。自社で蓄積する記事DBはarticles 154件、general_articles 34件の計188件に達し、学際的な研究成果、産学連携、大学発スタートアップ、大学DXに関する知見を整理・発信してきた。今後は、創業者・現経営体制に属人化しやすい編集判断、研究者ネットワーク、AI活用、イベント運営知を形式知化し、沖縄県内拠点または県内連携先との事業承継・第二創業体制を整え、地域企業・大学・後継者候補に知識流通基盤を提供する。</p>
+<h2>2. 助成金概要・応募要件（200字・地の文）</h2>
+<p>本補助金は、沖縄県内の中小企業・小規模事業者等が親族内承継、従業員承継、第三者承継、または承継を契機とする経営高度化を進める際に必要な委託費、外注費、専門家活用費等を支援する制度である。令和8年度第1回公募では上限100万円、補助率3分の2以内、事前相談必須とされている。esse-senseが申請する場合は、沖縄県内での事業実施主体、雇用要件、承継対象業務、県内産業への波及効果を事前確認する。</p>
+<h2>3. 申請テーマ案（A推奨/B代替・各150字）</h2>
+<p>A推奨は「沖縄発・研究知メディア承継DX事業」である。記事DB 188件、AI分類、研究者ネットワーク、esse-sense Future Forumの運営知を承継可能な業務手順とデータ基盤に整備し、県内大学・企業の知識移転と後継人材育成を支援する。</p>
+<p>B代替は「県内中小企業向け知識承継コンテンツ事業」である。事業承継に悩む沖縄県内企業の技術、顧客理解、地域固有の経営知を取材・編集・DB化し、後継者教育、採用広報、M&A前後のPMI支援に活用できる有償メディアサービスとして展開する。</p>
+<h2>4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字）</h2>
+<p>沖縄県では中小企業の経営者高齢化、離島を含む人材不足、観光・一次産業・地域サービスの担い手不足が重なり、事業承継の遅れが雇用と地域資源の喪失につながりやすい。一方、承継に必要な知識は財務・法務だけでなく、顧客との関係、技術の背景、地域文化、大学や専門家との接点など、文章化されにくい暗黙知を含む。esse-senseは、研究者の知を社会に届ける編集力、articles 154件とgeneral_articles 34件からなる学際DB、AIを用いた分類・再編集、産学連携支援の経験を有する。本事業では、これらの強みを沖縄県内の承継課題に接続し、事業承継を単なる代表交代ではなく、知識資産を次世代へ渡す第二創業の機会として設計する。</p>
+<p>実施方法として、第一に、esse-sense内部の編集・取材・AI活用・イベント運営プロセスを棚卸しし、承継対象となる業務、データ、取引先、研究者ネットワークを整理する。第二に、県内大学、産業支援機関、承継予定企業へのヒアリングを行い、承継時に失われやすい知識項目を抽出する。第三に、記事DB 188件を基盤として、沖縄の産業課題、大学発スタートアップ、地域企業DX、後継者教育に関連するタグ体系とAI要約テンプレートを整備する。第四に、esse-sense Future Forumを県内向け実証版として企画し、研究者、後継者、支援機関、大学発SUをつなぐ。補助対象経費は、承継計画策定支援、専門家委託、HP・LP整備、DB設計、広報物制作、実証イベント運営に充当する。</p>
+<p>成果として、承継可能な業務マニュアル、研究知DBのタグ体系、県内企業向け知識承継サービスの試作版、Future Forum沖縄版の開催実績を形成する。これにより、esse-sense自身の事業継続性を高めるだけでなく、県内中小企業が持つ技術・顧客知・地域知を可視化し、後継者教育、大学連携、新規事業創出へ転換するモデルを提示できる。採択後は、県内事業者との有償案件化を図り、補助終了後も継続する収益基盤を構築する。</p>
+<h2>5. スケジュールと予算（年次別）</h2>
+<p>初年度前半は事前相談、県内要件確認、承継対象業務の棚卸し、専門家との承継計画策定を行う。初年度後半はDBタグ体系、AI要約テンプレート、HP・LP、県内向け実証イベントを整備し、採択年度内に報告書と成果物を提出する。予算は総額150万円を想定し、専門家・コンサル委託60万円、DB・HP外注45万円、広報・記事制作25万円、イベント運営20万円とする。補助率3分の2の場合、補助申請額は100万円、自己負担は50万円を目安とする。</p>
+<h2>6. 提出物チェックリスト</h2>
+<ul>
+<li>交付申請書、事業計画書、収支予算書</li>
+<li>法人登記、定款、直近決算書、納税証明</li>
+<li>県内事業所・雇用要件を確認できる資料</li>
+<li>事業承継計画、後継者または承継体制の説明資料</li>
+<li>見積書、委託先概要、HP・DB整備仕様書</li>
+<li>事前相談記録、反社会的勢力排除等の誓約書</li>
+</ul>
+<h2>7. 推奨アクション（3-5点）</h2>
+<ul>
+<li>沖縄県内での申請主体、常時雇用1名以上、承継類型への該当性を公社へ事前確認する。</li>
+<li>申請テーマはA推奨を基本とし、esse-sense自身の承継DXと県内企業支援の両方を成果に置く。</li>
+<li>記事DB 188件の内訳、AI活用手順、Future Forum実績を別紙で数値化する。</li>
+<li>補助対象経費は委託費・外注費中心に整理し、採択前発注を避ける。</li>
+<li>県内大学、支援機関、承継予定企業から協力意向書を取得する。</li>
+</ul>
+<p>保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_E_事業承継補助金（沖縄県産業振興公社）.md</p>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

@@ -166,3 +166,36 @@ for md_path in md_files:
 
 print(f"HTML生成完了: {len(drafts_meta)}件")
 print(f"出力先: {DRAFTS_HTML}")
+
+# index.htmlのDRAFTS配列を更新
+import json
+index_path = f"{DRAFTS_HTML}/index.html"
+with open(index_path) as f:
+    idx_html = f.read()
+
+# rank自然順ソート（数字優先 → N100系 → B3xxx系 → B6_xxx名前順）
+def sort_key(d):
+    r = d['rank']
+    if r.isdigit():
+        return (0, int(r), d['filename'])
+    if r.startswith('N') and r[1:].isdigit():
+        return (1, int(r[1:]), d['filename'])
+    if r.startswith('B') and len(r) > 1 and r[1:].isdigit():
+        return (2, int(r[1:]), d['filename'])
+    return (3, r, d['filename'])
+
+drafts_sorted = sorted(drafts_meta, key=sort_key)
+draft_lines = [json.dumps(d, ensure_ascii=False) for d in drafts_sorted]
+new_array = "const DRAFTS = [\n" + ",\n".join(draft_lines) + "\n];"
+
+# 既存のconst DRAFTS = [ ... ]; を置換
+new_html = re.sub(
+    r'const DRAFTS = \[.*?\n\];',
+    new_array,
+    idx_html,
+    count=1,
+    flags=re.DOTALL,
+)
+with open(index_path, 'w') as f:
+    f.write(new_html)
+print(f"index.html更新完了: {len(drafts_sorted)}件")

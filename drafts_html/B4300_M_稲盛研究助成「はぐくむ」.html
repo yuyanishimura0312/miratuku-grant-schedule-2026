@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>稲盛研究助成「はぐくむ」</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>稲盛研究助成「はぐくむ」 申請書ドラフト（ミラツク向け）</h1>
+<p><strong>締切</strong>: 2026-07-22 | <strong>上限</strong>: —</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>法人プロフィールを基に当該助成金との適合性を強調。営業収益・コミュニティ規模・DB数・連載数等の数値を本文に組み込む。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>目的・要件・評価ポイントを地の文で。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 強み（①）に合致するテーマ・要旨150字 <strong>案B（代替）</strong>: 別角度・要旨150字</p>
+<h2>4. 事業/研究計画書本文</h2>
+<h3>背景・目的（300-400字）</h3>
+<h3>研究/事業の方法（300-400字）</h3>
+<h3>期待される成果（200-300字）</h3>
+<h2>5. スケジュールと予算</h2>
+<p>年次別予算内訳・実施計画。総事業費・補助申請額。</p>
+<h2>6. 提出物チェックリスト</h2>
+<p>申請書類のチェックボックス。</p>
+<h2>7. 推奨アクション</h2>
+<p>即時行動3-5点。</p>
+<p>末尾に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B4_M_稲盛研究助成「はぐくむ」.md」と1行記載。</p>
+<p>codex 助成金要件は年度で変わり得るため、まず公式情報を確認してから、指定パスにドラフトを作成します。 web search: web search: 稲盛研究助成 はぐくむ 2026 応募要項 codex 公式ページでは「はぐくむ」は先駆的な研究の芽を育むコースで、例年200万円／件・50件程度という説明を確認しました。ユーザー指定の締切とヘッダー表記を優先しつつ、本文と予算ではこの公表情報も反映します。 exec /bin/bash -lc 'mkdir -p drafts_v2 && pwd && ls drafts_v2 | head' in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms: /Users/nishimura+/work/miratuku-grants-2026 001_E_観光庁オーバーツーリズム対策.md 001_M_観光庁オーバーツーリズム対策.md 002_M_JSPS科研費_特別推進_基盤S.md 003_M_JST CREST 戦略的創造研究推進事業.md 004_E_NEDO ディープテック・スタートアップ支援(DTSU)第10回.md 005_E_中小企業成長加速化補助金（推定例年6月）.md 006_M_JST RISTEX「ケアが根づく社会システム」.md 007_M_JST RISTEX「SDGs達成に向けた共創的研究開発」.md 008_E_共創の場形成支援プログラム（COI-NEXT）「未来共創分野」.md 008_M_共創の場形成支援プログラム（COI-NEXT）「未来共創分野」.md</p>
+<p>exec /bin/bash -lc "sed -n '1,220p' drafts_v2/002_M_JSPS科研費_特別推進_基盤S.md" in /Users/nishimura+/work/miratuku-grants-2026 exec /bin/bash -lc "sed -n '1,180p' drafts_v2/006_M_JST\\ RISTEX「ケアが根づく社会システム」.md" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms:</p>
+<h1>JST RISTEX「ケアが根づく社会システム」 申請書ドラフト（ミラツク向け）</h1>
+<p><strong>締切</strong>: 2026-06-03 | <strong>上限</strong>: 2,300万円</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>法人プロフィールを基に、当該助成金との適合性を強調する自然な文章。営業収益・コミュニティ規模・DB数・連載数等の具体的な数値を本文に組み込む。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>助成金の目的・要件・評価ポイントを地の文で整理。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 法人の強み（②⑤）に最も合致するテーマと150字の要旨 <strong>案B（代替）</strong>: 別角度からのアプローチ</p>
+<h2>4. 事業/研究計画書本文（推奨案A）</h2>
+<h3>背景・目的（300-400字）</h3>
+<p>社会的・学術的意義を地の文で記述、法人の実績と数値を引用。</p>
+<h3>研究/事業の方法（300-400字）</h3>
+<p>具体的アプローチ、段階的実施計画。</p>
+<h3>期待される成果（200-300字）</h3>
+<p>定量・定性両面で成果物を明示。</p>
+<h2>5. スケジュールと予算</h2>
+<p>年次別の予算内訳と実施計画。総事業費・補助申請額を明示。</p>
+<h2>6. 提出物チェックリスト</h2>
+<p>申請書類のチェックボックスリスト。</p>
+<h2>7. 推奨アクション</h2>
+<p>即時行動項目を箇条書き3-5点。</p>
+<p>【絶対遵守】</p>
+<ol>
+<li>必ず/Users/nishimura+/work/miratuku-grants-2026/drafts_v2/006_M_JST RISTEX「ケアが根づく社会システム」.mdにファイルを保存</li>
+<li>法人の数値・実績を本文に組み込む</li>
+<li>地の文中心、箇条書きは補助的に</li>
+<li>1,500-2,500字</li>
+<li>保存後、<code>保存完了: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/006_M_JST RISTEX「ケアが根づく社会システム」.md</code> の1行のみ報告</li>
+</ol>
+<p>exec /bin/bash -lc "ls -ld '/Users/nishimura+/work/miratuku-grants-2026' '/Users/nishimura+/work/miratuku-grants-2026/drafts_v2' 2>/dev/null || true pwd" in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms: drwxr-xr-x  25 nishimura+  staff  800  5月 10 10:37 /Users/nishimura+/work/miratuku-grants-2026 drwxr-xr-x   5 nishimura+  staff  160  5月 10 10:52 /Users/nishimura+/work/miratuku-grants-2026/drafts_v2 /Users/nishimura+/work/miratuku-grants-2026/site</p>
+<p>exec /bin/bash -lc "touch '/Users/nishimura+/work/miratuku-grants-2026/drafts_v2/test_write_probe.md' 2>&1 || true ls -l '/Users/nishimura+/work/miratuku-grants-2026/drafts_v2/test_write_probe.md' 2>/dev/null || true" in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms: touch: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/test_write_probe.md: Operation not permitted</p>
+<p>codex 保存できませんでした: <code>/Users/nishimura+/work/miratuku-grants-2026/drafts_v2/006_M_JST RISTEX「ケアが根づく社会システム」.md</code> は sandbox 権限外で <code>Operation not permitted</code> でした。  succeeded in 0ms:</p>
+<h1>JSPS科研費 特別推進・基盤研究(S) 申請書ドラフト（ミラツク向け・連携大学経由）</h1>
+<p><strong>締切</strong>: 2026-06-16 16:30 | <strong>上限</strong>: 特別推進3億円（3-5年）／基盤(S)3,000万円（3-5年） <strong>前年実績</strong>: 2025-06-16 URL: <a href="https://www.jsps.go.jp/j-grantsinaid/02_koubo/toku_s.html">https://www.jsps.go.jp/j-grantsinaid/02_koubo/toku_s.html</a></p>
+<h2>1. 申請者情報</h2>
+<p>ミラツク（NPO法人・第14期・2010年設立）は、京都府・東京都を拠点に14年間異分野協働を推進し、26件の知識データベース（学術知識30,288概念・歴史事象91,550件・財団2,140件・採択者2,122件・神話11,906物語等を含む）を構築してきた。本助成金には連携大学のPI（教授級）を研究代表者とし、ミラツクが共同研究機関として参画する形態で応募する。連携先候補は京都大学、早稲田大学、慶應義塾大学、名古屋大学、大阪大学等の学際研究領域に強みを持つ研究者である。ミラツクの26DBは、本助成金の特に「データインフラ強化型」「学際的方法論型」研究において、本邦においておそらく類例のない実証基盤を提供する。</p>
+<h2>2. 助成金概要・応募要件</h2>
+<p>JSPSの最大級学術助成。特別推進研究は最大3億円・3-5年、基盤研究(S)は最大3,000万円・3-5年。応募者は国内大学・研究機関に所属する研究者（PI）で、研究科長の推薦が必要。ミラツクは共同研究機関として参画する。評価ポイントは学術的新規性と独創性、学問分野への波及効果、研究実績（被引用数・主要論文）、研究組織の充実、研究方法の妥当性。前年（2025-06-16）の採択結果は、基盤(S)で約12.3%の採択率（応募649件→採択80件）であった。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 「学際的知識ネットワークの構造解明と社会実装メカニズムの実証研究」 ミラツクの26DB（30,288学術概念・87,059関係）を基盤データとし、人文学・社会科学・自然科学・工学・芸術の五分野横断における知識翻訳メカニズムを実証的に解明する。連携大学PIによる学術理論と、ミラツクの実装フィールド（200件超の異分野協働事例）を統合し、新たな学際研究方法論を構築する。</p>
+<p><strong>案B（代替）</strong>: 「日本の異分野協働の14年史と社会変容の構造的記述」 ミラツクが2010年から蓄積してきた200件超の異分野協働事例を、CLA（Causal Layered Analysis）四層モデル（litany→system→worldview→myth）で構造化記述し、日本社会の知の循環パターンを学術的に解明する。</p>
+<h2>4. 研究計画書本文（推奨案A）</h2>
+<h3>背景・目的（380字）</h3>
+<p>異分野協働は社会課題解決の不可欠な手段でありながら、その認知的メカニズム・組織的条件・成果構造を体系的に解明する学術研究は世界的にも限定的である。本研究は、ミラツクが14年にわたり構築してきた26件の知識データベース（学術知30,288概念・関係87,059件・歴史事象91,550件等）を一次データとし、五分野横断における知識翻訳の構造を実証的に解明する。連携大学のPIが理論枠組みを提供し、ミラツクが実装フィールドと知識基盤を提供する協働研究体制で、本邦の社会課題解決能力を学術的に底上げする方法論を確立する。研究成果は学際研究の国際的リーダーシップ確立、データインフラの公共財化、政策形成への翻訳の三つを目標とする。</p>
+<h3>研究の方法（380字）</h3>
+<p>第一段階として、26DBの概念ネットワーク上で異分野間「翻訳可能性指標」を媒介中心性・構造的等価性・コミュニティ検出によって定義し、定量化する。第二段階として、ミラツクの200件超の協働事例から翻訳成功・失敗事例を選別し、Walter Vincentiの工学設計学とDonald Schönのreflective practice理論を枠組みとして構造的に記述する。第三段階として、大規模言語モデルを用いた翻訳補助ワークフローを実装し、人間専門家による翻訳との比較評価を行う。第四段階として、異分野協働実践者15名への半構造化インタビューで暗黙知領域を補完する。各段階を年度別に実施し、5年計画で完遂する。</p>
+<h3>期待される成果（240字）</h3>
+<p>異分野翻訳の構造モデル（査読論文5本以上）、AI協働翻訳ワークフロー（オープンソース化）、政策提言レポート3本、26DBの公共財化（一般研究者・NPO・自治体への無償公開）を成果物とする。研究分野としては、人文社会科学・情報科学・経営学を横断する新領域「異分野翻訳学」の確立を目指す。事業終了後はミラツクと連携大学が運営する常設研究センターへ発展させる構想である。</p>
+<h2>5. スケジュールと予算</h2>
+<p>研究期間は2026年9月から2031年8月までの5年間（基盤(S)を想定）。年間予算は約600万円・総額3,000万円。費目内訳は、研究員人件費（年200万円・5年で1,000万円）、データベース整備・解析環境（年100万円・500万円）、専門家インタビュー謝金・旅費（年100万円・500万円）、論文発表・国際会議（年100万円・500万円）、運営・成果公開（年100万円・500万円）。</p>
+<h2>6. 提出物チェックリスト</h2>
+<ul>
+<li><input type="checkbox" disabled> 研究計画調書（学振指定様式）</li>
+<li><input type="checkbox" disabled> 研究費計画書</li>
+<li><input type="checkbox" disabled> 研究実績書（研究代表者）</li>
+<li><input type="checkbox" disabled> 研究分担者・協力者リスト</li>
+<li><input type="checkbox" disabled> 倫理審査書類（インタビュー含む場合）</li>
+<li><input type="checkbox" disabled> 所属機関の推薦書</li>
+<li><input type="checkbox" disabled> 連携機関合意書（ミラツク）</li>
+<li><input type="checkbox" disabled> 過去5年の主要論文リスト</li>
+</ul>
+<h2>7. 推奨アクション</h2>
+<p>第一に、連携大学PIを2026-05-12までに確定する（候補：早稲田・慶應・京都大・名古屋大・大阪大の学際研究領域教授）。第二に、研究科長推薦のための学内手続きを5月中旬までに開始する。第三に、ミラツク26DBの概念ネットワーク分析を予備実験として実施し、データの妥当性を立証する。第四に、研究計画調書のドラフトを5月末までに完成し、6月初旬に学内事前審査。第五に、6月16日16:30までに電子申請を完了する。</p>
+<p>codex 既存のドラフトにはテンプレート状態のものも混在しているため、今回は指定構成どおりに新規ファイルとして保存します。内容は「個人研究者を主申請者、ミラツクを連携・知識基盤提供者」として成立する書き方に寄せます。 apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B4_M_稲盛研究助成「はぐくむ」.md diff --git a/miratuku-grants-2026/drafts_v2/B4_M_稲盛研究助成「はぐくむ」.md b/miratuku-grants-2026/drafts_v2/B4_M_稲盛研究助成「はぐくむ」.md new file mode 100644 index 0000000000000000000000000000000000000000..a98e74f8939abc6a88f09e14804e8d4a83e28f5f --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B4_M_稲盛研究助成「はぐくむ」.md @@ -0,0 +1,48 @@ +# 稲盛研究助成「はぐくむ」 申請書ドラフト（ミラツク向け） + +<strong>締切</strong>: 2026-07-22 | <strong>上限</strong>: — + +## 1. 申請者情報（300字） +ミラツクは2010年設立の特定非営利活動法人であり、京都府・東京都を拠点に、企業・研究者・行政・市民の協働を通じて知の社会接続を進めてきた。第14期現在、専従25名、2024年度営業収益87.4M円、企業協働20社、コミュニティ参加者350名を有する。学術知識30,288概念を含む26のSQLite知識データベースと、「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載知見を蓄積している。本申請では、若手・中堅研究者を主申請者とし、ミラツクが学際DB、分析環境、実践コミュニティを提供する連携機関として、独創的な学術研究の芽を育てる。 + +## 2. 助成金概要・応募要件（200字） +稲盛研究助成「はぐくむ」は、研究者自身の知的好奇心に基づく独創的で将来性のある研究を支援し、学術・文化の促進と国際社会への貢献につながる人材育成を目的とする。公表情報では「はぐくむ」は1件200万円、計50件程度の支援が想定され、専門を越えた交流や研究発信の機会も重視される。評価上は、研究テーマの独自性、発展可能性、申請者の主体性、研究方法の妥当性、将来の学術的波及が重要となる。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 「学際知識データベースを用いた知的好奇心の形成過程の実証研究」 +ミラツクの26DBを活用し、研究者が異分野概念に出会い、問いを生成し、研究テーマへ発展させる過程をネットワーク分析と質的調査で明らかにする。 + +<strong>案B（代替）</strong>: 「社会課題領域における学術概念の翻訳可能性に関する探索研究」 +学術知識30,288概念と実践現場の語彙を対応づけ、研究知が企業・NPO・地域実践に接続される条件を可視化し、学際研究の初期仮説を構築する。 + +## 4. 事業/研究計画書本文 +### 背景・目的（300-400字） +学際研究の重要性は広く認識されているが、異なる分野の概念がどのように研究者の問いを刺激し、独創的な研究テーマへ育つのかは、十分に実証されていない。特に、社会課題に関わる研究では、学術的厳密性と実践現場の言葉の間に距離があり、優れた着想が研究として結実する前に失われることが少なくない。本研究は、ミラツクが蓄積してきた26のSQLite知識データベース、学術知識30,288概念、300話の連載知見、350名規模のコミュニティを活用し、研究テーマが「はぐくまれる」認知的・社会的条件を明らかにする。目的は、個人研究者の独自性を損なわず、異分野の知を研究の芽として育てる学術的方法論を提示することである。 + +### 研究/事業の方法（300-400字） +第一に、学術知識DB内の概念間関係をネットワーク化し、異分野接続点、周辺概念、媒介概念を抽出する。第二に、主申請者が自身の研究領域を起点に、抽出された概念群から研究仮説を生成する過程をリサーチログとして記録し、問いの変化、参照概念、判断理由を分析する。第三に、ミラツクの企業協働20社とコミュニティ参加者350名のうち、研究テーマに関連する実践者へのヒアリングを行い、学術概念が現場の語彙と接続する条件を検証する。第四に、得られた知見を小規模ワークショップで再検討し、若手研究者が異分野知識を用いて研究の芽を育てるためのプロトコルとして整理する。量的分析と質的記述を組み合わせ、助成期間内に探索研究として完結させる。 + +### 期待される成果（200-300字） +成果は、査読論文または紀要論文1本、学会発表1件、研究テーマ生成プロトコル、概念ネットワークの可視化資料、実践者ヒアリングに基づく研究ノートとしてまとめる。ミラツクにとっては、26DBを単なる知識蓄積ではなく、学術的問いを生み出す研究基盤として位置づけ直す契機となる。学術的には、知的好奇心、学際性、社会実装を結ぶ初期理論を提示し、「はぐくむ」の趣旨に沿った将来発展性を示す。 + +## 5. スケジュールと予算 +実施期間は2026年10月から2028年3月までを想定する。2026年度は研究設計、倫理確認、DB整理、概念ネットワークの初期分析を行い、予算70万円をデータ整備、研究補助、解析環境に充てる。2027年度はヒアリング、ワークショップ、分析、論文化を進め、予算130万円を謝金・旅費40万円、研究補助40万円、解析・可視化30万円、成果発信20万円に配分する。総事業費は200万円、補助申請額は200万円を基本とし、管理的経費が認められる場合は所属機関規程に従い別途計上する。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> 申請書本体 +- <input type="checkbox" disabled> 研究計画・研究方法説明書 +- <input type="checkbox" disabled> 申請者略歴・主要業績 +- <input type="checkbox" disabled> 所属機関の承認または確認書 +- <input type="checkbox" disabled> ミラツクとの連携確認書 +- <input type="checkbox" disabled> 予算計画書 +- <input type="checkbox" disabled> 倫理審査要否の確認資料 +- <input type="checkbox" disabled> 申請システム登録情報 + +## 7. 推奨アクション +- 主申請者となる研究者の資格要件、年齢要件、所属機関手続きを即時確認する。 +- 5月中に案Aを基に1ページ概要を作成し、稲盛財団の公募説明会・募集要項で表現を調整する。 +- ミラツク26DBから本申請に使う概念範囲を確定し、サンプル可視化を1点作成する。 +- 連携確認書、DB利用条件、ヒアリング対象候補を6月中に整理する。 +- 7月上旬までに研究計画、予算、業績欄の第三者レビューを完了する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B4_M_稲盛研究助成「はぐくむ」.md</p>
+<p>diff --git a/miratuku-grants-2026/drafts_v2/B4_M_稲盛研究助成「はぐくむ」.md b/miratuku-grants-2026/drafts_v2/B4_M_稲盛研究助成「はぐくむ」.md new file mode 100644 index 0000000000000000000000000000000000000000..a98e74f8939abc6a88f09e14804e8d4a83e28f5f --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B4_M_稲盛研究助成「はぐくむ」.md @@ -0,0 +1,48 @@ +# 稲盛研究助成「はぐくむ」 申請書ドラフト（ミラツク向け） + +<strong>締切</strong>: 2026-07-22 | <strong>上限</strong>: — + +## 1. 申請者情報（300字） +ミラツクは2010年設立の特定非営利活動法人であり、京都府・東京都を拠点に、企業・研究者・行政・市民の協働を通じて知の社会接続を進めてきた。第14期現在、専従25名、2024年度営業収益87.4M円、企業協働20社、コミュニティ参加者350名を有する。学術知識30,288概念を含む26のSQLite知識データベースと、「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載知見を蓄積している。本申請では、若手・中堅研究者を主申請者とし、ミラツクが学際DB、分析環境、実践コミュニティを提供する連携機関として、独創的な学術研究の芽を育てる。 + +## 2. 助成金概要・応募要件（200字） +稲盛研究助成「はぐくむ」は、研究者自身の知的好奇心に基づく独創的で将来性のある研究を支援し、学術・文化の促進と国際社会への貢献につながる人材育成を目的とする。公表情報では「はぐくむ」は1件200万円、計50件程度の支援が想定され、専門を越えた交流や研究発信の機会も重視される。評価上は、研究テーマの独自性、発展可能性、申請者の主体性、研究方法の妥当性、将来の学術的波及が重要となる。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 「学際知識データベースを用いた知的好奇心の形成過程の実証研究」 +ミラツクの26DBを活用し、研究者が異分野概念に出会い、問いを生成し、研究テーマへ発展させる過程をネットワーク分析と質的調査で明らかにする。 + +<strong>案B（代替）</strong>: 「社会課題領域における学術概念の翻訳可能性に関する探索研究」 +学術知識30,288概念と実践現場の語彙を対応づけ、研究知が企業・NPO・地域実践に接続される条件を可視化し、学際研究の初期仮説を構築する。 + +## 4. 事業/研究計画書本文 +### 背景・目的（300-400字） +学際研究の重要性は広く認識されているが、異なる分野の概念がどのように研究者の問いを刺激し、独創的な研究テーマへ育つのかは、十分に実証されていない。特に、社会課題に関わる研究では、学術的厳密性と実践現場の言葉の間に距離があり、優れた着想が研究として結実する前に失われることが少なくない。本研究は、ミラツクが蓄積してきた26のSQLite知識データベース、学術知識30,288概念、300話の連載知見、350名規模のコミュニティを活用し、研究テーマが「はぐくまれる」認知的・社会的条件を明らかにする。目的は、個人研究者の独自性を損なわず、異分野の知を研究の芽として育てる学術的方法論を提示することである。 + +### 研究/事業の方法（300-400字） +第一に、学術知識DB内の概念間関係をネットワーク化し、異分野接続点、周辺概念、媒介概念を抽出する。第二に、主申請者が自身の研究領域を起点に、抽出された概念群から研究仮説を生成する過程をリサーチログとして記録し、問いの変化、参照概念、判断理由を分析する。第三に、ミラツクの企業協働20社とコミュニティ参加者350名のうち、研究テーマに関連する実践者へのヒアリングを行い、学術概念が現場の語彙と接続する条件を検証する。第四に、得られた知見を小規模ワークショップで再検討し、若手研究者が異分野知識を用いて研究の芽を育てるためのプロトコルとして整理する。量的分析と質的記述を組み合わせ、助成期間内に探索研究として完結させる。 + +### 期待される成果（200-300字） +成果は、査読論文または紀要論文1本、学会発表1件、研究テーマ生成プロトコル、概念ネットワークの可視化資料、実践者ヒアリングに基づく研究ノートとしてまとめる。ミラツクにとっては、26DBを単なる知識蓄積ではなく、学術的問いを生み出す研究基盤として位置づけ直す契機となる。学術的には、知的好奇心、学際性、社会実装を結ぶ初期理論を提示し、「はぐくむ」の趣旨に沿った将来発展性を示す。 + +## 5. スケジュールと予算 +実施期間は2026年10月から2028年3月までを想定する。2026年度は研究設計、倫理確認、DB整理、概念ネットワークの初期分析を行い、予算70万円をデータ整備、研究補助、解析環境に充てる。2027年度はヒアリング、ワークショップ、分析、論文化を進め、予算130万円を謝金・旅費40万円、研究補助40万円、解析・可視化30万円、成果発信20万円に配分する。総事業費は200万円、補助申請額は200万円を基本とし、管理的経費が認められる場合は所属機関規程に従い別途計上する。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> 申請書本体 +- <input type="checkbox" disabled> 研究計画・研究方法説明書 +- <input type="checkbox" disabled> 申請者略歴・主要業績 +- <input type="checkbox" disabled> 所属機関の承認または確認書 +- <input type="checkbox" disabled> ミラツクとの連携確認書 +- <input type="checkbox" disabled> 予算計画書 +- <input type="checkbox" disabled> 倫理審査要否の確認資料 +- <input type="checkbox" disabled> 申請システム登録情報 + +## 7. 推奨アクション +- 主申請者となる研究者の資格要件、年齢要件、所属機関手続きを即時確認する。 +- 5月中に案Aを基に1ページ概要を作成し、稲盛財団の公募説明会・募集要項で表現を調整する。 +- ミラツク26DBから本申請に使う概念範囲を確定し、サンプル可視化を1点作成する。 +- 連携確認書、DB利用条件、ヒアリング対象候補を6月中に整理する。 +- 7月上旬までに研究計画、予算、業績欄の第三者レビューを完了する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B4_M_稲盛研究助成「はぐくむ」.md</p>
+<p>exec /bin/bash -lc "sed -n '1,240p' 'drafts_v2/B4_M_稲盛研究助成「はぐくむ」.md'" in /Users/nishimura+/work/miratuku-grants-2026 exec /bin/bash -lc "wc -m 'drafts_v2/B4_M_稲盛研究助成「はぐくむ」.md'" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms:     2418 drafts_v2/B4_M_稲盛研究助成「はぐくむ」.md</p>
+<p>succeeded in 0ms:</p>
+<h1>稲盛研究助成「はぐくむ」 申請書ドラフト（ミラツク向け）</h1>
+<p><strong>締切</strong>: 2026-07-22 | <strong>上限</strong>: —</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>ミラツクは2010年設立の特定非営利活動法人であり、京都府・東京都を拠点に、企業・研究者・行政・市民の協働を通じて知の社会接続を進めてきた。第14期現在、専従25名、2024年度営業収益87.4M円、企業協働20社、コミュニティ参加者350名を有する。学術知識30,288概念を含む26のSQLite知識データベースと、「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載知見を蓄積している。本申請では、若手・中堅研究者を主申請者とし、ミラツクが学際DB、分析環境、実践コミュニティを提供する連携機関として、独創的な学術研究の芽を育てる。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>稲盛研究助成「はぐくむ」は、研究者自身の知的好奇心に基づく独創的で将来性のある研究を支援し、学術・文化の促進と国際社会への貢献につながる人材育成を目的とする。公表情報では「はぐくむ」は1件200万円、計50件程度の支援が想定され、専門を越えた交流や研究発信の機会も重視される。評価上は、研究テーマの独自性、発展可能性、申請者の主体性、研究方法の妥当性、将来の学術的波及が重要となる。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 「学際知識データベースを用いた知的好奇心の形成過程の実証研究」 ミラツクの26DBを活用し、研究者が異分野概念に出会い、問いを生成し、研究テーマへ発展させる過程をネットワーク分析と質的調査で明らかにする。</p>
+<p><strong>案B（代替）</strong>: 「社会課題領域における学術概念の翻訳可能性に関する探索研究」 学術知識30,288概念と実践現場の語彙を対応づけ、研究知が企業・NPO・地域実践に接続される条件を可視化し、学際研究の初期仮説を構築する。</p>
+<h2>4. 事業/研究計画書本文</h2>
+<h3>背景・目的（300-400字）</h3>
+<p>学際研究の重要性は広く認識されているが、異なる分野の概念がどのように研究者の問いを刺激し、独創的な研究テーマへ育つのかは、十分に実証されていない。特に、社会課題に関わる研究では、学術的厳密性と実践現場の言葉の間に距離があり、優れた着想が研究として結実する前に失われることが少なくない。本研究は、ミラツクが蓄積してきた26のSQLite知識データベース、学術知識30,288概念、300話の連載知見、350名規模のコミュニティを活用し、研究テーマが「はぐくまれる」認知的・社会的条件を明らかにする。目的は、個人研究者の独自性を損なわず、異分野の知を研究の芽として育てる学術的方法論を提示することである。</p>
+<h3>研究/事業の方法（300-400字）</h3>
+<p>第一に、学術知識DB内の概念間関係をネットワーク化し、異分野接続点、周辺概念、媒介概念を抽出する。第二に、主申請者が自身の研究領域を起点に、抽出された概念群から研究仮説を生成する過程をリサーチログとして記録し、問いの変化、参照概念、判断理由を分析する。第三に、ミラツクの企業協働20社とコミュニティ参加者350名のうち、研究テーマに関連する実践者へのヒアリングを行い、学術概念が現場の語彙と接続する条件を検証する。第四に、得られた知見を小規模ワークショップで再検討し、若手研究者が異分野知識を用いて研究の芽を育てるためのプロトコルとして整理する。量的分析と質的記述を組み合わせ、助成期間内に探索研究として完結させる。</p>
+<h3>期待される成果（200-300字）</h3>
+<p>成果は、査読論文または紀要論文1本、学会発表1件、研究テーマ生成プロトコル、概念ネットワークの可視化資料、実践者ヒアリングに基づく研究ノートとしてまとめる。ミラツクにとっては、26DBを単なる知識蓄積ではなく、学術的問いを生み出す研究基盤として位置づけ直す契機となる。学術的には、知的好奇心、学際性、社会実装を結ぶ初期理論を提示し、「はぐくむ」の趣旨に沿った将来発展性を示す。</p>
+<h2>5. スケジュールと予算</h2>
+<p>実施期間は2026年10月から2028年3月までを想定する。2026年度は研究設計、倫理確認、DB整理、概念ネットワークの初期分析を行い、予算70万円をデータ整備、研究補助、解析環境に充てる。2027年度はヒアリング、ワークショップ、分析、論文化を進め、予算130万円を謝金・旅費40万円、研究補助40万円、解析・可視化30万円、成果発信20万円に配分する。総事業費は200万円、補助申請額は200万円を基本とし、管理的経費が認められる場合は所属機関規程に従い別途計上する。</p>
+<h2>6. 提出物チェックリスト</h2>
+<ul>
+<li><input type="checkbox" disabled> 申請書本体</li>
+<li><input type="checkbox" disabled> 研究計画・研究方法説明書</li>
+<li><input type="checkbox" disabled> 申請者略歴・主要業績</li>
+<li><input type="checkbox" disabled> 所属機関の承認または確認書</li>
+<li><input type="checkbox" disabled> ミラツクとの連携確認書</li>
+<li><input type="checkbox" disabled> 予算計画書</li>
+<li><input type="checkbox" disabled> 倫理審査要否の確認資料</li>
+<li><input type="checkbox" disabled> 申請システム登録情報</li>
+</ul>
+<h2>7. 推奨アクション</h2>
+<ul>
+<li>主申請者となる研究者の資格要件、年齢要件、所属機関手続きを即時確認する。</li>
+<li>5月中に案Aを基に1ページ概要を作成し、稲盛財団の公募説明会・募集要項で表現を調整する。</li>
+<li>ミラツク26DBから本申請に使う概念範囲を確定し、サンプル可視化を1点作成する。</li>
+<li>連携確認書、DB利用条件、ヒアリング対象候補を6月中に整理する。</li>
+<li>7月上旬までに研究計画、予算、業績欄の第三者レビューを完了する。</li>
+</ul>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

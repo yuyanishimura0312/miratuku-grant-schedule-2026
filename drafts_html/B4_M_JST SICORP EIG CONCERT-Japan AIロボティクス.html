@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>JST SICORP EIG CONCERT-Japan AIロボティクス</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>JST SICORP EIG CONCERT-Japan AIロボティクス 申請書ドラフト（ミラツク向け）</h1>
+<p><strong>締切</strong>: 2026-07-22 | <strong>上限</strong>: 3,900万円(3年)</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>特定非営利活動法人ミラツクは2010年設立、第14期を迎える知識創造・社会実装型NPOである。京都府・東京都を拠点に専従25名体制で活動し、2024年度営業収益は87.4M円。企業協働20社、コミュニティ参加者350名を基盤に、産学官民を横断する研究・事業開発を推進してきた。学術知識30,288概念を含む26のSQLite知識データベース、連載「事業のかたち」「暮らしのかたち」「変化のかたち」各100話・合計300話の知見を保有し、AIロボティクス研究を社会課題・生活者価値・実装現場へ接続する中間支援機能を担える。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>JST SICORP EIG CONCERT-Japanは、日本と欧州等の研究機関による国際共同研究を支援し、AI・ロボティクス分野の科学技術成果を社会的価値へ展開することを重視する国系助成である。大学等研究機関を主体とした国際共同体制、相手国研究者との役割分担、独創性、実装可能性、若手育成、データ管理、国際的波及効果が評価の要点となる。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 「学際知識グラフを用いた人間中心AIロボティクスの国際共創基盤」。ミラツクの26DBと大規模解析力を活用し、介護・教育・地域産業等で求められるロボット行動設計を、社会課題と研究シーズの両面から翻訳する。</p>
+<p><strong>案B（代替）</strong>: 「AIロボット導入における社会受容性と協働設計手法の国際比較」。欧州連携大学と共同で、生活・労働現場における信頼、説明可能性、利用者参加型評価の指標を開発する。</p>
+<h2>4. 事業/研究計画書本文</h2>
+<h3>背景・目的（300-400字）</h3>
+<p>AIロボティクスは労働力不足、ケア、教育、災害対応、地域産業の高度化に資する一方、技術シーズと現場課題の接続、社会受容性、倫理・説明責任、分野横断知識の統合が実装上の障壁となっている。本計画では、連携大学を研究代表とし、ミラツクは学際知識DBと企業・市民コミュニティを用いた「社会課題翻訳」と「実装仮説生成」を担う。学術知識30,288概念を含む知識基盤と、300話の社会変化・暮らし・事業事例を統合し、欧州側研究者との比較分析を通じて、人間中心AIロボティクスの研究テーマ、評価軸、社会実装モデルを構築する。</p>
+<h3>研究/事業の方法（300-400字）</h3>
+<p>第1に、26のSQLite知識DBからAI、ロボティクス、ケア、教育、地域産業、倫理、HRIに関連する概念群を抽出し、研究シーズと社会課題の対応関係を知識グラフ化する。第2に、国内外の研究者、企業、実装現場、コミュニティ参加者350名から協力者を募り、ワークショップとインタビューで導入場面、阻害要因、期待価値を整理する。第3に、連携大学が技術検証を担い、ミラツクはデータ解析、ユースケース設計、国際比較、成果発信を担当する。各年度で欧州側パートナーとの共同レビューを実施し、研究仮説、評価指標、実装プロトコルを段階的に更新する。</p>
+<h3>期待される成果（200-300字）</h3>
+<p>成果は、AIロボティクスの社会実装に向けた国際共通の課題マップ、ユースケース別評価指標、研究シーズ・社会課題対応データセット、実装プロトコル、共同論文・国際発表である。ミラツクは企業協働20社とコミュニティを通じて、研究成果を事業開発・政策対話・市民参加へ展開する。助成終了後は、大学との共同研究継続、企業コンソーシアム形成、海外招聘を含む国際交流事業へ発展させる。</p>
+<h2>5. スケジュールと予算</h2>
+<p>1年目は知識DB整備、国際共同研究体制構築、課題マップ作成に1,200万円。2年目は国内外調査、ワークショップ、技術・社会評価、プロトタイプ検証に1,400万円。3年目は実装プロトコル確立、成果公開、国際シンポジウム、次期共同研究形成に1,300万円。総事業費3,900万円、補助申請額3,900万円を想定する。内訳は人件費1,500万円、調査・データ整備700万円、国際旅費・招聘600万円、ワークショップ・会議費400万円、解析・システム費400万円、成果発信・管理費300万円。</p>
+<h2>6. 提出物チェックリスト</h2>
+<ul>
+<li><input type="checkbox" disabled> 申請書本体</li>
+<li><input type="checkbox" disabled> 日本側・相手国側研究代表者の体制表</li>
+<li><input type="checkbox" disabled> 連携大学との役割分担書</li>
+<li><input type="checkbox" disabled> 欧州側共同研究者の同意書・推薦状</li>
+<li><input type="checkbox" disabled> 研究計画・年次計画・予算内訳</li>
+<li><input type="checkbox" disabled> データマネジメント計画</li>
+<li><input type="checkbox" disabled> 倫理・個人情報・AIガバナンス確認書</li>
+<li><input type="checkbox" disabled> 法人概要、決算書、活動実績資料</li>
+</ul>
+<h2>7. 推奨アクション</h2>
+<ol>
+<li>連携大学の研究代表者、欧州側PI、ミラツクの分担範囲を5月中に確定する。</li>
+<li>26DBからAIロボティクス関連概念を抽出し、申請用の図表1枚に整理する。</li>
+<li>企業協働20社・コミュニティ350名から実証候補領域を3件選定する。</li>
+<li>国際比較、海外招聘、成果発信を含む3年ロードマップを作成する。</li>
+<li>7月上旬までに英文要旨、DMP、倫理・社会受容性評価の記述を完成させる。</li>
+</ol>
+<p>保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B4_M_JST SICORP EIG CONCERT-Japan AIロボティクス.md</p>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

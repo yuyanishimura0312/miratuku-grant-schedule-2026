@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>パナソニック NPO/NGOサポートファンド for SDGs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>パナソニック NPO/NGOサポートファンド for SDGs 申請書ドラフト（ミラツク向け）</h1>
+<p><strong>締切</strong>: 2026-07-15〜07/31 | <strong>上限</strong>: 組織基盤強化</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>法人プロフィールを基に当該助成金との適合性を強調。営業収益・コミュニティ規模・DB数・連載数等の数値を本文に組み込む。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>目的・要件・評価ポイントを地の文で。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 強み（②⑤）に合致するテーマ・要旨150字 <strong>案B（代替）</strong>: 別角度・要旨150字</p>
+<h2>4. 事業/研究計画書本文</h2>
+<h3>背景・目的（300-400字）</h3>
+<h3>研究/事業の方法（300-400字）</h3>
+<h3>期待される成果（200-300字）</h3>
+<h2>5. スケジュールと予算</h2>
+<p>年次別予算内訳・実施計画。総事業費・補助申請額。</p>
+<h2>6. 提出物チェックリスト</h2>
+<p>申請書類のチェックボックス。</p>
+<h2>7. 推奨アクション</h2>
+<p>即時行動3-5点。</p>
+<p>末尾に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md」と1行記載。</p>
+<p>codex 助成金の目的・要件は年度で変わり得るため、公式情報を確認してからドラフトに落とし込みます。その後、指定パスへMarkdownとして保存します。 web search: web search: パナソニック NPO/NGOサポートファンド for SDGs 2026 組織基盤強化 募集要項 codex 公式ページで、国内助成は「貧困の解消または関連課題に取り組むNPO」向け、2027年1月1日から12月31日の1年事業、組織基盤強化コース上限200万円、組織診断からはじめるコース上限150万円と確認しました。ミラツクの強み②セクター協働・⑤実装に寄せて、組織基盤強化コース想定で書きます。 exec /bin/bash -lc 'mkdir -p drafts_v2 && pwd' in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms: /Users/nishimura+/work/miratuku-grants-2026</p>
+<p>codex これから指定ファイルを作成します。内容は提出用の骨子としてすぐ調整できるよう、審査側の語彙である「第三者の客観的視点」「組織課題」「持続発展」を本文に入れています。 apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md diff --git a/miratuku-grants-2026/drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md b/miratuku-grants-2026/drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md new file mode 100644 index 0000000000000000000000000000000000000000..43e0a3bfe8cf4d97fabd8612a7e61884b67d2d73 --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md @@ -0,0 +1,47 @@ +# パナソニック NPO/NGOサポートファンド for SDGs 申請書ドラフト（ミラツク向け） + +<strong>締切</strong>: 2026-07-15〜07/31 | <strong>上限</strong>: 組織基盤強化 + +## 1. 申請者情報（300字） +特定非営利活動法人ミラツクは、2010年設立、京都府・東京都を拠点に活動する第14期のNPOである。専従25名体制で、2024年度営業収益は87.4M円。企業協働20社、コミュニティ参加者350名を基盤に、社会課題と事業創出をつなぐ対話・調査・実装支援を行ってきた。学術知識30,288概念を含む26のSQLite知識データベース、「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載を蓄積し、知を社会実装へ接続する組織である。本助成では、蓄積した知識資産とセクター協働の実践を、貧困・孤立・地域格差に向き合うNPO等へ安定的に還元するための組織基盤強化に取り組む。 + +## 2. 助成金概要・応募要件（200字） +本助成は、SDGs目標1「貧困の解消」に資するNPO/NGOが、持続発展的に社会変革へ取り組むための組織基盤強化を支援する制度である。国内助成は、日本国内の貧困または貧困と関連する問題の解決に取り組むNPOが対象で、民間非営利組織、設立3年以上が基本要件となる。評価上は、第三者の客観的視点を取り入れた組織課題の明確化、優先課題に基づく改善計画、事業終了後も継続する運営力の向上が重要となる。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 「貧困・孤立課題に取り組むNPOとの協働を持続化する、知識基盤活用型の組織運営強化」。ミラツクの企業・NPO・研究者をつなぐ協働力と実装力を、組織内の標準プロセス、評価、知識共有に落とし込む。 + +<strong>案B（代替）</strong>: 「社会課題解決に資する知識データベースの公益活用体制整備」。26の知識DBと300話の連載資産を、国内の困窮・孤立支援団体が活用できる相談、研修、伴走支援の基盤へ転換する。 + +## 4. 事業/研究計画書本文 +### 背景・目的（300-400字） +ミラツクは、企業、行政、研究者、NPO、市民をつなぎ、複雑な社会課題に対する新しい事業や協働の形を生み出してきた。一方で、国内では相対的貧困、若者や子育て世帯の孤立、地域間格差が重なり、個別支援だけでなく、支援団体同士が知見を共有し、企業や地域資源を巻き込む仕組みが求められている。ミラツクには20社との企業協働、350名のコミュニティ、26の知識DBと300話の知的資産があるが、貧困関連課題に取り組む団体へ継続的に届けるための内部運営、優先領域、評価指標、外部連携プロセスは十分に体系化されていない。本事業では、第三者の客観的視点を取り入れ、協働創出と実装支援を担う組織基盤を強化し、貧困・孤立課題に取り組むNPO等の持続的な課題解決を支える体制を整える。 + +### 研究/事業の方法（300-400字） +2027年1月から12月まで、組織基盤強化コースとして実施する。第一に、NPO支援機関または組織運営専門家を第三者アドバイザーに迎え、既存事業、財務、人的体制、知識DB活用、協働案件形成の流れを診断し、貧困関連課題への貢献可能性と組織課題を整理する。第二に、企業協働20社、コミュニティ参加者350名、連載読者・関係者へのヒアリングを行い、ミラツクが提供すべき伴走支援、研修、ナレッジ提供の型を明確化する。第三に、知識DBと連載資産を活用した「課題理解・協働設計・実装検証」の標準プロセスを作成し、2から3団体のNPOとの試行支援で検証する。第四に、成果指標、案件管理、振り返り会議、外部協働先との合意形成書式を整備し、助成終了後も運用できる内部体制に落とし込む。 + +### 期待される成果（200-300字） +成果は、1. 組織課題と優先改善事項を整理した基盤強化計画、2. 貧困・孤立課題に関わる協働案件形成プロセス、3. 知識DBと連載資産を活用した研修・伴走支援メニュー、4. 試行支援を通じた改善記録、5. 継続運用のための評価指標と担当体制である。これにより、ミラツクの強みであるセクター協働と実装力を個人依存から組織能力へ転換し、国内NPOが企業・研究知・地域資源とつながる機会を増やす。助成終了後は、通常事業とコミュニティ運営に組み込み、継続的に社会課題解決へ還元する。 + +## 5. スケジュールと予算 +実施期間は2027年1月1日から12月31日。1-3月は第三者診断、関係者ヒアリング、組織課題整理。4-6月は基盤強化計画、標準プロセス、評価指標の設計。7-10月はNPO 2-3団体との試行支援、企業・研究者との協働設計、知識DB活用研修。11-12月は成果検証、運用規程化、次年度計画策定を行う。総事業費は2,400,000円、補助申請額は2,000,000円、自己資金400,000円。内訳は、第三者アドバイザー謝金500,000円、診断・調査・ヒアリング費350,000円、知識DB活用設計・教材化450,000円、試行支援・ワークショップ運営500,000円、評価・報告書作成250,000円、事務局人件費相当350,000円。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> 国内助成の応募要項確認 +- <input type="checkbox" disabled> 応募用紙一式 +- <input type="checkbox" disabled> 組織基盤強化計画書 +- <input type="checkbox" disabled> 2024年度決算書・事業報告書 +- <input type="checkbox" disabled> 2025年度予算書・事業計画書 +- <input type="checkbox" disabled> 定款、役員名簿、団体概要資料 +- <input type="checkbox" disabled> 第三者アドバイザー候補の略歴・見積 +- <input type="checkbox" disabled> 2027年実施スケジュールと予算内訳 +- <input type="checkbox" disabled> 代表者確認、押印・電子提出前チェック + +## 7. 推奨アクション +1. 国内助成の対象課題に合わせ、「貧困と関連する問題」をミラツクの既存事業実績から具体化する。 +2. 第三者アドバイザー候補を5月中に選定し、診断範囲と成果物を合意する。 +3. 試行支援先となるNPO 2-3団体を候補化し、課題領域と協働仮説を整理する。 +4. 26の知識DBと300話連載から、貧困・孤立・地域格差に関係する知識群を抽出する。 +5. 7月上旬までに応募書類、財務資料、役員確認を完了し、7月15日の受付開始直後に提出可能な状態にする。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md</p>
+<p>diff --git a/miratuku-grants-2026/drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md b/miratuku-grants-2026/drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md new file mode 100644 index 0000000000000000000000000000000000000000..43e0a3bfe8cf4d97fabd8612a7e61884b67d2d73 --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md @@ -0,0 +1,47 @@ +# パナソニック NPO/NGOサポートファンド for SDGs 申請書ドラフト（ミラツク向け） + +<strong>締切</strong>: 2026-07-15〜07/31 | <strong>上限</strong>: 組織基盤強化 + +## 1. 申請者情報（300字） +特定非営利活動法人ミラツクは、2010年設立、京都府・東京都を拠点に活動する第14期のNPOである。専従25名体制で、2024年度営業収益は87.4M円。企業協働20社、コミュニティ参加者350名を基盤に、社会課題と事業創出をつなぐ対話・調査・実装支援を行ってきた。学術知識30,288概念を含む26のSQLite知識データベース、「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載を蓄積し、知を社会実装へ接続する組織である。本助成では、蓄積した知識資産とセクター協働の実践を、貧困・孤立・地域格差に向き合うNPO等へ安定的に還元するための組織基盤強化に取り組む。 + +## 2. 助成金概要・応募要件（200字） +本助成は、SDGs目標1「貧困の解消」に資するNPO/NGOが、持続発展的に社会変革へ取り組むための組織基盤強化を支援する制度である。国内助成は、日本国内の貧困または貧困と関連する問題の解決に取り組むNPOが対象で、民間非営利組織、設立3年以上が基本要件となる。評価上は、第三者の客観的視点を取り入れた組織課題の明確化、優先課題に基づく改善計画、事業終了後も継続する運営力の向上が重要となる。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 「貧困・孤立課題に取り組むNPOとの協働を持続化する、知識基盤活用型の組織運営強化」。ミラツクの企業・NPO・研究者をつなぐ協働力と実装力を、組織内の標準プロセス、評価、知識共有に落とし込む。 + +<strong>案B（代替）</strong>: 「社会課題解決に資する知識データベースの公益活用体制整備」。26の知識DBと300話の連載資産を、国内の困窮・孤立支援団体が活用できる相談、研修、伴走支援の基盤へ転換する。 + +## 4. 事業/研究計画書本文 +### 背景・目的（300-400字） +ミラツクは、企業、行政、研究者、NPO、市民をつなぎ、複雑な社会課題に対する新しい事業や協働の形を生み出してきた。一方で、国内では相対的貧困、若者や子育て世帯の孤立、地域間格差が重なり、個別支援だけでなく、支援団体同士が知見を共有し、企業や地域資源を巻き込む仕組みが求められている。ミラツクには20社との企業協働、350名のコミュニティ、26の知識DBと300話の知的資産があるが、貧困関連課題に取り組む団体へ継続的に届けるための内部運営、優先領域、評価指標、外部連携プロセスは十分に体系化されていない。本事業では、第三者の客観的視点を取り入れ、協働創出と実装支援を担う組織基盤を強化し、貧困・孤立課題に取り組むNPO等の持続的な課題解決を支える体制を整える。 + +### 研究/事業の方法（300-400字） +2027年1月から12月まで、組織基盤強化コースとして実施する。第一に、NPO支援機関または組織運営専門家を第三者アドバイザーに迎え、既存事業、財務、人的体制、知識DB活用、協働案件形成の流れを診断し、貧困関連課題への貢献可能性と組織課題を整理する。第二に、企業協働20社、コミュニティ参加者350名、連載読者・関係者へのヒアリングを行い、ミラツクが提供すべき伴走支援、研修、ナレッジ提供の型を明確化する。第三に、知識DBと連載資産を活用した「課題理解・協働設計・実装検証」の標準プロセスを作成し、2から3団体のNPOとの試行支援で検証する。第四に、成果指標、案件管理、振り返り会議、外部協働先との合意形成書式を整備し、助成終了後も運用できる内部体制に落とし込む。 + +### 期待される成果（200-300字） +成果は、1. 組織課題と優先改善事項を整理した基盤強化計画、2. 貧困・孤立課題に関わる協働案件形成プロセス、3. 知識DBと連載資産を活用した研修・伴走支援メニュー、4. 試行支援を通じた改善記録、5. 継続運用のための評価指標と担当体制である。これにより、ミラツクの強みであるセクター協働と実装力を個人依存から組織能力へ転換し、国内NPOが企業・研究知・地域資源とつながる機会を増やす。助成終了後は、通常事業とコミュニティ運営に組み込み、継続的に社会課題解決へ還元する。 + +## 5. スケジュールと予算 +実施期間は2027年1月1日から12月31日。1-3月は第三者診断、関係者ヒアリング、組織課題整理。4-6月は基盤強化計画、標準プロセス、評価指標の設計。7-10月はNPO 2-3団体との試行支援、企業・研究者との協働設計、知識DB活用研修。11-12月は成果検証、運用規程化、次年度計画策定を行う。総事業費は2,400,000円、補助申請額は2,000,000円、自己資金400,000円。内訳は、第三者アドバイザー謝金500,000円、診断・調査・ヒアリング費350,000円、知識DB活用設計・教材化450,000円、試行支援・ワークショップ運営500,000円、評価・報告書作成250,000円、事務局人件費相当350,000円。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> 国内助成の応募要項確認 +- <input type="checkbox" disabled> 応募用紙一式 +- <input type="checkbox" disabled> 組織基盤強化計画書 +- <input type="checkbox" disabled> 2024年度決算書・事業報告書 +- <input type="checkbox" disabled> 2025年度予算書・事業計画書 +- <input type="checkbox" disabled> 定款、役員名簿、団体概要資料 +- <input type="checkbox" disabled> 第三者アドバイザー候補の略歴・見積 +- <input type="checkbox" disabled> 2027年実施スケジュールと予算内訳 +- <input type="checkbox" disabled> 代表者確認、押印・電子提出前チェック + +## 7. 推奨アクション +1. 国内助成の対象課題に合わせ、「貧困と関連する問題」をミラツクの既存事業実績から具体化する。 +2. 第三者アドバイザー候補を5月中に選定し、診断範囲と成果物を合意する。 +3. 試行支援先となるNPO 2-3団体を候補化し、課題領域と協働仮説を整理する。 +4. 26の知識DBと300話連載から、貧困・孤立・地域格差に関係する知識群を抽出する。 +5. 7月上旬までに応募書類、財務資料、役員確認を完了し、7月15日の受付開始直後に提出可能な状態にする。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md</p>
+<p>exec /bin/bash -lc "wc -m drafts_v2/B4_M_パナソニック\\ NPO_NGOサポートファンド\\ for\\ SDGs.md" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms:     2728 drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md</p>
+<p>diff --git a/miratuku-grants-2026/drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md b/miratuku-grants-2026/drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md new file mode 100644 index 0000000000000000000000000000000000000000..43e0a3bfe8cf4d97fabd8612a7e61884b67d2d73 --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md @@ -0,0 +1,47 @@ +# パナソニック NPO/NGOサポートファンド for SDGs 申請書ドラフト（ミラツク向け） + +<strong>締切</strong>: 2026-07-15〜07/31 | <strong>上限</strong>: 組織基盤強化 + +## 1. 申請者情報（300字） +特定非営利活動法人ミラツクは、2010年設立、京都府・東京都を拠点に活動する第14期のNPOである。専従25名体制で、2024年度営業収益は87.4M円。企業協働20社、コミュニティ参加者350名を基盤に、社会課題と事業創出をつなぐ対話・調査・実装支援を行ってきた。学術知識30,288概念を含む26のSQLite知識データベース、「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載を蓄積し、知を社会実装へ接続する組織である。本助成では、蓄積した知識資産とセクター協働の実践を、貧困・孤立・地域格差に向き合うNPO等へ安定的に還元するための組織基盤強化に取り組む。 + +## 2. 助成金概要・応募要件（200字） +本助成は、SDGs目標1「貧困の解消」に資するNPO/NGOが、持続発展的に社会変革へ取り組むための組織基盤強化を支援する制度である。国内助成は、日本国内の貧困または貧困と関連する問題の解決に取り組むNPOが対象で、民間非営利組織、設立3年以上が基本要件となる。評価上は、第三者の客観的視点を取り入れた組織課題の明確化、優先課題に基づく改善計画、事業終了後も継続する運営力の向上が重要となる。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 「貧困・孤立課題に取り組むNPOとの協働を持続化する、知識基盤活用型の組織運営強化」。ミラツクの企業・NPO・研究者をつなぐ協働力と実装力を、組織内の標準プロセス、評価、知識共有に落とし込む。 + +<strong>案B（代替）</strong>: 「社会課題解決に資する知識データベースの公益活用体制整備」。26の知識DBと300話の連載資産を、国内の困窮・孤立支援団体が活用できる相談、研修、伴走支援の基盤へ転換する。 + +## 4. 事業/研究計画書本文 +### 背景・目的（300-400字） +ミラツクは、企業、行政、研究者、NPO、市民をつなぎ、複雑な社会課題に対する新しい事業や協働の形を生み出してきた。一方で、国内では相対的貧困、若者や子育て世帯の孤立、地域間格差が重なり、個別支援だけでなく、支援団体同士が知見を共有し、企業や地域資源を巻き込む仕組みが求められている。ミラツクには20社との企業協働、350名のコミュニティ、26の知識DBと300話の知的資産があるが、貧困関連課題に取り組む団体へ継続的に届けるための内部運営、優先領域、評価指標、外部連携プロセスは十分に体系化されていない。本事業では、第三者の客観的視点を取り入れ、協働創出と実装支援を担う組織基盤を強化し、貧困・孤立課題に取り組むNPO等の持続的な課題解決を支える体制を整える。 + +### 研究/事業の方法（300-400字） +2027年1月から12月まで、組織基盤強化コースとして実施する。第一に、NPO支援機関または組織運営専門家を第三者アドバイザーに迎え、既存事業、財務、人的体制、知識DB活用、協働案件形成の流れを診断し、貧困関連課題への貢献可能性と組織課題を整理する。第二に、企業協働20社、コミュニティ参加者350名、連載読者・関係者へのヒアリングを行い、ミラツクが提供すべき伴走支援、研修、ナレッジ提供の型を明確化する。第三に、知識DBと連載資産を活用した「課題理解・協働設計・実装検証」の標準プロセスを作成し、2から3団体のNPOとの試行支援で検証する。第四に、成果指標、案件管理、振り返り会議、外部協働先との合意形成書式を整備し、助成終了後も運用できる内部体制に落とし込む。 + +### 期待される成果（200-300字） +成果は、1. 組織課題と優先改善事項を整理した基盤強化計画、2. 貧困・孤立課題に関わる協働案件形成プロセス、3. 知識DBと連載資産を活用した研修・伴走支援メニュー、4. 試行支援を通じた改善記録、5. 継続運用のための評価指標と担当体制である。これにより、ミラツクの強みであるセクター協働と実装力を個人依存から組織能力へ転換し、国内NPOが企業・研究知・地域資源とつながる機会を増やす。助成終了後は、通常事業とコミュニティ運営に組み込み、継続的に社会課題解決へ還元する。 + +## 5. スケジュールと予算 +実施期間は2027年1月1日から12月31日。1-3月は第三者診断、関係者ヒアリング、組織課題整理。4-6月は基盤強化計画、標準プロセス、評価指標の設計。7-10月はNPO 2-3団体との試行支援、企業・研究者との協働設計、知識DB活用研修。11-12月は成果検証、運用規程化、次年度計画策定を行う。総事業費は2,400,000円、補助申請額は2,000,000円、自己資金400,000円。内訳は、第三者アドバイザー謝金500,000円、診断・調査・ヒアリング費350,000円、知識DB活用設計・教材化450,000円、試行支援・ワークショップ運営500,000円、評価・報告書作成250,000円、事務局人件費相当350,000円。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> 国内助成の応募要項確認 +- <input type="checkbox" disabled> 応募用紙一式 +- <input type="checkbox" disabled> 組織基盤強化計画書 +- <input type="checkbox" disabled> 2024年度決算書・事業報告書 +- <input type="checkbox" disabled> 2025年度予算書・事業計画書 +- <input type="checkbox" disabled> 定款、役員名簿、団体概要資料 +- <input type="checkbox" disabled> 第三者アドバイザー候補の略歴・見積 +- <input type="checkbox" disabled> 2027年実施スケジュールと予算内訳 +- <input type="checkbox" disabled> 代表者確認、押印・電子提出前チェック + +## 7. 推奨アクション +1. 国内助成の対象課題に合わせ、「貧困と関連する問題」をミラツクの既存事業実績から具体化する。 +2. 第三者アドバイザー候補を5月中に選定し、診断範囲と成果物を合意する。 +3. 試行支援先となるNPO 2-3団体を候補化し、課題領域と協働仮説を整理する。 +4. 26の知識DBと300話連載から、貧困・孤立・地域格差に関係する知識群を抽出する。 +5. 7月上旬までに応募書類、財務資料、役員確認を完了し、7月15日の受付開始直後に提出可能な状態にする。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md</p>
+<p>codex 文字数を確認したところ、全体で2,728字あり指定上限を少し超えています。要件を残したまま、重複表現と予算説明を圧縮して2,500字以内に収めます。 apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md diff --git a/miratuku-grants-2026/drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md b/miratuku-grants-2026/drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md new file mode 100644 index 0000000000000000000000000000000000000000..b0a5a467d4141555fdc8f69600ff23c70dd32cf3 --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md @@ -0,0 +1,47 @@ +# パナソニック NPO/NGOサポートファンド for SDGs 申請書ドラフト（ミラツク向け） + +<strong>締切</strong>: 2026-07-15〜07/31 | <strong>上限</strong>: 組織基盤強化 + +## 1. 申請者情報（300字） +特定非営利活動法人ミラツクは、2010年設立、京都府・東京都を拠点に活動する第14期のNPOである。専従25名体制で、2024年度営業収益は87.4M円。企業協働20社、コミュニティ参加者350名を基盤に、社会課題と事業創出をつなぐ対話・調査・実装支援を行ってきた。学術知識30,288概念を含む26のSQLite知識データベース、合計300話の連載を蓄積し、知を社会実装へ接続している。本助成では、知識資産とセクター協働の実践を、貧困・孤立・地域格差に向き合うNPO等へ安定的に還元する組織基盤を強化する。 + +## 2. 助成金概要・応募要件（200字） +本助成は、SDGs目標1「貧困の解消」に資するNPO/NGOの組織基盤強化を支援する制度である。国内助成は、日本国内の貧困または関連課題の解決に取り組むNPOが対象で、民間非営利組織、設立3年以上が基本要件となる。第三者の客観的視点を取り入れた組織課題の明確化、改善計画、事業終了後も継続する運営力向上が重要となる。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 「貧困・孤立課題に取り組むNPOとの協働を持続化する、知識基盤活用型の組織運営強化」。ミラツクの企業・NPO・研究者をつなぐ協働力と実装力を、組織内の標準プロセス、評価、知識共有に落とし込む。 + +<strong>案B（代替）</strong>: 「社会課題解決に資する知識データベースの公益活用体制整備」。26の知識DBと300話の連載資産を、国内の困窮・孤立支援団体が活用できる相談、研修、伴走支援の基盤へ転換する。 + +## 4. 事業/研究計画書本文 +### 背景・目的（300-400字） +ミラツクは、企業、行政、研究者、NPO、市民をつなぎ、複雑な社会課題に対する新しい事業や協働を生み出してきた。一方で、国内では相対的貧困、若者や子育て世帯の孤立、地域間格差が重なり、支援団体同士が知見を共有し、企業や地域資源を巻き込む仕組みが求められている。ミラツクには20社との企業協働、350名のコミュニティ、26の知識DBと300話の知的資産があるが、貧困関連課題に取り組む団体へ継続的に届けるための内部運営、優先領域、評価指標、外部連携プロセスは十分に体系化されていない。本事業では、第三者の客観的視点を取り入れ、協働創出と実装支援を担う組織基盤を強化する。 + +### 研究/事業の方法（300-400字） +2027年1月から12月まで、組織基盤強化コースとして実施する。第一に、NPO支援機関または組織運営専門家を第三者アドバイザーに迎え、既存事業、財務、人的体制、知識DB活用、協働案件形成の流れを診断し、貧困関連課題への貢献可能性と組織課題を整理する。第二に、企業協働20社、コミュニティ参加者350名、連載読者・関係者へヒアリングし、伴走支援、研修、ナレッジ提供の型を明確化する。第三に、知識DBと連載資産を活用した「課題理解・協働設計・実装検証」の標準プロセスを作成し、NPO 2-3団体との試行支援で検証する。第四に、成果指標、案件管理、振り返り会議、外部協働先との合意形成書式を整備する。 + +### 期待される成果（200-300字） +成果は、1. 組織課題と優先改善事項を整理した基盤強化計画、2. 貧困・孤立課題に関わる協働案件形成プロセス、3. 知識DBと連載資産を活用した研修・伴走支援メニュー、4. 試行支援の改善記録、5. 継続運用の評価指標と担当体制である。これにより、セクター協働と実装力を個人依存から組織能力へ転換し、国内NPOが企業・研究知・地域資源とつながる機会を増やす。 + +## 5. スケジュールと予算 +実施期間は2027年1月1日から12月31日。1-3月は第三者診断、関係者ヒアリング、組織課題整理。4-6月は基盤強化計画、標準プロセス、評価指標の設計。7-10月はNPO 2-3団体との試行支援、企業・研究者との協働設計、知識DB活用研修。11-12月は成果検証、運用規程化、次年度計画策定を行う。総事業費2,400,000円、補助申請額2,000,000円、自己資金400,000円。内訳は第三者アドバイザー謝金500,000円、診断・調査350,000円、知識DB活用設計450,000円、試行支援500,000円、評価・報告250,000円、事務局人件費相当350,000円。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> 国内助成の応募要項確認 +- <input type="checkbox" disabled> 応募用紙一式 +- <input type="checkbox" disabled> 組織基盤強化計画書 +- <input type="checkbox" disabled> 2024年度決算書・事業報告書 +- <input type="checkbox" disabled> 2025年度予算書・事業計画書 +- <input type="checkbox" disabled> 定款、役員名簿、団体概要資料 +- <input type="checkbox" disabled> 第三者アドバイザー候補の略歴・見積 +- <input type="checkbox" disabled> 2027年実施スケジュールと予算内訳 +- <input type="checkbox" disabled> 代表者確認、押印・電子提出前チェック + +## 7. 推奨アクション +1. 国内助成の対象課題に合わせ、「貧困と関連する問題」をミラツクの既存事業実績から具体化する。 +2. 第三者アドバイザー候補を5月中に選定し、診断範囲と成果物を合意する。 +3. 試行支援先となるNPO 2-3団体を候補化し、課題領域と協働仮説を整理する。 +4. 26の知識DBと300話連載から、貧困・孤立・地域格差に関係する知識群を抽出する。 +5. 7月上旬までに応募書類、財務資料、役員確認を完了し、7月15日の受付開始直後に提出可能な状態にする。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md</p>
+<p>diff --git a/miratuku-grants-2026/drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md b/miratuku-grants-2026/drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md new file mode 100644 index 0000000000000000000000000000000000000000..b0a5a467d4141555fdc8f69600ff23c70dd32cf3 --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md @@ -0,0 +1,47 @@ +# パナソニック NPO/NGOサポートファンド for SDGs 申請書ドラフト（ミラツク向け） + +<strong>締切</strong>: 2026-07-15〜07/31 | <strong>上限</strong>: 組織基盤強化 + +## 1. 申請者情報（300字） +特定非営利活動法人ミラツクは、2010年設立、京都府・東京都を拠点に活動する第14期のNPOである。専従25名体制で、2024年度営業収益は87.4M円。企業協働20社、コミュニティ参加者350名を基盤に、社会課題と事業創出をつなぐ対話・調査・実装支援を行ってきた。学術知識30,288概念を含む26のSQLite知識データベース、合計300話の連載を蓄積し、知を社会実装へ接続している。本助成では、知識資産とセクター協働の実践を、貧困・孤立・地域格差に向き合うNPO等へ安定的に還元する組織基盤を強化する。 + +## 2. 助成金概要・応募要件（200字） +本助成は、SDGs目標1「貧困の解消」に資するNPO/NGOの組織基盤強化を支援する制度である。国内助成は、日本国内の貧困または関連課題の解決に取り組むNPOが対象で、民間非営利組織、設立3年以上が基本要件となる。第三者の客観的視点を取り入れた組織課題の明確化、改善計画、事業終了後も継続する運営力向上が重要となる。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 「貧困・孤立課題に取り組むNPOとの協働を持続化する、知識基盤活用型の組織運営強化」。ミラツクの企業・NPO・研究者をつなぐ協働力と実装力を、組織内の標準プロセス、評価、知識共有に落とし込む。 + +<strong>案B（代替）</strong>: 「社会課題解決に資する知識データベースの公益活用体制整備」。26の知識DBと300話の連載資産を、国内の困窮・孤立支援団体が活用できる相談、研修、伴走支援の基盤へ転換する。 + +## 4. 事業/研究計画書本文 +### 背景・目的（300-400字） +ミラツクは、企業、行政、研究者、NPO、市民をつなぎ、複雑な社会課題に対する新しい事業や協働を生み出してきた。一方で、国内では相対的貧困、若者や子育て世帯の孤立、地域間格差が重なり、支援団体同士が知見を共有し、企業や地域資源を巻き込む仕組みが求められている。ミラツクには20社との企業協働、350名のコミュニティ、26の知識DBと300話の知的資産があるが、貧困関連課題に取り組む団体へ継続的に届けるための内部運営、優先領域、評価指標、外部連携プロセスは十分に体系化されていない。本事業では、第三者の客観的視点を取り入れ、協働創出と実装支援を担う組織基盤を強化する。 + +### 研究/事業の方法（300-400字） +2027年1月から12月まで、組織基盤強化コースとして実施する。第一に、NPO支援機関または組織運営専門家を第三者アドバイザーに迎え、既存事業、財務、人的体制、知識DB活用、協働案件形成の流れを診断し、貧困関連課題への貢献可能性と組織課題を整理する。第二に、企業協働20社、コミュニティ参加者350名、連載読者・関係者へヒアリングし、伴走支援、研修、ナレッジ提供の型を明確化する。第三に、知識DBと連載資産を活用した「課題理解・協働設計・実装検証」の標準プロセスを作成し、NPO 2-3団体との試行支援で検証する。第四に、成果指標、案件管理、振り返り会議、外部協働先との合意形成書式を整備する。 + +### 期待される成果（200-300字） +成果は、1. 組織課題と優先改善事項を整理した基盤強化計画、2. 貧困・孤立課題に関わる協働案件形成プロセス、3. 知識DBと連載資産を活用した研修・伴走支援メニュー、4. 試行支援の改善記録、5. 継続運用の評価指標と担当体制である。これにより、セクター協働と実装力を個人依存から組織能力へ転換し、国内NPOが企業・研究知・地域資源とつながる機会を増やす。 + +## 5. スケジュールと予算 +実施期間は2027年1月1日から12月31日。1-3月は第三者診断、関係者ヒアリング、組織課題整理。4-6月は基盤強化計画、標準プロセス、評価指標の設計。7-10月はNPO 2-3団体との試行支援、企業・研究者との協働設計、知識DB活用研修。11-12月は成果検証、運用規程化、次年度計画策定を行う。総事業費2,400,000円、補助申請額2,000,000円、自己資金400,000円。内訳は第三者アドバイザー謝金500,000円、診断・調査350,000円、知識DB活用設計450,000円、試行支援500,000円、評価・報告250,000円、事務局人件費相当350,000円。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> 国内助成の応募要項確認 +- <input type="checkbox" disabled> 応募用紙一式 +- <input type="checkbox" disabled> 組織基盤強化計画書 +- <input type="checkbox" disabled> 2024年度決算書・事業報告書 +- <input type="checkbox" disabled> 2025年度予算書・事業計画書 +- <input type="checkbox" disabled> 定款、役員名簿、団体概要資料 +- <input type="checkbox" disabled> 第三者アドバイザー候補の略歴・見積 +- <input type="checkbox" disabled> 2027年実施スケジュールと予算内訳 +- <input type="checkbox" disabled> 代表者確認、押印・電子提出前チェック + +## 7. 推奨アクション +1. 国内助成の対象課題に合わせ、「貧困と関連する問題」をミラツクの既存事業実績から具体化する。 +2. 第三者アドバイザー候補を5月中に選定し、診断範囲と成果物を合意する。 +3. 試行支援先となるNPO 2-3団体を候補化し、課題領域と協働仮説を整理する。 +4. 26の知識DBと300話連載から、貧困・孤立・地域格差に関係する知識群を抽出する。 +5. 7月上旬までに応募書類、財務資料、役員確認を完了し、7月15日の受付開始直後に提出可能な状態にする。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md</p>
+<p>exec /bin/bash -lc "wc -m drafts_v2/B4_M_パナソニック\\ NPO_NGOサポートファンド\\ for\\ SDGs.md" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms:     2480 drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md</p>
+<p>diff --git a/miratuku-grants-2026/drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md b/miratuku-grants-2026/drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md new file mode 100644 index 0000000000000000000000000000000000000000..b0a5a467d4141555fdc8f69600ff23c70dd32cf3 --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md @@ -0,0 +1,47 @@ +# パナソニック NPO/NGOサポートファンド for SDGs 申請書ドラフト（ミラツク向け） + +<strong>締切</strong>: 2026-07-15〜07/31 | <strong>上限</strong>: 組織基盤強化 + +## 1. 申請者情報（300字） +特定非営利活動法人ミラツクは、2010年設立、京都府・東京都を拠点に活動する第14期のNPOである。専従25名体制で、2024年度営業収益は87.4M円。企業協働20社、コミュニティ参加者350名を基盤に、社会課題と事業創出をつなぐ対話・調査・実装支援を行ってきた。学術知識30,288概念を含む26のSQLite知識データベース、合計300話の連載を蓄積し、知を社会実装へ接続している。本助成では、知識資産とセクター協働の実践を、貧困・孤立・地域格差に向き合うNPO等へ安定的に還元する組織基盤を強化する。 + +## 2. 助成金概要・応募要件（200字） +本助成は、SDGs目標1「貧困の解消」に資するNPO/NGOの組織基盤強化を支援する制度である。国内助成は、日本国内の貧困または関連課題の解決に取り組むNPOが対象で、民間非営利組織、設立3年以上が基本要件となる。第三者の客観的視点を取り入れた組織課題の明確化、改善計画、事業終了後も継続する運営力向上が重要となる。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 「貧困・孤立課題に取り組むNPOとの協働を持続化する、知識基盤活用型の組織運営強化」。ミラツクの企業・NPO・研究者をつなぐ協働力と実装力を、組織内の標準プロセス、評価、知識共有に落とし込む。 + +<strong>案B（代替）</strong>: 「社会課題解決に資する知識データベースの公益活用体制整備」。26の知識DBと300話の連載資産を、国内の困窮・孤立支援団体が活用できる相談、研修、伴走支援の基盤へ転換する。 + +## 4. 事業/研究計画書本文 +### 背景・目的（300-400字） +ミラツクは、企業、行政、研究者、NPO、市民をつなぎ、複雑な社会課題に対する新しい事業や協働を生み出してきた。一方で、国内では相対的貧困、若者や子育て世帯の孤立、地域間格差が重なり、支援団体同士が知見を共有し、企業や地域資源を巻き込む仕組みが求められている。ミラツクには20社との企業協働、350名のコミュニティ、26の知識DBと300話の知的資産があるが、貧困関連課題に取り組む団体へ継続的に届けるための内部運営、優先領域、評価指標、外部連携プロセスは十分に体系化されていない。本事業では、第三者の客観的視点を取り入れ、協働創出と実装支援を担う組織基盤を強化する。 + +### 研究/事業の方法（300-400字） +2027年1月から12月まで、組織基盤強化コースとして実施する。第一に、NPO支援機関または組織運営専門家を第三者アドバイザーに迎え、既存事業、財務、人的体制、知識DB活用、協働案件形成の流れを診断し、貧困関連課題への貢献可能性と組織課題を整理する。第二に、企業協働20社、コミュニティ参加者350名、連載読者・関係者へヒアリングし、伴走支援、研修、ナレッジ提供の型を明確化する。第三に、知識DBと連載資産を活用した「課題理解・協働設計・実装検証」の標準プロセスを作成し、NPO 2-3団体との試行支援で検証する。第四に、成果指標、案件管理、振り返り会議、外部協働先との合意形成書式を整備する。 + +### 期待される成果（200-300字） +成果は、1. 組織課題と優先改善事項を整理した基盤強化計画、2. 貧困・孤立課題に関わる協働案件形成プロセス、3. 知識DBと連載資産を活用した研修・伴走支援メニュー、4. 試行支援の改善記録、5. 継続運用の評価指標と担当体制である。これにより、セクター協働と実装力を個人依存から組織能力へ転換し、国内NPOが企業・研究知・地域資源とつながる機会を増やす。 + +## 5. スケジュールと予算 +実施期間は2027年1月1日から12月31日。1-3月は第三者診断、関係者ヒアリング、組織課題整理。4-6月は基盤強化計画、標準プロセス、評価指標の設計。7-10月はNPO 2-3団体との試行支援、企業・研究者との協働設計、知識DB活用研修。11-12月は成果検証、運用規程化、次年度計画策定を行う。総事業費2,400,000円、補助申請額2,000,000円、自己資金400,000円。内訳は第三者アドバイザー謝金500,000円、診断・調査350,000円、知識DB活用設計450,000円、試行支援500,000円、評価・報告250,000円、事務局人件費相当350,000円。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> 国内助成の応募要項確認 +- <input type="checkbox" disabled> 応募用紙一式 +- <input type="checkbox" disabled> 組織基盤強化計画書 +- <input type="checkbox" disabled> 2024年度決算書・事業報告書 +- <input type="checkbox" disabled> 2025年度予算書・事業計画書 +- <input type="checkbox" disabled> 定款、役員名簿、団体概要資料 +- <input type="checkbox" disabled> 第三者アドバイザー候補の略歴・見積 +- <input type="checkbox" disabled> 2027年実施スケジュールと予算内訳 +- <input type="checkbox" disabled> 代表者確認、押印・電子提出前チェック + +## 7. 推奨アクション +1. 国内助成の対象課題に合わせ、「貧困と関連する問題」をミラツクの既存事業実績から具体化する。 +2. 第三者アドバイザー候補を5月中に選定し、診断範囲と成果物を合意する。 +3. 試行支援先となるNPO 2-3団体を候補化し、課題領域と協働仮説を整理する。 +4. 26の知識DBと300話連載から、貧困・孤立・地域格差に関係する知識群を抽出する。 +5. 7月上旬までに応募書類、財務資料、役員確認を完了し、7月15日の受付開始直後に提出可能な状態にする。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md</p>
+<p>codex 指定パスにドラフトを保存しました。全体で <code>2,480字</code> です。</p>
+<p>ファイル: <a href="/Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B4_M_パナソニック%20NPO_NGOサポートファンド%20for%20SDGs.md">B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md</a></p>
+<p>公式情報で、2026年募集の受付期間、国内助成対象、組織基盤強化コース上限200万円、事業期間2027年1月1日〜12月31日を確認して反映しています。</p>
+<p>参照: <a href="https://holdings.panasonic/jp/corporate/sustainability/citizenship/pnsf/npo_summary/2026_recruit.html">https://holdings.panasonic/jp/corporate/sustainability/citizenship/pnsf/npo_summary/2026_recruit.html</a> diff --git a/miratuku-grants-2026/drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md b/miratuku-grants-2026/drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md new file mode 100644 index 0000000000000000000000000000000000000000..b0a5a467d4141555fdc8f69600ff23c70dd32cf3 --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md @@ -0,0 +1,47 @@ +# パナソニック NPO/NGOサポートファンド for SDGs 申請書ドラフト（ミラツク向け） + +<strong>締切</strong>: 2026-07-15〜07/31 | <strong>上限</strong>: 組織基盤強化 + +## 1. 申請者情報（300字） +特定非営利活動法人ミラツクは、2010年設立、京都府・東京都を拠点に活動する第14期のNPOである。専従25名体制で、2024年度営業収益は87.4M円。企業協働20社、コミュニティ参加者350名を基盤に、社会課題と事業創出をつなぐ対話・調査・実装支援を行ってきた。学術知識30,288概念を含む26のSQLite知識データベース、合計300話の連載を蓄積し、知を社会実装へ接続している。本助成では、知識資産とセクター協働の実践を、貧困・孤立・地域格差に向き合うNPO等へ安定的に還元する組織基盤を強化する。 + +## 2. 助成金概要・応募要件（200字） +本助成は、SDGs目標1「貧困の解消」に資するNPO/NGOの組織基盤強化を支援する制度である。国内助成は、日本国内の貧困または関連課題の解決に取り組むNPOが対象で、民間非営利組織、設立3年以上が基本要件となる。第三者の客観的視点を取り入れた組織課題の明確化、改善計画、事業終了後も継続する運営力向上が重要となる。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 「貧困・孤立課題に取り組むNPOとの協働を持続化する、知識基盤活用型の組織運営強化」。ミラツクの企業・NPO・研究者をつなぐ協働力と実装力を、組織内の標準プロセス、評価、知識共有に落とし込む。 + +<strong>案B（代替）</strong>: 「社会課題解決に資する知識データベースの公益活用体制整備」。26の知識DBと300話の連載資産を、国内の困窮・孤立支援団体が活用できる相談、研修、伴走支援の基盤へ転換する。 + +## 4. 事業/研究計画書本文 +### 背景・目的（300-400字） +ミラツクは、企業、行政、研究者、NPO、市民をつなぎ、複雑な社会課題に対する新しい事業や協働を生み出してきた。一方で、国内では相対的貧困、若者や子育て世帯の孤立、地域間格差が重なり、支援団体同士が知見を共有し、企業や地域資源を巻き込む仕組みが求められている。ミラツクには20社との企業協働、350名のコミュニティ、26の知識DBと300話の知的資産があるが、貧困関連課題に取り組む団体へ継続的に届けるための内部運営、優先領域、評価指標、外部連携プロセスは十分に体系化されていない。本事業では、第三者の客観的視点を取り入れ、協働創出と実装支援を担う組織基盤を強化する。 + +### 研究/事業の方法（300-400字） +2027年1月から12月まで、組織基盤強化コースとして実施する。第一に、NPO支援機関または組織運営専門家を第三者アドバイザーに迎え、既存事業、財務、人的体制、知識DB活用、協働案件形成の流れを診断し、貧困関連課題への貢献可能性と組織課題を整理する。第二に、企業協働20社、コミュニティ参加者350名、連載読者・関係者へヒアリングし、伴走支援、研修、ナレッジ提供の型を明確化する。第三に、知識DBと連載資産を活用した「課題理解・協働設計・実装検証」の標準プロセスを作成し、NPO 2-3団体との試行支援で検証する。第四に、成果指標、案件管理、振り返り会議、外部協働先との合意形成書式を整備する。 + +### 期待される成果（200-300字） +成果は、1. 組織課題と優先改善事項を整理した基盤強化計画、2. 貧困・孤立課題に関わる協働案件形成プロセス、3. 知識DBと連載資産を活用した研修・伴走支援メニュー、4. 試行支援の改善記録、5. 継続運用の評価指標と担当体制である。これにより、セクター協働と実装力を個人依存から組織能力へ転換し、国内NPOが企業・研究知・地域資源とつながる機会を増やす。 + +## 5. スケジュールと予算 +実施期間は2027年1月1日から12月31日。1-3月は第三者診断、関係者ヒアリング、組織課題整理。4-6月は基盤強化計画、標準プロセス、評価指標の設計。7-10月はNPO 2-3団体との試行支援、企業・研究者との協働設計、知識DB活用研修。11-12月は成果検証、運用規程化、次年度計画策定を行う。総事業費2,400,000円、補助申請額2,000,000円、自己資金400,000円。内訳は第三者アドバイザー謝金500,000円、診断・調査350,000円、知識DB活用設計450,000円、試行支援500,000円、評価・報告250,000円、事務局人件費相当350,000円。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> 国内助成の応募要項確認 +- <input type="checkbox" disabled> 応募用紙一式 +- <input type="checkbox" disabled> 組織基盤強化計画書 +- <input type="checkbox" disabled> 2024年度決算書・事業報告書 +- <input type="checkbox" disabled> 2025年度予算書・事業計画書 +- <input type="checkbox" disabled> 定款、役員名簿、団体概要資料 +- <input type="checkbox" disabled> 第三者アドバイザー候補の略歴・見積 +- <input type="checkbox" disabled> 2027年実施スケジュールと予算内訳 +- <input type="checkbox" disabled> 代表者確認、押印・電子提出前チェック + +## 7. 推奨アクション +1. 国内助成の対象課題に合わせ、「貧困と関連する問題」をミラツクの既存事業実績から具体化する。 +2. 第三者アドバイザー候補を5月中に選定し、診断範囲と成果物を合意する。 +3. 試行支援先となるNPO 2-3団体を候補化し、課題領域と協働仮説を整理する。 +4. 26の知識DBと300話連載から、貧困・孤立・地域格差に関係する知識群を抽出する。 +5. 7月上旬までに応募書類、財務資料、役員確認を完了し、7月15日の受付開始直後に提出可能な状態にする。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md</p>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

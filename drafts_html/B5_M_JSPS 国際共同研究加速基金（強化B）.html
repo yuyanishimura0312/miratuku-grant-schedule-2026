@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>JSPS 国際共同研究加速基金（強化B）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>JSPS 国際共同研究加速基金（強化B） 申請書ドラフト（ミラツク向け）</h1>
+<p><strong>締切</strong>: 2026-09-17頃 | <strong>上限</strong>: 50-200万円(科研費連動)</p>
+<h2>1. 申請者情報（300字・数値組込）</h2>
+<p>特定非営利活動法人ミラツクは、2010年設立、現在第14期を迎える京都府・東京都拠点の実践型研究支援組織である。専従25名体制で、2024年度営業収益は87.4M円。企業協働20社、コミュニティ参加者350名との対話基盤を持ち、学術知識30,288概念を含む26のSQLite知識データベースを運用している。また「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載を通じ、研究知を社会の言葉へ翻訳してきた。本申請では、連携大学を研究主体とし、ミラツクは学際DB、知の社会接続、対話設計、成果発信を担う協力機関として参画する。</p>
+<h2>2. 助成金概要・応募要件（200字・地の文）</h2>
+<p>JSPS国際共同研究加速基金（強化B）は、採択済み科研費課題を基盤に、海外研究者との共同研究を加速する制度である。申請主体は科研費を有する大学等の研究者であり、既存課題との関連性、相手国研究者との役割分担、渡航・招聘・共同分析・成果発信の具体性が重視される。ミラツクは連携大学の研究計画における社会接続、知識整理、国際共同ワークショップ設計の支援主体として位置づける。</p>
+<h2>3. 申請テーマ案（A推奨/B代替・各150字）</h2>
+<p><strong>A推奨: 学際知識基盤を用いた社会課題形成の日欧比較研究</strong> 連携大学の科研費課題を基盤に、海外研究者と共同で、学術概念が企業・地域・市民の課題形成へ転換される過程を比較分析する。ミラツクの26DBと300話の社会実装事例を活用し、知の翻訳モデルを国際共同で検証する。</p>
+<p><strong>B代替: 研究成果の社会実装を促す国際共創プロセス研究</strong> 海外研究機関と連携し、研究成果が産官学民の協働を通じて事業・制度・生活実践へ移行する条件を分析する。ミラツクは企業20社、参加者350名の協働基盤を提供し、共同ワークショップと事例分析を担う。</p>
+<h2>4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字）</h2>
+<p><strong>背景目的</strong> 気候変動、少子高齢化、地域産業転換、ウェルビーイングなどの複合課題は、単一分野の知識だけでは解決が難しい。一方、大学で蓄積される学術知は、専門語彙や研究領域の境界により、企業・自治体・市民の意思決定へ十分に接続されない場合がある。本研究は、連携大学の科研費課題を国際共同研究へ発展させ、海外研究者との比較分析を通じて、学術概念が社会課題の発見、対話、事業仮説、実装計画へ変換されるプロセスを明らかにする。ミラツクは、30,288概念を含むDB、300話の連載、企業協働20社の実践知を提供し、研究成果を社会に届く形式へ翻訳する。</p>
+<p><strong>方法</strong> 第1に、連携大学の科研費課題に関連する主要概念を抽出し、ミラツクが保有する26のSQLite知識データベースと照合して概念接続図を作成する。第2に、海外共同研究者の所属機関で行われている類似研究、社会実装事例、政策・産業連携の枠組みを収集し、日本側事例との比較軸を設定する。第3に、京都または東京での招聘ワークショップと相手国での共同研究会を実施し、研究者、企業、実践者が同一の概念地図を用いて課題形成を行う過程を記録する。第4に、議事録、概念マップ、事例記述を質的分析し、学際知が社会実装へ移行する条件をモデル化する。</p>
+<p><strong>成果</strong> 本研究により、科研費課題の国際共同研究としての発展可能性を高め、学術概念を社会課題形成へ接続する実証的モデルを構築する。成果は、国際共著論文、共同研究会報告、概念接続データセット、社会向け解説記事として整理する。ミラツクにとっては、既存の学際DBと連載資産を大学研究の国際展開に接続する機会となる。</p>
+<h2>5. スケジュールと予算（年次別）</h2>
+<p><strong>1年目</strong>は、科研費課題との接続整理、海外共同研究者との研究設計、既存DBの概念抽出を行う。予算は50-80万円とし、打合せ旅費、翻訳・通訳、データ整理に充てる。</p>
+<p><strong>2年目</strong>は、海外研究者の招聘、相手国訪問、共同研究会、比較事例調査、概念マップ作成を進める。予算は100-150万円とし、招聘旅費、渡航費、会場費、分析補助、英文校閲費に配分する。</p>
+<p><strong>3年目</strong>は、分析統合、国際共著論文、報告書、社会向け記事、次期申請を準備する。予算は50-100万円とし、成果発信、データ整備、英文成果物作成に使用する。</p>
+<h2>6. 提出物チェックリスト（チェックボックス）</h2>
+<ul>
+<li><input type="checkbox" disabled> 科研費課題名・課題番号・研究代表者情報</li>
+<li><input type="checkbox" disabled> 既存科研費課題との関係整理</li>
+<li><input type="checkbox" disabled> 海外共同研究者の略歴・所属・実績</li>
+<li><input type="checkbox" disabled> 渡航・招聘計画と研究会計画</li>
+<li><input type="checkbox" disabled> ミラツクの役割分担表</li>
+<li><input type="checkbox" disabled> 26DBと30,288概念の活用説明</li>
+<li><input type="checkbox" disabled> 企業協働20社、参加者350名、連載300話の資料</li>
+<li><input type="checkbox" disabled> 予算内訳、見積、校閲根拠</li>
+<li><input type="checkbox" disabled> 成果発信、倫理、データ管理方針</li>
+</ul>
+<h2>7. 推奨アクション（3-5点）</h2>
+<ol>
+<li>連携大学の科研費課題を特定し、研究代表者と申請可否を確認する。</li>
+<li>海外共同研究者を1-2名に絞り、交流実績、招聘時期、共同論文化を文書化する。</li>
+<li>ミラツクの役割を「知識基盤・社会接続・対話設計の協力機関」として明確化する。</li>
+<li>26DB、30,288概念、300話連載から、科研費課題に直結する領域を選ぶ。</li>
+<li>2026年7月末までにテーマ、海外相手先、渡航計画を固め、8月中に初稿と予算表を完成させる。</li>
+</ol>
+<p>保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B5_M_JSPS 国際共同研究加速基金（強化B）.md</p>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

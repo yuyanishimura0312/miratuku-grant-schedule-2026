@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>京都市国際交流協会 国際交流事業支援</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>京都市国際交流協会 国際交流事業支援 申請書ドラフト（esse-sense向け）</h1>
+<p><strong>締切</strong>: 通年（随時） | <strong>上限</strong>: 段階設定</p>
+<h2>1. 申請者情報（300字・数値組込）</h2>
+<h2>2. 助成金概要・応募要件（200字・地の文）</h2>
+<h2>3. 申請テーマ案（A推奨/B代替・各150字）</h2>
+<h2>4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字）</h2>
+<h2>5. スケジュールと予算（年次別）</h2>
+<h2>6. 提出物チェックリスト</h2>
+<h2>7. 推奨アクション（3-5点）</h2>
+<p>末尾に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_E_京都市国際交流協会 国際交流事業支援.md」記載。地の文中心、法人数値組込必須。 codex 助成金要件は年度や随時募集の扱いが変わる可能性があるため、公式情報を確認してからドラフトに落とします。 web search: web search: 京都市国際交流協会 国際交流事業支援 助成金 随時 codex</p>
+<h1>京都市国際交流協会 国際交流事業支援 申請書ドラフト（esse-sense向け）</h1>
+<p><strong>締切</strong>: 通年（随時） | <strong>上限</strong>: 段階設定</p>
+<h2>1. 申請者情報（300字・数値組込）</h2>
+<p>esse-senseは、研究者の知を社会に届けるメディア事業を中核とする株式会社である。自社運営の記事データベースには、専門記事154件、一般向け記事34件を蓄積し、学際的な研究知の編集、発信、データ活用を継続してきた。AIを用いた研究テーマ整理、産学連携支援、大学発スタートアップ支援、大学DXに関する知見を有し、研究者・大学・企業・行政をつなぐ実装型の情報基盤を形成している。近年は国際対話の場としてesse-sense Future Forumを展開し、京都の大学・研究者が持つ知を多言語・多文化の文脈で社会に開く基盤づくりを進めている。</p>
+<h2>2. 助成金概要・応募要件（200字・地の文）</h2>
+<p>京都市国際交流協会は、京都市国際交流会館を拠点に、異文化理解、外国籍市民への支援、留学生・市民向け情報提供などを通じて、京都における国際交流と多文化共生を推進している。本支援は、京都らしい国際交流の裾野を広げ、市民、留学生、研究者、企業等が相互理解を深める事業に適合する。営利法人として申請する場合は、公共性、非営利性のある事業設計、参加者への開放性、成果の地域還元を明確にする。</p>
+<h2>3. 申請テーマ案（A推奨/B代替・各150字）</h2>
+<p>A推奨案は、「京都発・研究知の国際交流フォーラム」である。京都の大学研究者、留学生、外国籍市民、企業人を招き、環境、文化、AI、教育等の研究テーマをやさしい日本語と英語で共有する。記事DBとAI要約を活用し、対話記録を公開可能な知識資産として地域に還元する。</p>
+<p>B代替案は、「外国籍市民と研究者をつなぐ多文化サイエンス対話」である。生活課題、防災、教育、健康などをテーマに、京都在住の外国籍市民の声と研究者の知見を接続する小規模連続ワークショップを実施し、相互理解と地域課題の可視化を図る。</p>
+<h2>4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字）</h2>
+<p>京都には多くの大学、研究者、留学生、外国籍市民が集積している一方、研究の知見が市民や国際コミュニティに届く機会は限定的である。特に、専門性の高い研究成果は日本語・専門語の壁により、地域の多文化共生や国際交流の資源として十分に活用されていない。esse-senseは、研究者の知を社会に届けるメディア事業を通じて、154件の専門記事と34件の一般記事を蓄積してきた。本事業では、この知的資産を京都の国際交流の文脈に接続し、研究者、留学生、外国籍市民、企業、行政関係者が同じ場で学び合う機会を創出することを目的とする。</p>
+<p>実施方法として、まず既存の記事DBから国際交流に適したテーマを選定し、AIを用いて専門内容をやさしい日本語・英語の概要に再編集する。次に、京都市内の大学関係者、留学生、外国籍市民、企業人を対象に、公開型フォーラムと少人数対話セッションを組み合わせて開催する。フォーラムでは研究者による短時間の話題提供を行い、対話セッションでは参加者が生活実感、文化的背景、研究への期待を共有する。終了後は、議論内容を個人情報に配慮して整理し、記事、レポート、次回企画案として公開・蓄積する。営利法人の自主事業と切り分け、参加費を低廉または無料とし、助成対象経費は会場、通訳、翻訳、広報、記録作成に限定する。</p>
+<p>期待される成果は、京都の研究知を国際交流資源として再編集し、市民と外国籍住民が共に学ぶ機会を増やすことである。定量目標として、1回以上の公開フォーラム、参加者40名以上、研究記事・レポート3本以上の公開を目指す。定性的には、大学・研究者と地域の多文化コミュニティの接点を形成し、esse-sense Future Forumの国際展開にもつながる継続的な交流基盤を構築する。</p>
+<h2>5. スケジュールと予算（年次別）</h2>
+<p>初年度前半は、助成要件の確認、協力研究者・登壇者の選定、対象記事の抽出、やさしい日本語・英語要約の作成を行う。中盤に広報、参加者募集、会場調整、通訳・記録体制の整備を進める。後半にフォーラムと対話セッションを実施し、終了後1か月以内にレポートを公開する。</p>
+<p>予算は、会場費、通訳・翻訳費、広報物制作費、記録・編集費、登壇謝金、運営消耗品を中心に組む。自社人件費や通常の営利メディア運営費は対象外または自己負担とし、助成金は国際交流性と地域還元性が明確な経費に限定する。</p>
+<h2>6. 提出物チェックリスト</h2>
+<p>申請書には、法人概要、事業目的、実施体制、対象者、京都市内での実施場所、収支予算、広報計画、成果公開方法を明記する。添付資料として、会社概要、過去記事実績、esse-sense Future Forumの概要、協力予定者一覧、見積書、会場候補、広報案、反社会的勢力排除等の確認書類を準備する。営利法人であるため、公益性と収益事業との区分を説明する資料を加える。</p>
+<h2>7. 推奨アクション（3-5点）</h2>
+<ol>
+<li>事前に協会へ、株式会社による申請可否と対象経費範囲を確認する。</li>
+<li>事業名に「京都」「国際交流」「多文化共生」「研究知の社会還元」を明示する。</li>
+<li>参加費無料または低廉化、成果物公開、京都市内実施を前提に設計する。</li>
+<li>留学生、外国籍市民、大学関係者を含む協力先を早期に確保する。</li>
+<li>自社のDB154件・一般記事34件を、公共的な国際交流資源として位置づける。</li>
+</ol>
+<p>参照: <a href="https://www.kcif.or.jp/">京都市国際交流協会</a>、<a href="https://partner.jica.go.jp/Org/Detail/87">JICA PARTNER掲載団体情報</a></p>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>テルモ生命科学振興財団 国際交流助成</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>テルモ生命科学振興財団 国際交流助成 申請書ドラフト（esse-sense向け）</h1>
+<p><strong>締切</strong>: 2026-08-07 | <strong>上限</strong>: —</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>esse-senseは、研究者の知を社会に届けることを主要事業とする株式会社であり、学術知の編集、発信、データ活用、産学連携支援を一体で担う。専門記事DBとしてarticles 154件、一般向けgeneral_articles 34件の計188件を蓄積し、研究テーマ、研究者、社会課題、企業ニーズを横断的に接続する基盤を形成してきた。AI、学際DB、大学発スタートアップ支援、大学DXに強みを持ち、国際展開ではesse-sense Future Forumを通じて海外研究者・実務家との対話を進めている。本助成では、生命科学に関する国際的研究交流を社会に届く知識循環へ展開できる点を訴求する。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>テルモ生命科学振興財団の国際交流助成は、生命科学にかかる科学技術の研究等を目的として開催される学会、研究会、シンポジウム等を支援する制度であり、看護学、リハビリテーション学等も対象に含む。2026年度後期は2026年10月から2027年3月開催分が対象で、募集期間は2026年7月1日から8月7日。300名未満の小規模研究会助成では、外部参加を認める公開性、海外参加を含む国際性、研究交流としての明確な目的が重要となる。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 生命科学研究を社会実装へつなぐ国際小規模研究会「AI時代の知識循環と産学連携」</p>
+<p>要旨: esse-senseの188件の記事DB、AI・データ活用、Future Forumの国際対話基盤を活かし、生命科学、医療技術、研究DX、大学発スタートアップ支援を横断する研究交流を行い、研究知を社会に届ける方法論を共有する。</p>
+<p><strong>案B（代替）</strong>: 若手生命科学研究者の国際発信力を高めるメディア連携型研究会</p>
+<p>要旨: 若手研究者が海外研究者・産学連携支援者と対話し、生命科学研究の国際共同研究化、社会発信、事業化の可能性を検討する。研究会後はesse-senseの記事化により、成果を参加者外にも波及させる。</p>
+<h2>4. 事業/研究計画書本文</h2>
+<h3>背景・目的（300-400字）</h3>
+<p>生命科学の研究成果は、医療、予防、リハビリテーション、福祉、ヘルスケア産業に大きな波及可能性を持つ。一方で、専門分野ごとに議論が閉じやすく、海外の研究動向、社会実装の担い手、一般社会への発信が分断される課題がある。esse-senseは、articles 154件、general_articles 34件を通じて研究者の知を編集・発信してきた実績を持ち、AIと学際DBにより研究テーマ間の接続を可視化できる。本研究会は、国内外の生命科学研究者と産学連携支援者が参加し、研究知の翻訳、国際共同研究、社会実装の接点を形成することを目的とする。</p>
+<h3>研究/事業の方法（300-400字）</h3>
+<p>小規模研究会として、2026年11月から2027年2月の間に国内会場とオンライン併用で開催する。事前準備では、既存の記事DB188件から生命科学、医療技術、研究DX、産学連携に関わる記事を抽出し、登壇候補者、論点、海外事例を整理する。当日は、海外研究者の基調報告、国内研究者の話題提供、大学発スタートアップ支援者を交えたパネル討議、少人数ラウンドテーブルを組み合わせる。参加者は100-150名を想定し、外部参加を認める公開型とする。終了後は討議内容をレポート、記事、公開アーカイブとして発信する。</p>
+<h3>期待される成果（200-300字）</h3>
+<p>定量的には、国際小規模研究会1回、国内外登壇者6-8名、参加者100-150名、成果レポート1本、関連記事3本以上の公開を目標とする。定性的には、生命科学研究者と社会実装の担い手の間に新たな接点をつくり、研究成果を国際共同研究、産学連携、大学発スタートアップ支援へ展開する道筋を示す。助成終了後もesse-sense Future Forumと記事DBを活用し、継続的な国際交流の土台を維持する。</p>
+<h2>5. スケジュールと予算</h2>
+<p>2026年7月に申請、8-9月に登壇者調整とプログラム設計、10月に広報・参加者募集、11月から2027年2月の間に研究会を開催し、開催後1カ月以内に成果記事と報告書を公開する。総事業費は800,000円、助成申請額は公式確認上限の500,000円を想定する。内訳は、登壇者謝金・旅費250,000円、会場・配信費180,000円、通訳・翻訳費150,000円、記録編集・記事化費150,000円、広報・事務費70,000円。営利法人単独申請が難しい場合は、連携大学・研究者を開催責任者に置く。</p>
+<h2>6. 提出物チェックリスト</h2>
+<ul>
+<li><input type="checkbox" disabled> 国際交流助成Webシステム登録</li>
+<li><input type="checkbox" disabled> 申請書</li>
+<li><input type="checkbox" disabled> 開催趣旨・研究会概要</li>
+<li><input type="checkbox" disabled> プログラム案</li>
+<li><input type="checkbox" disabled> 登壇者・海外参加者候補一覧</li>
+<li><input type="checkbox" disabled> 参加者見込、外部参加を認める公開性の説明</li>
+<li><input type="checkbox" disabled> 収支予算書</li>
+<li><input type="checkbox" disabled> 法人概要、記事DB件数資料</li>
+<li><input type="checkbox" disabled> 連携大学・研究者との役割分担表</li>
+</ul>
+<h2>7. 推奨アクション</h2>
+<ul>
+<li>営利法人単独での申請可否と、開催責任者の要件を財団に確認する。</li>
+<li>小規模研究会助成として、開催日を2026年10月から2027年3月内で確定する。</li>
+<li>海外登壇者2-3名、国内登壇者4-5名の候補をリスト化する。</li>
+<li>生命科学関連の記事DB代表例を10件抽出し、申請添付資料に整える。</li>
+<li>助成対象経費に合わせ、500,000円申請ベースで予算を再精査する。</li>
+</ul>
+<p>保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B4_E_テルモ生命科学振興財団 国際交流助成.md</p>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>外務省 日本NGO連携無償資金協力</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>外務省 日本NGO連携無償資金協力 申請書ドラフト（ミラツク向け）</h1>
+<p><strong>締切</strong>: 通年 | <strong>上限</strong>: 数千万-数億円</p>
+<h2>1. 申請者情報（300字・数値組込）</h2>
+<h2>2. 助成金概要・応募要件（200字・地の文）</h2>
+<h2>3. 申請テーマ案（A推奨/B代替・各150字）</h2>
+<h2>4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字）</h2>
+<h2>5. スケジュールと予算（年次別）</h2>
+<h2>6. 提出物チェックリスト</h2>
+<h2>7. 推奨アクション（3-5点）</h2>
+<p>末尾に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_M_外務省 日本NGO連携無償資金協力.md」記載。地の文中心、法人数値組込必須。 codex 外務省制度は応募要件が変わり得るので、いただいた条件を軸にしつつ公式情報の範囲を軽く確認してから、指定パスにドラフトを作成します。 web search: web search: site:mofa.go.jp 日本NGO連携無償資金協力 応募要件 通年 N連 codex 令和8年度の外務省ページで、対象NGO・対象国地域・対象事業・支援対象経費・安全対策等が実施要領の柱であることを確認しました。これを反映し、申請本文は「海外現地実装＋知識基盤による成果可視化」に寄せます。 exec /bin/bash -lc "mkdir -p drafts_v2 && pwd && ls -la drafts_v2 | sed -n '1,20p'" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms: /Users/nishimura+/work/miratuku-grants-2026 total 9744 drwxr-xr-x  210 nishimura+  staff    6720  5月 10 11:37 . drwxr-xr-x   26 nishimura+  staff     832  5月 10 10:58 .. -rw-r--r--    1 nishimura+  staff    6056  5月 10 10:51 001_E_観光庁オーバーツーリズム対策.md -rw-r--r--    1 nishimura+  staff    7310  5月 10 10:51 001_M_観光庁オーバーツーリズム対策.md -rw-r--r--    1 nishimura+  staff    6594  5月 10 10:52 002_M_JSPS科研費_特別推進_基盤S.md -rw-r--r--    1 nishimura+  staff    2574  5月 10 10:57 003_M_JST CREST 戦略的創造研究推進事業.md -rw-r--r--    1 nishimura+  staff    1968  5月 10 10:57 004_E_NEDO ディープテック・スタートアップ支援(DTSU)第10回.md -rw-r--r--    1 nishimura+  staff    2720  5月 10 10:57 005_E_中小企業成長加速化補助金（推定例年6月）.md -rw-r--r--    1 nishimura+  staff    2892  5月 10 10:57 006_M_JST RISTEX「ケアが根づく社会システム」.md -rw-r--r--    1 nishimura+  staff    1915  5月 10 10:57 007_M_JST RISTEX「SDGs達成に向けた共創的研究開発」.md -rw-r--r--    1 nishimura+  staff    6116  5月 10 10:57 008_E_共創の場形成支援プログラム（COI-NEXT）「未来共創分野」.md -rw-r--r--    1 nishimura+  staff    2197  5月 10 10:57 008_M_共創の場形成支援プログラム（COI-NEXT）「未来共創分野」.md -rw-r--r--    1 nishimura+  staff    2167  5月 10 10:57 010_E_総務省 地域社会DX推進パッケージ事業（二次公募）.md -rw-r--r--    1 nishimura+  staff    2549  5月 10 10:57 010_M_総務省 地域社会DX推進パッケージ事業（二次公募）.md -rw-r--r--    1 nishimura+  staff    2517  5月 10 10:57 012_E_JST ASPIRE 2026 国際共同研究.md -rw-r--r--    1 nishimura+  staff    5061  5月 10 10:57 012_M_JST ASPIRE 2026 国際共同研究.md -rw-r--r--    1 nishimura+  staff    1928  5月 10 10:57 013_M_JSPS 研究成果公開促進費 データベース部門.md -rw-r--r--    1 nishimura+  staff    2973  5月 10 10:57 014_E_京都市 MICE開催支援助成金（大規模国際・上期4月_下期10月）.md -rw-r--r--    1 nishimura+  staff    2175  5月 10 10:57 014_M_京都市 MICE開催支援助成金（大規模国際・上期4月_下期10月）.md</p>
+<p>codex 指定フォルダは既に多数のドラフトを含む構成でした。これから新規ファイルとして、既存の粒度に合わせた短めの申請書ドラフトを追加します。 apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_M_外務省 日本NGO連携無償資金協力.md diff --git a/miratuku-grants-2026/drafts_v2/B6_M_外務省 日本NGO連携無償資金協力.md b/miratuku-grants-2026/drafts_v2/B6_M_外務省 日本NGO連携無償資金協力.md new file mode 100644 index 0000000000000000000000000000000000000000..9bc940110cacef02afcac25347ce4d0bea4fe62d --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B6_M_外務省 日本NGO連携無償資金協力.md @@ -0,0 +1,41 @@ +# 外務省 日本NGO連携無償資金協力 申請書ドラフト（ミラツク向け） +<strong>締切</strong>: 通年 | <strong>上限</strong>: 数千万-数億円 + +## 1. 申請者情報（300字・数値組込） +特定非営利活動法人ミラツクは、2010年設立、第14期を迎える京都府・東京都拠点の非営利法人である。専従25名体制のもと、2024年度営業収益87.4M円を基盤に、企業協働20社、コミュニティ参加者350名と連携し、研究知と実践現場を接続する事業を継続してきた。学術知識30,288概念を含む26のSQLite知識データベース、「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載知見を有し、学際DB、セクター協働、知の社会接続、データ活用、大規模解析、海外招聘を強みとする。 + +## 2. 助成金概要・応募要件（200字・地の文） +日本NGO連携無償資金協力は、日本のNGOが開発途上国・地域で実施する開発協力事業等を対象に、外務省が事業費を支援する制度である。対象NGO、対象国・地域、対象事業、支援対象経費、安全対策、広報、会計管理、情報開示等について実施要領に基づく確認が求められる。ミラツクはNPO法人として、現地団体との協働実績、資金管理体制、成果指標、テロ資金供与対策を明確化した上で申請する。 + +## 3. 申請テーマ案（A推奨/B代替・各150字） +A推奨: 開発途上国の社会課題解決を担う現地NGO・行政・企業のための「知識基盤型共創ラボ」構築事業。教育、保健、環境、生計向上等の現地課題を、学際DBと対話型協働設計により分析し、実装計画、研修、成果可視化まで支援する。 + +B代替: アジア地域の若手実践者を対象とした、地域課題解決人材の育成と日系企業・大学・NGOの越境連携事業。海外招聘と現地ワークショップを組み合わせ、300話の知見を教材化し、協働案件の形成まで伴走する。 + +## 4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字） +対象地域では、教育、保健、環境、生計向上など複合的課題が相互に関係し、単一分野の支援だけでは持続的な改善に至りにくい。現地NGOや自治体は住民との接点を有する一方、課題構造の分析、関係者間の合意形成、事業成果の可視化、外部資金への説明力に制約を抱える。ミラツクは、26のSQLite知識データベースと学術知識30,288概念、企業協働20社、350名の実践コミュニティを活用し、現地の暗黙知と国際的な研究知を接続できる。本事業は、開発課題の構造化、実装可能な事業モデルの共創、成果指標の整備を通じ、現地主体が継続的に課題解決を進める基盤を形成することを目的とする。 + +方法として、初年度に対象国・地域の現地NGO、行政、教育機関、住民組織を選定し、課題ヒアリングと既存データ整理を行う。ミラツクの学際DBを用いて課題群を概念マップ化し、現地語・日本語双方で共有可能な知識カード、研修教材、事業仮説を作成する。2年目は、現地ワークショップ、専門家派遣、海外招聘を組み合わせ、教育・保健・環境等から優先領域を定めて小規模実証を実施する。3年目は、実証結果を大規模解析により評価し、成果指標、費用対効果、住民参加度、連携継続性を整理する。全期間を通じて、安全対策、会計管理、広報、個人情報・機微情報管理を実施要領に沿って運用する。 + +成果として、現地団体が自ら課題を分析し、関係者と合意形成し、資金提供者に説明可能な事業計画を作成できる状態を目指す。具体的には、対象地域の課題マップ、研修教材、現地実証モデル、成果評価レポート、日系企業・大学・NGOとの連携案件を創出する。ミラツクにとっても、知の社会接続を国際協力領域に展開し、NPOとしての公益性と実装力を高める機会となる。 + +## 5. スケジュールと予算（年次別） +1年次は、対象国・地域の選定、現地パートナー確認、課題調査、知識DBによる分析、基本計画策定を行う。予算は調査旅費、現地調整費、翻訳、専門家人件費、管理費を中心に3,000万-5,000万円を想定する。 + +2年次は、現地ワークショップ、専門家派遣、海外招聘、研修教材作成、小規模実証を実施する。予算は研修運営、実証費、招聘費、現地委託費、安全対策費を中心に5,000万-1億円を想定する。 + +3年次は、実証拡大、成果評価、大規模解析、政策・事業提言、継続資金形成を行う。予算は評価調査、成果発信、現地伴走、外部監査、広報費を含め5,000万-1億円を想定する。 + +## 6. 提出物チェックリスト +- 申請書、事業計画書、予算書、資金計画、団体概要、定款、役員名簿、直近決算書、監査資料、納税・登記関連資料 +- 現地パートナー確認書、対象地域の課題資料、受益者設定、成果指標、リスク管理表、安全対策計画 +- テロ資金供与対策、利益相反管理、個人情報管理、広報計画、調達方針、外部評価計画 + +## 7. 推奨アクション（3-5点） +- 外務省の令和8年度実施要領を精読し、対象国・対象事業・経費区分の適合表を作成する。 +- 既存の海外招聘・国際協働実績を棚卸しし、現地実施能力を示す証憑を整える。 +- 26のSQLite知識DBと300話連載を、国際協力向け教材・成果可視化ツールとして再編集する。 +- 申請前に在外公館または外務省担当窓口へ事前相談し、対象国と事業類型の妥当性を確認する。 +- 初年度は大型実装よりも、現地パートナーの信頼形成と成果指標設計に重点を置く。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_M_外務省 日本NGO連携無償資金協力.md</p>
+<p>diff --git a/miratuku-grants-2026/drafts_v2/B6_M_外務省 日本NGO連携無償資金協力.md b/miratuku-grants-2026/drafts_v2/B6_M_外務省 日本NGO連携無償資金協力.md new file mode 100644 index 0000000000000000000000000000000000000000..9bc940110cacef02afcac25347ce4d0bea4fe62d --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B6_M_外務省 日本NGO連携無償資金協力.md @@ -0,0 +1,41 @@ +# 外務省 日本NGO連携無償資金協力 申請書ドラフト（ミラツク向け） +<strong>締切</strong>: 通年 | <strong>上限</strong>: 数千万-数億円 + +## 1. 申請者情報（300字・数値組込） +特定非営利活動法人ミラツクは、2010年設立、第14期を迎える京都府・東京都拠点の非営利法人である。専従25名体制のもと、2024年度営業収益87.4M円を基盤に、企業協働20社、コミュニティ参加者350名と連携し、研究知と実践現場を接続する事業を継続してきた。学術知識30,288概念を含む26のSQLite知識データベース、「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載知見を有し、学際DB、セクター協働、知の社会接続、データ活用、大規模解析、海外招聘を強みとする。 + +## 2. 助成金概要・応募要件（200字・地の文） +日本NGO連携無償資金協力は、日本のNGOが開発途上国・地域で実施する開発協力事業等を対象に、外務省が事業費を支援する制度である。対象NGO、対象国・地域、対象事業、支援対象経費、安全対策、広報、会計管理、情報開示等について実施要領に基づく確認が求められる。ミラツクはNPO法人として、現地団体との協働実績、資金管理体制、成果指標、テロ資金供与対策を明確化した上で申請する。 + +## 3. 申請テーマ案（A推奨/B代替・各150字） +A推奨: 開発途上国の社会課題解決を担う現地NGO・行政・企業のための「知識基盤型共創ラボ」構築事業。教育、保健、環境、生計向上等の現地課題を、学際DBと対話型協働設計により分析し、実装計画、研修、成果可視化まで支援する。 + +B代替: アジア地域の若手実践者を対象とした、地域課題解決人材の育成と日系企業・大学・NGOの越境連携事業。海外招聘と現地ワークショップを組み合わせ、300話の知見を教材化し、協働案件の形成まで伴走する。 + +## 4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字） +対象地域では、教育、保健、環境、生計向上など複合的課題が相互に関係し、単一分野の支援だけでは持続的な改善に至りにくい。現地NGOや自治体は住民との接点を有する一方、課題構造の分析、関係者間の合意形成、事業成果の可視化、外部資金への説明力に制約を抱える。ミラツクは、26のSQLite知識データベースと学術知識30,288概念、企業協働20社、350名の実践コミュニティを活用し、現地の暗黙知と国際的な研究知を接続できる。本事業は、開発課題の構造化、実装可能な事業モデルの共創、成果指標の整備を通じ、現地主体が継続的に課題解決を進める基盤を形成することを目的とする。 + +方法として、初年度に対象国・地域の現地NGO、行政、教育機関、住民組織を選定し、課題ヒアリングと既存データ整理を行う。ミラツクの学際DBを用いて課題群を概念マップ化し、現地語・日本語双方で共有可能な知識カード、研修教材、事業仮説を作成する。2年目は、現地ワークショップ、専門家派遣、海外招聘を組み合わせ、教育・保健・環境等から優先領域を定めて小規模実証を実施する。3年目は、実証結果を大規模解析により評価し、成果指標、費用対効果、住民参加度、連携継続性を整理する。全期間を通じて、安全対策、会計管理、広報、個人情報・機微情報管理を実施要領に沿って運用する。 + +成果として、現地団体が自ら課題を分析し、関係者と合意形成し、資金提供者に説明可能な事業計画を作成できる状態を目指す。具体的には、対象地域の課題マップ、研修教材、現地実証モデル、成果評価レポート、日系企業・大学・NGOとの連携案件を創出する。ミラツクにとっても、知の社会接続を国際協力領域に展開し、NPOとしての公益性と実装力を高める機会となる。 + +## 5. スケジュールと予算（年次別） +1年次は、対象国・地域の選定、現地パートナー確認、課題調査、知識DBによる分析、基本計画策定を行う。予算は調査旅費、現地調整費、翻訳、専門家人件費、管理費を中心に3,000万-5,000万円を想定する。 + +2年次は、現地ワークショップ、専門家派遣、海外招聘、研修教材作成、小規模実証を実施する。予算は研修運営、実証費、招聘費、現地委託費、安全対策費を中心に5,000万-1億円を想定する。 + +3年次は、実証拡大、成果評価、大規模解析、政策・事業提言、継続資金形成を行う。予算は評価調査、成果発信、現地伴走、外部監査、広報費を含め5,000万-1億円を想定する。 + +## 6. 提出物チェックリスト +- 申請書、事業計画書、予算書、資金計画、団体概要、定款、役員名簿、直近決算書、監査資料、納税・登記関連資料 +- 現地パートナー確認書、対象地域の課題資料、受益者設定、成果指標、リスク管理表、安全対策計画 +- テロ資金供与対策、利益相反管理、個人情報管理、広報計画、調達方針、外部評価計画 + +## 7. 推奨アクション（3-5点） +- 外務省の令和8年度実施要領を精読し、対象国・対象事業・経費区分の適合表を作成する。 +- 既存の海外招聘・国際協働実績を棚卸しし、現地実施能力を示す証憑を整える。 +- 26のSQLite知識DBと300話連載を、国際協力向け教材・成果可視化ツールとして再編集する。 +- 申請前に在外公館または外務省担当窓口へ事前相談し、対象国と事業類型の妥当性を確認する。 +- 初年度は大型実装よりも、現地パートナーの信頼形成と成果指標設計に重点を置く。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_M_外務省 日本NGO連携無償資金協力.md</p>
+<p>exec /bin/bash -lc "wc -m 'drafts_v2/B6_M_外務省 日本NGO連携無償資金協力.md'" in /Users/nishimura+/work/miratuku-grants-2026 exec /bin/bash -lc "sed -n '1,220p' 'drafts_v2/B6_M_外務省 日本NGO連携無償資金協力.md'" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms:     2391 drafts_v2/B6_M_外務省 日本NGO連携無償資金協力.md</p>
+<p>succeeded in 0ms:</p>
+<h1>外務省 日本NGO連携無償資金協力 申請書ドラフト（ミラツク向け）</h1>
+<p><strong>締切</strong>: 通年 | <strong>上限</strong>: 数千万-数億円</p>
+<h2>1. 申請者情報（300字・数値組込）</h2>
+<p>特定非営利活動法人ミラツクは、2010年設立、第14期を迎える京都府・東京都拠点の非営利法人である。専従25名体制のもと、2024年度営業収益87.4M円を基盤に、企業協働20社、コミュニティ参加者350名と連携し、研究知と実践現場を接続する事業を継続してきた。学術知識30,288概念を含む26のSQLite知識データベース、「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載知見を有し、学際DB、セクター協働、知の社会接続、データ活用、大規模解析、海外招聘を強みとする。</p>
+<h2>2. 助成金概要・応募要件（200字・地の文）</h2>
+<p>日本NGO連携無償資金協力は、日本のNGOが開発途上国・地域で実施する開発協力事業等を対象に、外務省が事業費を支援する制度である。対象NGO、対象国・地域、対象事業、支援対象経費、安全対策、広報、会計管理、情報開示等について実施要領に基づく確認が求められる。ミラツクはNPO法人として、現地団体との協働実績、資金管理体制、成果指標、テロ資金供与対策を明確化した上で申請する。</p>
+<h2>3. 申請テーマ案（A推奨/B代替・各150字）</h2>
+<p>A推奨: 開発途上国の社会課題解決を担う現地NGO・行政・企業のための「知識基盤型共創ラボ」構築事業。教育、保健、環境、生計向上等の現地課題を、学際DBと対話型協働設計により分析し、実装計画、研修、成果可視化まで支援する。</p>
+<p>B代替: アジア地域の若手実践者を対象とした、地域課題解決人材の育成と日系企業・大学・NGOの越境連携事業。海外招聘と現地ワークショップを組み合わせ、300話の知見を教材化し、協働案件の形成まで伴走する。</p>
+<h2>4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字）</h2>
+<p>対象地域では、教育、保健、環境、生計向上など複合的課題が相互に関係し、単一分野の支援だけでは持続的な改善に至りにくい。現地NGOや自治体は住民との接点を有する一方、課題構造の分析、関係者間の合意形成、事業成果の可視化、外部資金への説明力に制約を抱える。ミラツクは、26のSQLite知識データベースと学術知識30,288概念、企業協働20社、350名の実践コミュニティを活用し、現地の暗黙知と国際的な研究知を接続できる。本事業は、開発課題の構造化、実装可能な事業モデルの共創、成果指標の整備を通じ、現地主体が継続的に課題解決を進める基盤を形成することを目的とする。</p>
+<p>方法として、初年度に対象国・地域の現地NGO、行政、教育機関、住民組織を選定し、課題ヒアリングと既存データ整理を行う。ミラツクの学際DBを用いて課題群を概念マップ化し、現地語・日本語双方で共有可能な知識カード、研修教材、事業仮説を作成する。2年目は、現地ワークショップ、専門家派遣、海外招聘を組み合わせ、教育・保健・環境等から優先領域を定めて小規模実証を実施する。3年目は、実証結果を大規模解析により評価し、成果指標、費用対効果、住民参加度、連携継続性を整理する。全期間を通じて、安全対策、会計管理、広報、個人情報・機微情報管理を実施要領に沿って運用する。</p>
+<p>成果として、現地団体が自ら課題を分析し、関係者と合意形成し、資金提供者に説明可能な事業計画を作成できる状態を目指す。具体的には、対象地域の課題マップ、研修教材、現地実証モデル、成果評価レポート、日系企業・大学・NGOとの連携案件を創出する。ミラツクにとっても、知の社会接続を国際協力領域に展開し、NPOとしての公益性と実装力を高める機会となる。</p>
+<h2>5. スケジュールと予算（年次別）</h2>
+<p>1年次は、対象国・地域の選定、現地パートナー確認、課題調査、知識DBによる分析、基本計画策定を行う。予算は調査旅費、現地調整費、翻訳、専門家人件費、管理費を中心に3,000万-5,000万円を想定する。</p>
+<p>2年次は、現地ワークショップ、専門家派遣、海外招聘、研修教材作成、小規模実証を実施する。予算は研修運営、実証費、招聘費、現地委託費、安全対策費を中心に5,000万-1億円を想定する。</p>
+<p>3年次は、実証拡大、成果評価、大規模解析、政策・事業提言、継続資金形成を行う。予算は評価調査、成果発信、現地伴走、外部監査、広報費を含め5,000万-1億円を想定する。</p>
+<h2>6. 提出物チェックリスト</h2>
+<ul>
+<li>申請書、事業計画書、予算書、資金計画、団体概要、定款、役員名簿、直近決算書、監査資料、納税・登記関連資料</li>
+<li>現地パートナー確認書、対象地域の課題資料、受益者設定、成果指標、リスク管理表、安全対策計画</li>
+<li>テロ資金供与対策、利益相反管理、個人情報管理、広報計画、調達方針、外部評価計画</li>
+</ul>
+<h2>7. 推奨アクション（3-5点）</h2>
+<ul>
+<li>外務省の令和8年度実施要領を精読し、対象国・対象事業・経費区分の適合表を作成する。</li>
+<li>既存の海外招聘・国際協働実績を棚卸しし、現地実施能力を示す証憑を整える。</li>
+<li>26のSQLite知識DBと300話連載を、国際協力向け教材・成果可視化ツールとして再編集する。</li>
+<li>申請前に在外公館または外務省担当窓口へ事前相談し、対象国と事業類型の妥当性を確認する。</li>
+<li>初年度は大型実装よりも、現地パートナーの信頼形成と成果指標設計に重点を置く。</li>
+</ul>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>DX等成長分野リスキリング推進事業</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>DX等成長分野リスキリング推進事業 申請書ドラフト（esse-sense向け）</h1>
+<p><strong>締切</strong>: 2026-06〜08予定 | <strong>上限</strong>: 数千万-+企業連携支援</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>法人プロフィールを基に、当該助成金との適合性を強調する自然な文章。営業収益・コミュニティ規模・DB数・連載数等の数値を本文に組み込む。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>助成金の目的・要件・評価ポイントを地の文で整理。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 法人の強み（④⑤）に合致するテーマ <strong>案B（代替）</strong>: 別角度からのアプローチ （各案にタイトル・要旨150字）</p>
+<h2>4. 事業/研究計画書本文（推奨案A）</h2>
+<h3>背景・目的（300-400字）</h3>
+<p>社会的・学術的意義、法人の実績・数値を引用。</p>
+<h3>研究/事業の方法（300-400字）</h3>
+<p>具体的アプローチ、段階的実施計画。</p>
+<h3>期待される成果（200-300字）</h3>
+<p>定量・定性両面で。</p>
+<h2>5. スケジュールと予算</h2>
+<p>年次別の予算内訳・実施計画。総事業費・補助申請額を明示。</p>
+<h2>6. 提出物チェックリスト</h2>
+<p>申請書類のチェックボックスリスト。</p>
+<h2>7. 推奨アクション</h2>
+<p>即時行動項目を箇条書き3-5点。</p>
+<p>【重要】</p>
+<ul>
+<li>地の文中心、箇条書きは補助的に</li>
+<li>法人の数値・実績を本文に組み込む</li>
+<li>1,500-2,500字</li>
+<li>出力末尾に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B3_E_DX等成長分野リスキリング推進事業.md」と記載</li>
+</ul>
+<p>codex</p>
+<h1>DX等成長分野リスキリング推進事業 申請書ドラフト（esse-sense向け）</h1>
+<p><strong>締切</strong>: 2026-06〜08予定 | <strong>上限</strong>: 数千万-+企業連携支援</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>esse-senseは、研究者の知を社会に届けることを主要事業とする営利法人であり、学術知の編集・流通・社会実装を担うメディア事業を展開している。現在、研究・社会課題に関する記事DBとしてarticles154件、general_articles34件を蓄積し、学際的知見を産業界・教育機関・自治体等が活用可能な形に翻訳してきた。データ活用、AI、産学連携支援、大学発スタートアップ支援、大学・学術機関DXに強みを有し、国際展開としてesse-sense Future Forumも推進している。ミラツクとの密接な共同応募実績を基盤に、大学と企業をつなぐ実践的なリスキリング基盤を構築できる点で、本事業との適合性は高い。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>本事業は、DX等の成長分野において、大学等の学術機関と企業が連携し、実務人材の再教育・能力開発を推進することを目的とする。評価上は、成長分野への明確な対応、大学等との連携実効性、企業現場での活用可能性、継続的な人材育成モデル、成果の横展開性が重視される。esse-senseは学術知DBとメディア編集力を持つため、研究知を実務者向け学習コンテンツへ変換する役割を担える。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 学術知DBとAIを活用した「大学・企業連携型 人材DXリスキリング基盤」 要旨: esse-senseが蓄積するarticles154件、general_articles34件の知見DBを基盤に、大学研究者の知をAIで構造化し、企業人材向けのDX学習プログラムへ展開する。大学・企業・ミラツク連携により、学術知の社会実装と人材育成を同時に進める。</p>
+<p><strong>案B（代替）</strong>: 大学発スタートアップ支援人材のための実践型リスキリングプログラム 要旨: 大学発スタートアップ支援、産学連携、研究成果の事業化に関わる人材を対象に、研究知の評価、事業仮説構築、データ活用、AI活用を学ぶ短期集中型プログラムを開発する。</p>
+<h2>4. 事業/研究計画書本文（推奨案A）</h2>
+<h3>背景・目的（300-400字）</h3>
+<p>日本企業におけるDX推進では、単なるツール導入ではなく、研究知を理解し、事業課題に接続できる人材の不足が顕在化している。特にAI、データ活用、大学発技術、産学連携領域では、専門知と実務知の橋渡しが必要である。esse-senseは、研究者の知を社会に届けるメディア事業を通じ、articles154件、general_articles34件の学際的知見DBを構築してきた。また、esse-sense Future Forum等を通じた国際的な知の接続、ミラツクとの共同応募実績を有する。本事業では、これらの資産を活用し、大学・企業連携による人材DXリスキリング基盤を構築することを目的とする。</p>
+<h3>研究/事業の方法（300-400字）</h3>
+<p>第一段階では、既存記事DBをAI・データ活用・産学連携・大学DX・大学発SU支援の観点で再分類し、企業人材向けの学習モジュールへ再設計する。第二段階では、大学研究者および実務家へのヒアリングを行い、研究知を業務課題に接続するケース教材を作成する。第三段階では、企業連携による試行講座を実施し、受講者の理解度、行動変容、業務適用度を測定する。ミラツクは共創設計、企業連携、社会実装支援を担い、esse-senseは知見DB、編集、AIによる教材化、研究者ネットワーク接続を担う。最終的に、大学・企業が継続利用できるリスキリングモデルとして体系化する。</p>
+<h3>期待される成果（200-300字）</h3>
+<p>定量成果として、初年度に学習モジュール10本、ケース教材20件、試行講座3回、受講者100名規模を目標とする。定性成果として、研究知を企業のDX課題に接続する共通言語を形成し、大学研究者、企業人材、支援機関が協働しやすい環境を整える。さらに、articles154件、general_articles34件のDBを教育資産として再活用することで、メディア事業と人材育成事業の相乗効果を生み、継続的な収益化と社会実装の基盤を確立する。</p>
+<h2>5. スケジュールと予算</h2>
+<p>総事業費は5,000万円、補助申請額は4,000万円を想定する。1年目は設計・教材開発を中心に2,000万円を計上し、DB再分類、AI教材化、大学研究者ヒアリング、講座設計を実施する。2年目は実証・改善に2,000万円を充て、企業連携講座、効果測定、修了者コミュニティ形成を行う。3年目は横展開・事業化に1,000万円を配分し、大学・企業向け導入パッケージ、継続課金モデル、共同研究展開を整備する。主な費目は人件費、教材開発費、AI・データ基盤費、研究者謝金、実証運営費、広報・成果発信費である。</p>
+<h2>6. 提出物チェックリスト</h2>
+<ul>
+<li><input type="checkbox" disabled> 申請書本体</li>
+<li><input type="checkbox" disabled> 事業計画書</li>
+<li><input type="checkbox" disabled> 収支予算書</li>
+<li><input type="checkbox" disabled> 法人登記・会社概要資料</li>
+<li><input type="checkbox" disabled> 決算書・財務資料</li>
+<li><input type="checkbox" disabled> 大学・企業連携に関する確認書または協定書</li>
+<li><input type="checkbox" disabled> ミラツクとの連携実績資料</li>
+<li><input type="checkbox" disabled> 記事DB・知見DBの概要資料</li>
+<li><input type="checkbox" disabled> 実施体制図</li>
+<li><input type="checkbox" disabled> 成果指標・効果測定計画</li>
+</ul>
+<h2>7. 推奨アクション</h2>
+<ul>
+<li>連携候補大学・研究者を早期に確定し、協力意思を文書化する。</li>
+<li>articles154件、general_articles34件をテーマ別に棚卸しし、教材化候補を抽出する。</li>
+<li>企業側の受講ニーズを3社以上にヒアリングし、実証先を確保する。</li>
+<li>ミラツクとの役割分担、共同実施体制、過去実績を申請書に明記する。</li>
+<li>補助対象経費に合わせ、AI基盤費・人件費・講座運営費の積算根拠を整える。</li>
+</ul>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

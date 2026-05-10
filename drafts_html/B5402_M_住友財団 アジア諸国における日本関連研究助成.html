@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>住友財団 アジア諸国における日本関連研究助成</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>住友財団 アジア諸国における日本関連研究助成 申請書ドラフト（ミラツク向け）</h1>
+<p><strong>締切</strong>: 2026-09-01 | <strong>上限</strong>: —</p>
+<h2>1. 申請者情報（300字・数値組込）</h2>
+<h2>2. 助成金概要・応募要件（200字・地の文）</h2>
+<h2>3. 申請テーマ案（A推奨/B代替・各150字）</h2>
+<h2>4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字）</h2>
+<h2>5. スケジュールと予算（年次別）</h2>
+<h2>6. 提出物チェックリスト（チェックボックス）</h2>
+<h2>7. 推奨アクション（3-5点）</h2>
+<p>末尾に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B5_M_住友財団 アジア諸国における日本関連研究助成.md」記載。地の文中心、法人数値組込必須。 codex 助成要件の表現にズレが出ないよう、まず財団側の公開情報を確認してから、指定パスにドラフトを作成します。 web search: web search: 住友財団 アジア諸国における日本関連研究助成 2026 募集要項 codex 公開情報では、この助成は「2026年度は9月1日応募開始予定」とされ、直近年度は10月31日17時締切でした。指定の「締切: 2026-09-01」は、提出完了期限というより応募開始・内部着手期限として扱えるよう本文内で補正して書きます。 exec /bin/bash -lc 'mkdir -p drafts_v2 && pwd && ls drafts_v2' in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms: /Users/nishimura+/work/miratuku-grants-2026 001_E_観光庁オーバーツーリズム対策.md 001_M_観光庁オーバーツーリズム対策.md 002_M_JSPS科研費_特別推進_基盤S.md 003_M_JST CREST 戦略的創造研究推進事業.md 004_E_NEDO ディープテック・スタートアップ支援(DTSU)第10回.md 005_E_中小企業成長加速化補助金（推定例年6月）.md 006_M_JST RISTEX「ケアが根づく社会システム」.md 007_M_JST RISTEX「SDGs達成に向けた共創的研究開発」.md 008_E_共創の場形成支援プログラム（COI-NEXT）「未来共創分野」.md 008_M_共創の場形成支援プログラム（COI-NEXT）「未来共創分野」.md 010_E_総務省 地域社会DX推進パッケージ事業（二次公募）.md 010_M_総務省 地域社会DX推進パッケージ事業（二次公募）.md 012_E_JST ASPIRE 2026 国際共同研究.md 012_M_JST ASPIRE 2026 国際共同研究.md 013_M_JSPS 研究成果公開促進費 データベース部門.md 014_E_京都市 MICE開催支援助成金（大規模国際・上期4月_下期10月）.md 014_M_京都市 MICE開催支援助成金（大規模国際・上期4月_下期10月）.md 015_E_経済安全保障重要技術育成プログラム（K Program）.md 015_M_経済安全保障重要技術育成プログラム（K Program）.md 016_E_ムーンショット型研究開発事業.md 016_M_ムーンショット型研究開発事業.md 017_E_内閣府 SIP第3期（戦略的イノベーション創造）.md 017_M_内閣府 SIP第3期（戦略的イノベーション創造）.md 018_E_NEDO グリーンイノベーション基金.md 018_M_NEDO グリーンイノベーション基金.md 019_E_JST GteX 革新的GX技術創出（推定例年5-7月）.md 019_M_JST GteX 革新的GX技術創出（推定例年5-7月）.md 020_E_JST スタートアップ・エコシステム共創（地域拠点）.md 021_E_第2期スタートアップ・エコシステム拠点形成戦略（内閣府）.md 022_M_地域中核大学・特色ある研究大学 総合振興パッケージ（J-PEAKS）.md 023_E_トヨタ財団 国際助成プログラム.md 023_M_トヨタ財団 国際助成プログラム.md 024_M_トヨタ財団 国内助成プログラム（自治型社会）.md 025_M_住友財団 基礎科学研究助成.md 026_M_鹿島学術振興財団 特定テーマ研究助成.md 029_M_トヨタ財団 研究助成「未来の社会システム」.md 030_E_DNP文化振興財団 グラフィック文化研究助成.md 030_M_DNP文化振興財団 グラフィック文化研究助成.md B3200_M_立石科学技術振興財団 国際交流助成.md B3201_E_立石科学技術振興財団 国際交流助成.md B3202_M_立石科学技術振興財団 国際会議開催助成.md B3203_E_立石科学技術振興財団 国際会議開催助成.md B3204_M_清水基金 文化芸術活動特別助成事業.md B3205_M_JFE21世紀財団 アジア歴史研究助成.md B3206_M_京都市芸術文化協会 伝統芸能文化復元.md B3207_M_住友財団 環境研究助成.md B3208_E_新事業進出・ものづくり補助金 第4回.md B3209_M_丸紅基金 第52回社会福祉助成金.md B3210_M_三井住友海上福祉財団 研究助成.md B3211_E_三井住友海上福祉財団 研究助成.md B3212_E_IMPACT FLOW KYOTO 2025-2026.md B3213_E_DX等成長分野リスキリング推進事業.md B4_E_セコム科学技術振興財団 学術集会助成.md B4_E_テルモ生命科学振興財団 国際交流助成.md B4_E_島津科学技術振興財団 研究開発助成（先進情報・データサイエンス）.md B4_E_日本食品化学研究振興財団 シンポジウム開催助成.md B4_M_JST SICORP EIG CONCERT-Japan AIロボティクス.md B4_M_セコム科学技術振興財団 学術集会助成.md B4_M_テルモ生命科学振興財団 国際交流助成.md B4_M_パナソニック NPO_NGOサポートファンド for SDGs.md B4_M_稲盛研究助成「たかめる」.md B4_M_稲盛研究助成「はぐくむ」.md B4_M_日本食品化学研究振興財団 シンポジウム開催助成.md B4300_M_稲盛研究助成「はぐくむ」.md B4301_M_日本食品化学研究振興財団 シンポジウム開催助成.md B4302_E_日本食品化学研究振興財団 シンポジウム開催助成.md B4303_M_セコム科学技術振興財団 学術集会助成.md B4304_E_セコム科学技術振興財団 学術集会助成.md B4305_E_島津科学技術振興財団 研究開発助成（先進情報・データサイエンス）.md B4306_M_稲盛研究助成「たかめる」.md B4307_M_テルモ生命科学振興財団 国際交流助成.md B4308_E_テルモ生命科学振興財団 国際交流助成.md B4309_M_JST SICORP EIG CONCERT-Japan AIロボティクス.md B4310_E_JST SICORP EIG CONCERT-Japan AIロボティクス.md B4311_M_パナソニック NPO_NGOサポートファンド for SDGs.md N100_M_京都府 文化力チャレンジ補助金.md N101_E_デジタル化・AI導入補助金 2026 セキュリティ枠.md N102_M_JST 創発的研究支援事業.md N103_E_京都エコノミック・ガーデニング支援.md N104_M_サステナブルツーリズム推進事業（沖縄）.md N105_E_中小企業省力化投資補助金 一般型 第6回.md N106_M_大同生命厚生事業団 地域保健福祉研究助成.md N107_M_NEDO 数理科学分野×産学連携の調査.md N108_E_NEDO 数理科学分野×産学連携の調査.md N109_M_ロッテ財団 実装型共同研究助成.md N110_E_ロッテ財団 実装型共同研究助成.md N111_E_JETRO GSAP（グローバル・スタートアップ・アクセラ）.md N112_M_京都産学公の森推進事業.md N113_E_京都産学公の森推進事業.md N114_M_JST さきがけ／ACT-X 2026年度.md N115_M_松下幸之助記念志財団 出版助成.md N116_M_内藤記念国際会議開催助成金.md N117_E_内藤記念国際会議開催助成金.md N118_M_住友電工グループ社会貢献基金 学術研究助成.md N119_E_京都市デジタル化推進プロジェクト.md N120_E_事業承継・M&A補助金.md N121_M_観光庁 オーバーツーリズム対策面的整備（令和8年度）.md N122_E_観光庁 オーバーツーリズム対策面的整備（令和8年度）.md N123_M_DX推進補助事業（沖縄DX促進）.md N124_E_DX推進補助事業（沖縄DX促進）.md N125_M_JST CREST「エクスポソーム」.md N126_M_京都市 Arts Aid KYOTO.md N127_M_コミュニティ活動促進事業（沖縄）.md N128_E_JETRO J-StarX（海外起業家育成）.md N129_M_中国電力技術研究財団 国際会議等開催助成.md N130_E_中国電力技術研究財団 国際会議等開催助成.md</p>
+<p>codex 既存の <code>drafts_v2</code> には同種の助成金ドラフトが多数あるため、ファイル構成だけ合わせてから本文を新規作成します。内容は今回指定されたM+E、A+D、国際協働研究に寄せます。 exec /bin/bash -lc "sed -n '1,220p' 'drafts_v2/B3205_M_JFE21世紀財団 アジア歴史研究助成.md'" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms:</p>
+<h1>JFE21世紀財団 アジア歴史研究助成 申請書ドラフト（ミラツク向け）</h1>
+<p><strong>締切</strong>: 2026-06-22 | <strong>上限</strong>: 150万円</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>法人プロフィールを基に、当該助成金との適合性を強調する自然な文章。営業収益・コミュニティ規模・DB数・連載数等の数値を本文に組み込む。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>助成金の目的・要件・評価ポイントを地の文で整理。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 法人の強み（①③）に合致するテーマ <strong>案B（代替）</strong>: 別角度からのアプローチ （各案にタイトル・要旨150字）</p>
+<h2>4. 事業/研究計画書本文（推奨案A）</h2>
+<h3>背景・目的（300-400字）</h3>
+<p>社会的・学術的意義、法人の実績・数値を引用。</p>
+<h3>研究/事業の方法（300-400字）</h3>
+<p>具体的アプローチ、段階的実施計画。</p>
+<h3>期待される成果（200-300字）</h3>
+<p>定量・定性両面で。</p>
+<h2>5. スケジュールと予算</h2>
+<p>年次別の予算内訳・実施計画。総事業費・補助申請額を明示。</p>
+<h2>6. 提出物チェックリスト</h2>
+<p>申請書類のチェックボックスリスト。</p>
+<h2>7. 推奨アクション</h2>
+<p>即時行動項目を箇条書き3-5点。</p>
+<p>【重要】</p>
+<ul>
+<li>地の文中心、箇条書きは補助的に</li>
+<li>法人の数値・実績を本文に組み込む</li>
+<li>1,500-2,500字</li>
+<li>出力末尾に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B3_M_JFE21世紀財団 アジア歴史研究助成.md」と記載</li>
+</ul>
+<p>codex 助成金の要件部分だけ、現在公開情報と齟齬がないか確認してからドラフト化します。いただいた法人情報はそのまま軸にします。 web search: web search: JFE21世紀財団 アジア歴史研究助成 2026 募集要項 codex</p>
+<h1>JFE21世紀財団 アジア歴史研究助成 申請書ドラフト（ミラツク向け）</h1>
+<p><strong>締切</strong>: 2026-06-22 | <strong>上限</strong>: 150万円</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>特定非営利活動法人ミラツクは、2010年設立、京都府・東京都を拠点に活動する第14期の非営利法人である。専従スタッフ25名により、企業協働20社、コミュニティ参加者350名との協働を通じ、研究知・実践知を社会課題解決に接続してきた。2024年度営業収益は87,405,221円で、継続的な事業運営基盤を有する。特に、学術知識30,288概念、歴史事象91,550件、財団2,140件、採択者2,122件、神話11,906物語等を含む26のSQLite知識データベースを整備しており、学際的知見の構造化と研究者の知の社会接続を強みとする。「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、計300話の連載完結実績もあり、本助成の学術的・社会的展開に適合する。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>JFE21世紀財団アジア歴史研究助成は、日本の大学・公的研究機関に所属する研究者によるアジア歴史研究を対象とし、1件150万円、10件程度を支援する制度である。対象は、アジア各地域の政治、経済、社会、文化の歴史的経緯を踏まえ、現況を直視し、21世紀の日本とアジアの共存共栄に資するVision構築へ貢献する研究である。ミラツクとしては、研究代表者を大学・公的研究機関所属者に置き、法人は知識基盤構築・社会接続の協力機関として設計する。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: <strong>タイトル</strong>: アジアにおける産業・文化交流の歴史知識基盤化と共存共栄Visionの構築 <strong>要旨</strong>: 日本とアジア各地域の産業・文化交流に関する歴史事象を収集・構造化し、研究者の解釈と知識データベースを接続する。歴史的記憶と現代課題を往還し、共存共栄に資する論点地図と公開報告を作成する。</p>
+<p><strong>案B（代替）</strong>: <strong>タイトル</strong>: アジア各地域の神話・記憶・生活文化から見る関係史の再編集 <strong>要旨</strong>: 神話11,906物語等の知識基盤を活用し、アジア各地域における生活文化・記憶・語りの比較研究を行う。国家間関係だけでなく、市民の暮らしに根ざした相互理解の歴史的基盤を明らかにする。</p>
+<h2>4. 事業/研究計画書本文（推奨案A）</h2>
+<h3>背景・目的（300-400字）</h3>
+<p>アジア各地域と日本の関係は、産業化、移動、交易、植民地経験、文化交流、技術移転など複雑な歴史的経緯の上に成り立っている。しかし、研究成果は専門分野ごとに蓄積される一方、現代の産業・文化のVision形成に活用しやすい形で横断的に整理されているとは言い難い。本研究は、アジア歴史研究の成果を、現代社会の協働や相互理解に接続する知識基盤として再構成することを目的とする。ミラツクは26のSQLite知識データベース、歴史事象91,550件、学術知識30,288概念を保有し、研究者の知の社会接続を継続してきた。本助成では、大学・公的研究機関所属の研究代表者と連携し、歴史研究の学術性を保ちながら、21世紀アジアと日本の共存共栄に資する論点を可視化する。</p>
+<h3>研究/事業の方法（300-400字）</h3>
+<p>研究は三段階で実施する。第一に、北・東アジア、東南アジア、南アジアから西アジア、中央アジアからカフカス地域を対象に、日本との産業・文化交流に関する既存研究、年表、事例を収集し、歴史事象データとして整理する。第二に、研究代表者および協力研究者による検討会を開催し、個別事象を政治・経済・社会・文化の観点から分類し、現代の課題と接続する主要論点を抽出する。第三に、ミラツクの知識基盤と連載制作の経験を活用し、研究成果を論点地図、短報、公開報告書として編集する。単なるデータ集積ではなく、研究者の解釈を中心に据え、歴史的経緯、記憶、現在の相互依存、将来の協働可能性を一体的に記述する。</p>
+<h3>期待される成果（200-300字）</h3>
+<p>成果として、アジアと日本の産業・文化交流に関する歴史事象データセット、主要論点を整理した研究報告書、研究者・実務者向けの論点地図を作成する。定量的には、関連事象300件以上、主要文献100件以上、研究会3回、公開報告1件を目標とする。定性的には、専門的な歴史研究を産業・文化の将来構想へ接続し、企業、研究者、市民が共有可能な知的基盤を形成する。これにより、本助成が掲げる「日本の産業と文化のVision構築」に具体的な貢献を行う。</p>
+<h2>5. スケジュールと予算</h2>
+<p>実施期間は2026年10月から2027年9月を想定する。2026年10月から12月に研究設計、対象地域・文献整理、データ項目設計を行う。2027年1月から4月に事例収集、データベース化、研究会2回を実施する。2027年5月から7月に分析、論点地図作成、追加ヒアリングを行い、2027年8月から9月に報告書編集、公開報告、成果提出を行う。総事業費は150万円、補助申請額は150万円とする。内訳は、研究協力者謝金45万円、資料・文献購入20万円、データ整理・編集補助35万円、研究会開催費20万円、旅費・打合せ費15万円、報告書編集・公開費15万円を予定する。</p>
+<h2>6. 提出物チェックリスト</h2>
+<ul>
+<li><input type="checkbox" disabled> 財団指定の申請書</li>
+<li><input type="checkbox" disabled> 研究計画書</li>
+<li><input type="checkbox" disabled> 研究代表者の所属・職位確認資料</li>
+<li><input type="checkbox" disabled> 研究代表者略歴・主要業績</li>
+<li><input type="checkbox" disabled> 予算計画書</li>
+<li><input type="checkbox" disabled> 共同研究・協力機関の役割説明</li>
+<li><input type="checkbox" disabled> ミラツクの法人概要資料</li>
+<li><input type="checkbox" disabled> 申請前の大学・研究機関内手続確認</li>
+</ul>
+<h2>7. 推奨アクション</h2>
+<ul>
+<li>研究代表者を大学または公的研究機関所属者として確定する。</li>
+<li>案Aを基に、対象地域を2〜3地域へ絞り、審査上の焦点を明確化する。</li>
+<li>ミラツクの役割を「研究協力機関」「知識基盤構築・社会接続担当」として整理する。</li>
+<li>歴史事象DBから申請テーマに関連するサンプル事例を10件抽出する。</li>
+<li>6月上旬までに研究計画書、予算書、代表者業績を揃え、6月22日締切に備える。</li>
+<p>exec /bin/bash -lc "sed -n '1,180p' 'drafts_v2/023_M_トヨタ財団 国際助成プログラム.md'" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms:</p>
+</ul>
+<h1>トヨタ財団 国際助成プログラム 申請書ドラフト（ミラツク向け）</h1>
+<p><strong>締切</strong>: 2026-05-30 | <strong>上限</strong>: 1,000万円</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>法人プロフィールを基に、当該助成金との適合性を強調する自然な文章。営業収益・コミュニティ規模・DB数・連載数等の具体的な数値を本文に組み込む。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>助成金の目的・要件・評価ポイントを地の文で整理。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 法人の強み（②⑦）に最も合致するテーマと150字の要旨 <strong>案B（代替）</strong>: 別角度からのアプローチ</p>
+<h2>4. 事業/研究計画書本文（推奨案A）</h2>
+<h3>背景・目的（300-400字）</h3>
+<p>社会的・学術的意義を地の文で記述、法人の実績と数値を引用。</p>
+<h3>研究/事業の方法（300-400字）</h3>
+<p>具体的アプローチ、段階的実施計画。</p>
+<h3>期待される成果（200-300字）</h3>
+<p>定量・定性両面で成果物を明示。</p>
+<h2>5. スケジュールと予算</h2>
+<p>年次別の予算内訳と実施計画。総事業費・補助申請額を明示。</p>
+<h2>6. 提出物チェックリスト</h2>
+<p>申請書類のチェックボックスリスト。</p>
+<h2>7. 推奨アクション</h2>
+<p>即時行動項目を箇条書き3-5点。</p>
+<p>【絶対遵守】</p>
+<ol>
+<li>必ず/Users/nishimura+/work/miratuku-grants-2026/drafts_v2/023_M_トヨタ財団 国際助成プログラム.mdにファイルを保存</li>
+<li>法人の数値・実績を本文に組み込む</li>
+<li>地の文中心、箇条書きは補助的に</li>
+<li>1,500-2,500字</li>
+<li>保存後、<code>保存完了: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/023_M_トヨタ財団 国際助成プログラム.md</code> の1行のみ報告</li>
+</ol>
+<p>codex 保存できませんでした: 指定パスが現在のサンドボックスの書き込み許可範囲外です。 codex これから指定ファイルを作成します。応募要件部分は、公式ページの「主に東アジア・東南アジア諸国の研究者による日本関連の人文・社会科学研究」と、2026年度9月1日開始予定という確認結果を反映します。 apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B5_M_住友財団 アジア諸国における日本関連研究助成.md diff --git a/miratuku-grants-2026/drafts_v2/B5_M_住友財団 アジア諸国における日本関連研究助成.md b/miratuku-grants-2026/drafts_v2/B5_M_住友財団 アジア諸国における日本関連研究助成.md new file mode 100644 index 0000000000000000000000000000000000000000..c89dec3765bbaa37265bcaa30c963e9bc43f3275 --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B5_M_住友財団 アジア諸国における日本関連研究助成.md @@ -0,0 +1,49 @@ +# 住友財団 アジア諸国における日本関連研究助成 申請書ドラフト（ミラツク向け） + +<strong>締切</strong>: 2026-09-01 | <strong>上限</strong>: — + +## 1. 申請者情報（300字・数値組込） +特定非営利活動法人ミラツクは、2010年設立、京都府・東京都を拠点に活動する第14期のNPO法人である。専従25名の体制で、2024年度営業収益87.4M円を基盤に、企業協働20社、コミュニティ参加者350名との対話と実装を進めてきた。学術知識30,288概念を含む26のSQLite知識データベースを整備し、「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載を通じて、専門知を社会に翻訳する実績を有する。学際DB、知の社会接続、海外招聘を組み合わせ、アジアの研究者と日本関連研究を共創できる点が本申請の中核的強みである。 + +## 2. 助成金概要・応募要件（200字・地の文） +住友財団「アジア諸国における日本関連研究助成」は、主として東アジア・東南アジア諸国の研究者による、日本研究、比較研究、国際関係研究、交流史研究等を支援し、アジア諸国と日本の相互理解を深める制度である。2026年度は9月1日応募開始予定と公表されているため、本稿では同日を内部締切として準備する。日本国内法人単独ではなく、アジア側研究者を研究主体に置き、ミラツクはM+Eの協働設計・知識基盤化・社会接続を担う構成が望ましい。 + +## 3. 申請テーマ案（A推奨/B代替・各150字） +<strong>案A（推奨）: アジアの日本関連研究をつなぐ「知識翻訳」共同研究</strong> +アジア各国の研究者が蓄積してきた日本関連研究を、学際DBと対話型ワークショップで横断的に接続する。研究概念、交流史、生活文化、制度比較を構造化し、日本理解を各国の文脈で深める共通知識基盤を形成する。 + +<strong>案B（代替）: 暮らしから見る日本理解の比較研究</strong> +日本の生活文化、地域実践、社会課題対応をアジア諸国の研究者と比較し、暮らしの語りを起点に相互理解を促す。300話の連載資産を分析素材に、各国の研究視点から再編集する。 + +## 4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字） +### 背景目的 +アジア諸国における日本関連研究は、文学、歴史、社会制度、産業、生活文化、国際関係など多様な領域で蓄積されている。一方で、研究成果は国・言語・専門分野ごとに分断されやすく、各国の研究者が日本理解を深めるための横断的な知識基盤や、研究成果を社会に共有する編集手法は十分に整っていない。本研究は、アジア側研究者を主体とし、ミラツクが保有する学術知識30,288概念を含む26のSQLite知識DB、300話の連載編集経験、企業・市民・研究者をつなぐ協働実績を活用して、日本関連研究を各国の文脈に開かれた形で再構成することを目的とする。単なる日本紹介ではなく、各国から見た日本像を比較し、相互理解の土台となる問いと概念を可視化する。 + +### 方法 +研究は三段階で実施する。第一に、東アジア・東南アジアの研究者3から5名を招聘またはオンライン招聘し、各国で蓄積された日本関連研究の主要論点を収集する。対象は、生活文化、地域社会、産業形成、公共政策、国際交流史を中心とし、既存文献、研究ノート、事例資料を整理する。第二に、ミラツクの知識DBを用いて、研究概念、人物・組織、出来事、実践事例の関係を構造化し、各国研究者との共同レビューで解釈の偏りを補正する。第三に、研究会、対話ワークショップ、短報編集を行い、学術的妥当性と社会的可読性を両立させた成果物にまとめる。ミラツクは研究主体を代替せず、協働設計、データ整理、知識翻訳、成果発信を担う。 + +### 成果 +成果として、アジア側研究者による日本関連研究の論点マップ、概念・事例データセット、共同研究報告書、公開対話記録を作成する。定量目標は、参加研究者3から5名、研究会4回、整理概念300件、事例50件、公開成果1件とする。定性的には、各国から見た日本理解の差異と共通点を可視化し、研究者、実務者、市民が参照できる知識基盤を整える。ミラツクの強みである学際DB、知の社会接続、海外招聘を統合し、財団の目的であるアジア諸国と日本の相互理解増進に貢献する。 + +## 5. スケジュールと予算（年次別） +2026年度は、9月に応募書類を確定し、採択後の2027年4月までに研究者候補、対象国、研究論点を確定する。2027年度前半は文献・事例収集、研究会2回、DB設計を行い、後半は共同レビュー、追加調査、公開対話、報告書編集を進める。2028年度が必要な場合は、成果の英日要約化、各国研究機関への共有、次期共同研究の設計に充てる。予算は、海外研究者謝金・招聘旅費、通訳翻訳、データ整理、研究会開催、報告書編集公開に配分する。上限未公表のため、募集要項公開後に総額を調整し、旅費偏重を避けて研究成果物と共同作業費を厚くする。 + +## 6. 提出物チェックリスト（チェックボックス） +- <input type="checkbox" disabled> 2026年度募集要項と正式締切の確認 +- <input type="checkbox" disabled> アジア側研究代表者・共同研究者の確定 +- <input type="checkbox" disabled> 研究計画書 +- <input type="checkbox" disabled> 研究者略歴・主要業績 +- <input type="checkbox" disabled> 推薦書または所属機関確認書類 +- <input type="checkbox" disabled> 予算計画書 +- <input type="checkbox" disabled> ミラツク法人概要・実績資料 +- <input type="checkbox" disabled> 知識DBと連載300話の活用説明資料 +- <input type="checkbox" disabled> 研究倫理・データ利用方針 + +## 7. 推奨アクション（3-5点） +- 9月1日を応募開始日兼内部締切とし、正式締切が10月末等に設定されても余裕を持って提出できる進行表を作る。 +- 申請主体になり得る東アジア・東南アジアの研究者を3名以上リスト化し、研究代表者候補を早期に確定する。 +- 案Aを基本に、対象国を2から3カ国、対象領域を生活文化・地域社会・国際交流史のいずれかに絞る。 +- 26のSQLite知識DBから、日本関連研究に接続しやすい概念・事例サンプルを20件抽出する。 +- ミラツクの役割を「協働設計・知識基盤化・社会接続」に限定し、研究主体性がアジア側研究者にあることを明確化する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B5_M_住友財団 アジア諸国における日本関連研究助成.md</p>
+<p>diff --git a/miratuku-grants-2026/drafts_v2/B5_M_住友財団 アジア諸国における日本関連研究助成.md b/miratuku-grants-2026/drafts_v2/B5_M_住友財団 アジア諸国における日本関連研究助成.md new file mode 100644 index 0000000000000000000000000000000000000000..c89dec3765bbaa37265bcaa30c963e9bc43f3275 --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B5_M_住友財団 アジア諸国における日本関連研究助成.md @@ -0,0 +1,49 @@ +# 住友財団 アジア諸国における日本関連研究助成 申請書ドラフト（ミラツク向け） + +<strong>締切</strong>: 2026-09-01 | <strong>上限</strong>: — + +## 1. 申請者情報（300字・数値組込） +特定非営利活動法人ミラツクは、2010年設立、京都府・東京都を拠点に活動する第14期のNPO法人である。専従25名の体制で、2024年度営業収益87.4M円を基盤に、企業協働20社、コミュニティ参加者350名との対話と実装を進めてきた。学術知識30,288概念を含む26のSQLite知識データベースを整備し、「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載を通じて、専門知を社会に翻訳する実績を有する。学際DB、知の社会接続、海外招聘を組み合わせ、アジアの研究者と日本関連研究を共創できる点が本申請の中核的強みである。 + +## 2. 助成金概要・応募要件（200字・地の文） +住友財団「アジア諸国における日本関連研究助成」は、主として東アジア・東南アジア諸国の研究者による、日本研究、比較研究、国際関係研究、交流史研究等を支援し、アジア諸国と日本の相互理解を深める制度である。2026年度は9月1日応募開始予定と公表されているため、本稿では同日を内部締切として準備する。日本国内法人単独ではなく、アジア側研究者を研究主体に置き、ミラツクはM+Eの協働設計・知識基盤化・社会接続を担う構成が望ましい。 + +## 3. 申請テーマ案（A推奨/B代替・各150字） +<strong>案A（推奨）: アジアの日本関連研究をつなぐ「知識翻訳」共同研究</strong> +アジア各国の研究者が蓄積してきた日本関連研究を、学際DBと対話型ワークショップで横断的に接続する。研究概念、交流史、生活文化、制度比較を構造化し、日本理解を各国の文脈で深める共通知識基盤を形成する。 + +<strong>案B（代替）: 暮らしから見る日本理解の比較研究</strong> +日本の生活文化、地域実践、社会課題対応をアジア諸国の研究者と比較し、暮らしの語りを起点に相互理解を促す。300話の連載資産を分析素材に、各国の研究視点から再編集する。 + +## 4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字） +### 背景目的 +アジア諸国における日本関連研究は、文学、歴史、社会制度、産業、生活文化、国際関係など多様な領域で蓄積されている。一方で、研究成果は国・言語・専門分野ごとに分断されやすく、各国の研究者が日本理解を深めるための横断的な知識基盤や、研究成果を社会に共有する編集手法は十分に整っていない。本研究は、アジア側研究者を主体とし、ミラツクが保有する学術知識30,288概念を含む26のSQLite知識DB、300話の連載編集経験、企業・市民・研究者をつなぐ協働実績を活用して、日本関連研究を各国の文脈に開かれた形で再構成することを目的とする。単なる日本紹介ではなく、各国から見た日本像を比較し、相互理解の土台となる問いと概念を可視化する。 + +### 方法 +研究は三段階で実施する。第一に、東アジア・東南アジアの研究者3から5名を招聘またはオンライン招聘し、各国で蓄積された日本関連研究の主要論点を収集する。対象は、生活文化、地域社会、産業形成、公共政策、国際交流史を中心とし、既存文献、研究ノート、事例資料を整理する。第二に、ミラツクの知識DBを用いて、研究概念、人物・組織、出来事、実践事例の関係を構造化し、各国研究者との共同レビューで解釈の偏りを補正する。第三に、研究会、対話ワークショップ、短報編集を行い、学術的妥当性と社会的可読性を両立させた成果物にまとめる。ミラツクは研究主体を代替せず、協働設計、データ整理、知識翻訳、成果発信を担う。 + +### 成果 +成果として、アジア側研究者による日本関連研究の論点マップ、概念・事例データセット、共同研究報告書、公開対話記録を作成する。定量目標は、参加研究者3から5名、研究会4回、整理概念300件、事例50件、公開成果1件とする。定性的には、各国から見た日本理解の差異と共通点を可視化し、研究者、実務者、市民が参照できる知識基盤を整える。ミラツクの強みである学際DB、知の社会接続、海外招聘を統合し、財団の目的であるアジア諸国と日本の相互理解増進に貢献する。 + +## 5. スケジュールと予算（年次別） +2026年度は、9月に応募書類を確定し、採択後の2027年4月までに研究者候補、対象国、研究論点を確定する。2027年度前半は文献・事例収集、研究会2回、DB設計を行い、後半は共同レビュー、追加調査、公開対話、報告書編集を進める。2028年度が必要な場合は、成果の英日要約化、各国研究機関への共有、次期共同研究の設計に充てる。予算は、海外研究者謝金・招聘旅費、通訳翻訳、データ整理、研究会開催、報告書編集公開に配分する。上限未公表のため、募集要項公開後に総額を調整し、旅費偏重を避けて研究成果物と共同作業費を厚くする。 + +## 6. 提出物チェックリスト（チェックボックス） +- <input type="checkbox" disabled> 2026年度募集要項と正式締切の確認 +- <input type="checkbox" disabled> アジア側研究代表者・共同研究者の確定 +- <input type="checkbox" disabled> 研究計画書 +- <input type="checkbox" disabled> 研究者略歴・主要業績 +- <input type="checkbox" disabled> 推薦書または所属機関確認書類 +- <input type="checkbox" disabled> 予算計画書 +- <input type="checkbox" disabled> ミラツク法人概要・実績資料 +- <input type="checkbox" disabled> 知識DBと連載300話の活用説明資料 +- <input type="checkbox" disabled> 研究倫理・データ利用方針 + +## 7. 推奨アクション（3-5点） +- 9月1日を応募開始日兼内部締切とし、正式締切が10月末等に設定されても余裕を持って提出できる進行表を作る。 +- 申請主体になり得る東アジア・東南アジアの研究者を3名以上リスト化し、研究代表者候補を早期に確定する。 +- 案Aを基本に、対象国を2から3カ国、対象領域を生活文化・地域社会・国際交流史のいずれかに絞る。 +- 26のSQLite知識DBから、日本関連研究に接続しやすい概念・事例サンプルを20件抽出する。 +- ミラツクの役割を「協働設計・知識基盤化・社会接続」に限定し、研究主体性がアジア側研究者にあることを明確化する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B5_M_住友財団 アジア諸国における日本関連研究助成.md</p>
+<p>exec /bin/bash -lc "wc -m 'drafts_v2/B5_M_住友財団 アジア諸国における日本関連研究助成.md' && sed -n '1,240p' 'drafts_v2/B5_M_住友財団 アジア諸国における日本関連研究助成.md'" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms:     2678 drafts_v2/B5_M_住友財団 アジア諸国における日本関連研究助成.md</p>
+<h1>住友財団 アジア諸国における日本関連研究助成 申請書ドラフト（ミラツク向け）</h1>
+<p><strong>締切</strong>: 2026-09-01 | <strong>上限</strong>: —</p>
+<h2>1. 申請者情報（300字・数値組込）</h2>
+<p>特定非営利活動法人ミラツクは、2010年設立、京都府・東京都を拠点に活動する第14期のNPO法人である。専従25名の体制で、2024年度営業収益87.4M円を基盤に、企業協働20社、コミュニティ参加者350名との対話と実装を進めてきた。学術知識30,288概念を含む26のSQLite知識データベースを整備し、「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載を通じて、専門知を社会に翻訳する実績を有する。学際DB、知の社会接続、海外招聘を組み合わせ、アジアの研究者と日本関連研究を共創できる点が本申請の中核的強みである。</p>
+<h2>2. 助成金概要・応募要件（200字・地の文）</h2>
+<p>住友財団「アジア諸国における日本関連研究助成」は、主として東アジア・東南アジア諸国の研究者による、日本研究、比較研究、国際関係研究、交流史研究等を支援し、アジア諸国と日本の相互理解を深める制度である。2026年度は9月1日応募開始予定と公表されているため、本稿では同日を内部締切として準備する。日本国内法人単独ではなく、アジア側研究者を研究主体に置き、ミラツクはM+Eの協働設計・知識基盤化・社会接続を担う構成が望ましい。</p>
+<h2>3. 申請テーマ案（A推奨/B代替・各150字）</h2>
+<p><strong>案A（推奨）: アジアの日本関連研究をつなぐ「知識翻訳」共同研究</strong> アジア各国の研究者が蓄積してきた日本関連研究を、学際DBと対話型ワークショップで横断的に接続する。研究概念、交流史、生活文化、制度比較を構造化し、日本理解を各国の文脈で深める共通知識基盤を形成する。</p>
+<p><strong>案B（代替）: 暮らしから見る日本理解の比較研究</strong> 日本の生活文化、地域実践、社会課題対応をアジア諸国の研究者と比較し、暮らしの語りを起点に相互理解を促す。300話の連載資産を分析素材に、各国の研究視点から再編集する。</p>
+<h2>4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字）</h2>
+<h3>背景目的</h3>
+<p>アジア諸国における日本関連研究は、文学、歴史、社会制度、産業、生活文化、国際関係など多様な領域で蓄積されている。一方で、研究成果は国・言語・専門分野ごとに分断されやすく、各国の研究者が日本理解を深めるための横断的な知識基盤や、研究成果を社会に共有する編集手法は十分に整っていない。本研究は、アジア側研究者を主体とし、ミラツクが保有する学術知識30,288概念を含む26のSQLite知識DB、300話の連載編集経験、企業・市民・研究者をつなぐ協働実績を活用して、日本関連研究を各国の文脈に開かれた形で再構成することを目的とする。単なる日本紹介ではなく、各国から見た日本像を比較し、相互理解の土台となる問いと概念を可視化する。</p>
+<h3>方法</h3>
+<p>研究は三段階で実施する。第一に、東アジア・東南アジアの研究者3から5名を招聘またはオンライン招聘し、各国で蓄積された日本関連研究の主要論点を収集する。対象は、生活文化、地域社会、産業形成、公共政策、国際交流史を中心とし、既存文献、研究ノート、事例資料を整理する。第二に、ミラツクの知識DBを用いて、研究概念、人物・組織、出来事、実践事例の関係を構造化し、各国研究者との共同レビューで解釈の偏りを補正する。第三に、研究会、対話ワークショップ、短報編集を行い、学術的妥当性と社会的可読性を両立させた成果物にまとめる。ミラツクは研究主体を代替せず、協働設計、データ整理、知識翻訳、成果発信を担う。</p>
+<h3>成果</h3>
+<p>成果として、アジア側研究者による日本関連研究の論点マップ、概念・事例データセット、共同研究報告書、公開対話記録を作成する。定量目標は、参加研究者3から5名、研究会4回、整理概念300件、事例50件、公開成果1件とする。定性的には、各国から見た日本理解の差異と共通点を可視化し、研究者、実務者、市民が参照できる知識基盤を整える。ミラツクの強みである学際DB、知の社会接続、海外招聘を統合し、財団の目的であるアジア諸国と日本の相互理解増進に貢献する。</p>
+<h2>5. スケジュールと予算（年次別）</h2>
+<p>2026年度は、9月に応募書類を確定し、採択後の2027年4月までに研究者候補、対象国、研究論点を確定する。2027年度前半は文献・事例収集、研究会2回、DB設計を行い、後半は共同レビュー、追加調査、公開対話、報告書編集を進める。2028年度が必要な場合は、成果の英日要約化、各国研究機関への共有、次期共同研究の設計に充てる。予算は、海外研究者謝金・招聘旅費、通訳翻訳、データ整理、研究会開催、報告書編集公開に配分する。上限未公表のため、募集要項公開後に総額を調整し、旅費偏重を避けて研究成果物と共同作業費を厚くする。</p>
+<h2>6. 提出物チェックリスト（チェックボックス）</h2>
+<ul>
+<li><input type="checkbox" disabled> 2026年度募集要項と正式締切の確認</li>
+<li><input type="checkbox" disabled> アジア側研究代表者・共同研究者の確定</li>
+<li><input type="checkbox" disabled> 研究計画書</li>
+<li><input type="checkbox" disabled> 研究者略歴・主要業績</li>
+<li><input type="checkbox" disabled> 推薦書または所属機関確認書類</li>
+<li><input type="checkbox" disabled> 予算計画書</li>
+<li><input type="checkbox" disabled> ミラツク法人概要・実績資料</li>
+<li><input type="checkbox" disabled> 知識DBと連載300話の活用説明資料</li>
+<li><input type="checkbox" disabled> 研究倫理・データ利用方針</li>
+</ul>
+<h2>7. 推奨アクション（3-5点）</h2>
+<ul>
+<li>9月1日を応募開始日兼内部締切とし、正式締切が10月末等に設定されても余裕を持って提出できる進行表を作る。</li>
+<li>申請主体になり得る東アジア・東南アジアの研究者を3名以上リスト化し、研究代表者候補を早期に確定する。</li>
+<li>案Aを基本に、対象国を2から3カ国、対象領域を生活文化・地域社会・国際交流史のいずれかに絞る。</li>
+<li>26のSQLite知識DBから、日本関連研究に接続しやすい概念・事例サンプルを20件抽出する。</li>
+<li>ミラツクの役割を「協働設計・知識基盤化・社会接続」に限定し、研究主体性がアジア側研究者にあることを明確化する。</li>
+</ul>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

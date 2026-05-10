@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>新事業進出・ものづくり補助金 第4回</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>新事業進出・ものづくり補助金 第4回 申請書ドラフト（esse-sense向け）</h1>
+<p><strong>締切</strong>: 2026-06-19 | <strong>上限</strong>: 1,000万円</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>法人プロフィールを基に、当該助成金との適合性を強調する自然な文章。営業収益・コミュニティ規模・DB数・連載数等の数値を本文に組み込む。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>助成金の目的・要件・評価ポイントを地の文で整理。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 法人の強み（④⑤）に合致するテーマ <strong>案B（代替）</strong>: 別角度からのアプローチ （各案にタイトル・要旨150字）</p>
+<h2>4. 事業/研究計画書本文（推奨案A）</h2>
+<h3>背景・目的（300-400字）</h3>
+<p>社会的・学術的意義、法人の実績・数値を引用。</p>
+<h3>研究/事業の方法（300-400字）</h3>
+<p>具体的アプローチ、段階的実施計画。</p>
+<h3>期待される成果（200-300字）</h3>
+<p>定量・定性両面で。</p>
+<h2>5. スケジュールと予算</h2>
+<p>年次別の予算内訳・実施計画。総事業費・補助申請額を明示。</p>
+<h2>6. 提出物チェックリスト</h2>
+<p>申請書類のチェックボックスリスト。</p>
+<h2>7. 推奨アクション</h2>
+<p>即時行動項目を箇条書き3-5点。</p>
+<p>【重要】</p>
+<ul>
+<li>地の文中心、箇条書きは補助的に</li>
+<li>法人の数値・実績を本文に組み込む</li>
+<li>1,500-2,500字</li>
+<li>出力末尾に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B3_E_新事業進出・ものづくり補助金 第4回.md」と記載</li>
+</ul>
+<p>codex</p>
+<h1>新事業進出・ものづくり補助金 第4回 申請書ドラフト（esse-sense向け）</h1>
+<p><strong>締切</strong>: 2026-06-19 | <strong>上限</strong>: 1,000万円</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>esse-senseは、研究者の知を社会に届けることを主要事業とする株式会社であり、学術知の編集・発信、産学連携支援、大学発スタートアップ支援、大学・学術機関のDX支援を一体的に展開してきた。自社で蓄積する記事データベースは、専門記事154件、一般向け記事34件に及び、学際的知見を社会実装につなげる基盤を有している。営業収益、読者・研究者コミュニティ規模、連載数等は申請時に最新値を反映するが、既存DBとAI・データ活用力を組み合わせた新事業開発力は、本補助金が重視する新市場進出、生産性向上、付加価値創出と高い適合性を持つ。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>本補助金は、中小企業等が取り組む新製品・新サービス開発、生産プロセス改善、成長分野への新事業進出を支援する国系補助制度である。評価では、既存事業との違い、顧客課題の明確さ、技術的・事業的な実現可能性、収益化計画、補助終了後の波及効果が重視される。esse-senseの場合、学術知DB、AI活用、産学連携支援の実績を基盤に、研究知の社会実装を加速する新サービスとして整理することが有効である。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 研究知社会実装AIプラットフォーム事業 大学・研究機関の研究成果、研究者知見、社会課題をAIで構造化し、企業・自治体・大学発スタートアップへ接続する新事業。既存の記事DB154件、general_articles34件を基盤に、知の探索、仮説生成、連携候補抽出を支援する。</p>
+<p><strong>案B（代替）</strong>: 大学・学術機関DX向け知見発信支援SaaS 大学や研究機関が保有する研究成果を、一般社会・企業向けに編集、配信、分析できるクラウド型サービスとして展開する。広報DX、産学連携広報、研究者ブランディングを支援し、継続課金型の新収益源を形成する。</p>
+<h2>4. 事業/研究計画書本文（推奨案A）</h2>
+<h3>背景・目的（300-400字）</h3>
+<p>日本の大学・研究機関には、社会課題解決や新産業創出に資する研究成果が多数存在する一方、企業、自治体、投資家、生活者がそれらを適切に発見し、連携へ進む仕組みは十分ではない。研究者の知は専門性が高く、論文・プレスリリース・講演情報などに分散しているため、事業化や政策形成に活用されるまでに編集・翻訳・接続の負荷が生じる。esse-senseは、研究者の知を社会に届けるメディア事業を通じて、専門記事154件、一般向け記事34件を蓄積し、学際的知見を社会に開く編集力とデータ基盤を形成してきた。本事業では、この基盤にAIを組み合わせ、研究知と社会課題を結びつける新たなプラットフォームを構築する。</p>
+<h3>研究/事業の方法（300-400字）</h3>
+<p>初年度は、既存の記事DBと研究者・領域情報を整理し、研究テーマ、社会課題、産業分野、技術成熟度、連携可能性などのメタデータを付与する。次に、AIを用いて記事・研究概要を構造化し、企業や自治体が関心領域から研究知を検索できるプロトタイプを開発する。あわせて、ミラツクとの共同応募実績とネットワークを活かし、大学、学術機関、大学発スタートアップ、企業との実証協力先を確保する。後半では、ユーザー検証を通じて、連携候補抽出、面談設計、共同研究テーマ案生成、記事化支援などの機能を追加し、有償導入に向けたサービス設計、価格体系、運用体制を確立する。</p>
+<h3>期待される成果（200-300字）</h3>
+<p>本事業により、研究知の探索から連携創出までを支援する新サービスを確立し、補助終了後の継続収益化を目指す。定量面では、既存188件の記事資産を起点に、構造化データ件数、登録研究領域数、実証参加機関数、有償導入候補数、商談件数をKPIとして管理する。定性面では、研究成果の社会実装機会を増やし、大学発スタートアップ支援、産学連携、学術機関DXの実務を効率化する。esse-sense Future Forumとの連動により、国内外への展開可能性も高める。</p>
+<h2>5. スケジュールと予算</h2>
+<p>本事業は、2026年度内にプロトタイプ開発と実証、2027年度に有償提供開始を目指す。2026年7月から9月に要件定義、DB整理、実証先調整を行い、10月から12月にAI検索・構造化機能を開発する。2027年1月から3月に大学・企業・自治体との実証を実施し、4月以降に有償プランとして展開する。</p>
+<p>総事業費は1,500万円、補助申請額は1,000万円を想定する。主な内訳は、AI・システム開発費600万円、データ整備・編集設計費250万円、UI/UX設計費150万円、実証運営・外部専門家費250万円、広報・営業資料制作費100万円、プロジェクト管理費150万円とする。自己負担分500万円は既存事業収益、共同事業収入、外部連携費等で確保する計画である。</p>
+<h2>6. 提出物チェックリスト</h2>
+<ul>
+<li><input type="checkbox" disabled> 申請書本体</li>
+<li><input type="checkbox" disabled> 事業計画書</li>
+<li><input type="checkbox" disabled> 経費明細書・見積書</li>
+<li><input type="checkbox" disabled> 履歴事項全部証明書</li>
+<li><input type="checkbox" disabled> 決算書・試算表</li>
+<li><input type="checkbox" disabled> 会社概要資料</li>
+<li><input type="checkbox" disabled> 既存記事DB・実績一覧</li>
+<li><input type="checkbox" disabled> 連携先・実証協力先の確認資料</li>
+<li><input type="checkbox" disabled> 資金調達・自己負担分の説明資料</li>
+<li><input type="checkbox" disabled> 電子申請アカウント、GビズID等の確認</li>
+</ul>
+<h2>7. 推奨アクション</h2>
+<ul>
+<li>営業収益、読者数、研究者ネットワーク数、連載数などの最新実績を確定する。</li>
+<li>既存記事188件を領域別に分類し、AI学習・検索に使えるDB一覧を作成する。</li>
+<li>ミラツク、大学、企業、自治体の実証協力候補を3〜5件選定する。</li>
+<li>補助対象経費に該当する開発費・外注費・専門家費の見積を取得する。</li>
+<li>案Aを中心に、既存メディア事業との差分と新規収益モデルを明確化する。</li>
+</ul>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

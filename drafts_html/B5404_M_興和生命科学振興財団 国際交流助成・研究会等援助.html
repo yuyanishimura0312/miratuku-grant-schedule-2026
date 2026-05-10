@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>興和生命科学振興財団 国際交流助成・研究会等援助</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>興和生命科学振興財団 国際交流助成・研究会等援助 申請書ドラフト（ミラツク向け）</h1>
+<p><strong>締切</strong>: 2026-09-01 | <strong>上限</strong>: —</p>
+<h2>1. 申請者情報（300字・数値組込）</h2>
+<h2>2. 助成金概要・応募要件（200字・地の文）</h2>
+<h2>3. 申請テーマ案（A推奨/B代替・各150字）</h2>
+<h2>4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字）</h2>
+<h2>5. スケジュールと予算（年次別）</h2>
+<h2>6. 提出物チェックリスト（チェックボックス）</h2>
+<h2>7. 推奨アクション（3-5点）</h2>
+<p>末尾に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B5_M_興和生命科学振興財団 国際交流助成・研究会等援助.md」記載。地の文中心、法人数値組込必須。 codex 指定パスに保存する前提で、既存の構成とドラフト置き場を確認します。内容はいただいた法人情報を中心に、国際交流・研究会等援助に合わせて組み立てます。 exec /bin/bash -lc 'ls -la && find drafts_v2 -maxdepth 1 -type f | head' in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms: total 632 drwxr-xr-x   26 nishimura+  staff    832  5月 10 10:58 . drwxr-xr-x   66 nishimura+  staff   2112  5月 10 10:21 .. -rw-r--r--@   1 nishimura+  staff   6148  5月  9 21:12 .DS_Store -rw-r--r--    1 nishimura+  staff   3745  5月  9 18:57 00_summary.md -rw-r--r--@   1 nishimura+  staff   7550  5月  9 19:08 01_松下幸之助記念志財団_研究助成.md -rw-r--r--@   1 nishimura+  staff   9082  5月  9 19:09 02_野村グループ基金_みらい助成.md -rw-r--r--@   1 nishimura+  staff   9601  5月  9 19:09 03_ものづくり補助金_19次.md -rw-r--r--    1 nishimura+  staff   8283  5月  9 19:10 04_企業メセナ協議会_助成認定.md -rw-r--r--    1 nishimura+  staff   8973  5月  9 19:11 05_JSPS_人文社会研究.md -rw-r--r--    1 nishimura+  staff   7034  5月  9 19:12 06_お金をまわそう基金.md -rw-r--r--    1 nishimura+  staff   4394  5月  9 19:12 07_esse-sense_補助金候補.md -rw-r--r--    1 nishimura+  staff   7702  5月  9 19:13 08_統合実行計画.md -rw-r--r--    1 nishimura+  staff  18962  5月  9 19:29 09_提出スケジュール_5月-9月.md -rw-r--r--    1 nishimura+  staff  16109  5月  9 19:55 09a_提出スケジュール_ミラツク.md -rw-r--r--    1 nishimura+  staff  16481  5月  9 19:55 09b_提出スケジュール_esse-sense.md -rw-r--r--    1 nishimura+  staff  12301  5月  9 19:38 10_沖縄県特有助成金.md -rw-r--r--    1 nishimura+  staff  17202  5月  9 19:40 11_京都府特有助成金.md -rw-r--r--    1 nishimura+  staff  21360  5月  9 19:55 12_国・NEDO・総務省系助成金.md -rw-r--r--    1 nishimura+  staff  17707  5月  9 21:12 build_schedule_csv.py -rw-r--r--    1 nishimura+  staff  22382  5月  9 21:07 build_schedule_xlsx.py drwxr-xr-x    8 nishimura+  staff    256  5月  9 21:12 csv drwxr-xr-x   74 nishimura+  staff   2368  5月 10 11:20 drafts_html drwxr-xr-x  108 nishimura+  staff   3456  5月 10 11:28 drafts_v2 drwxr-xr-x   14 nishimura+  staff    448  5月 10 11:11 site -rw-r--r--@   1 nishimura+  staff  27367  5月  9 21:07 提出スケジュール_2026年5-9月.xlsx -rw-r--r--@   1 nishimura+  staff  33191  5月  9 21:18 提出スケジュール.html drafts_v2/B3201_E_立石科学技術振興財団 国際交流助成.md drafts_v2/N130_E_中国電力技術研究財団 国際会議等開催助成.md drafts_v2/004_E_NEDO ディープテック・スタートアップ支援(DTSU)第10回.md drafts_v2/N104_M_サステナブルツーリズム推進事業（沖縄）.md drafts_v2/B3204_M_清水基金 文化芸術活動特別助成事業.md drafts_v2/B3210_M_三井住友海上福祉財団 研究助成.md drafts_v2/015_E_経済安全保障重要技術育成プログラム（K Program）.md drafts_v2/N119_E_京都市デジタル化推進プロジェクト.md drafts_v2/023_M_トヨタ財団 国際助成プログラム.md drafts_v2/B3211_E_三井住友海上福祉財団 研究助成.md</p>
+<p>codex 既存の <code>drafts_v2</code> には同種の助成金ドラフトがあるため、見出し粒度だけ合わせます。本文は今回指定の7項目に絞って新規作成します。 exec /bin/bash -lc "sed -n '1,180p' 'drafts_v2/N130_E_中国電力技術研究財団 国際会議等開催助成.md'" in /Users/nishimura+/work/miratuku-grants-2026 exec /bin/bash -lc "sed -n '1,160p' 'drafts_v2/023_M_トヨタ財団 国際助成プログラム.md'" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms:</p>
+<h1>トヨタ財団 国際助成プログラム 申請書ドラフト（ミラツク向け）</h1>
+<p><strong>締切</strong>: 2026-05-30 | <strong>上限</strong>: 1,000万円</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>法人プロフィールを基に、当該助成金との適合性を強調する自然な文章。営業収益・コミュニティ規模・DB数・連載数等の具体的な数値を本文に組み込む。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>助成金の目的・要件・評価ポイントを地の文で整理。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 法人の強み（②⑦）に最も合致するテーマと150字の要旨 <strong>案B（代替）</strong>: 別角度からのアプローチ</p>
+<h2>4. 事業/研究計画書本文（推奨案A）</h2>
+<h3>背景・目的（300-400字）</h3>
+<p>社会的・学術的意義を地の文で記述、法人の実績と数値を引用。</p>
+<h3>研究/事業の方法（300-400字）</h3>
+<p>具体的アプローチ、段階的実施計画。</p>
+<h3>期待される成果（200-300字）</h3>
+<p>定量・定性両面で成果物を明示。</p>
+<h2>5. スケジュールと予算</h2>
+<p>年次別の予算内訳と実施計画。総事業費・補助申請額を明示。</p>
+<h2>6. 提出物チェックリスト</h2>
+<p>申請書類のチェックボックスリスト。</p>
+<h2>7. 推奨アクション</h2>
+<p>即時行動項目を箇条書き3-5点。</p>
+<p>【絶対遵守】</p>
+<ol>
+<li>必ず/Users/nishimura+/work/miratuku-grants-2026/drafts_v2/023_M_トヨタ財団 国際助成プログラム.mdにファイルを保存</li>
+<li>法人の数値・実績を本文に組み込む</li>
+<li>地の文中心、箇条書きは補助的に</li>
+<li>1,500-2,500字</li>
+<li>保存後、<code>保存完了: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/023_M_トヨタ財団 国際助成プログラム.md</code> の1行のみ報告</li>
+</ol>
+<p>codex 保存できませんでした: 指定パスが現在のサンドボックスの書き込み許可範囲外です。  succeeded in 0ms:</p>
+<h1>中国電力技術研究財団 国際会議等開催助成 申請書ドラフト（esse-sense向け）</h1>
+<p><strong>締切</strong>: 2026-06-10 | <strong>上限</strong>: —</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>法人プロフィールを基に、当該助成金との適合性を強調する自然な文章。営業収益・コミュニティ規模・DB数・連載数等の数値を本文に組み込む。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>助成金の目的・要件・評価ポイントを地の文で整理。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 法人の強み（⑦）と評価軸に最も合致するテーマ <strong>案B（代替）</strong>: 別角度からのアプローチ （各案にタイトルと150字の要旨）</p>
+<h2>4. 事業/研究計画書本文（推奨案A）</h2>
+<h3>背景・目的（300-400字）</h3>
+<p>社会的・学術的意義を地の文で記述。法人の実績・数値を引用。</p>
+<h3>研究/事業の方法（300-400字）</h3>
+<p>具体的アプローチ、段階的実施計画。</p>
+<h3>期待される成果（200-300字）</h3>
+<p>定量・定性の両面で。</p>
+<h2>5. スケジュールと予算</h2>
+<p>年次別の予算内訳・実施計画。総事業費・補助申請額を明示。</p>
+<h2>6. 提出物チェックリスト</h2>
+<p>申請書類のチェックボックスリスト。</p>
+<h2>7. 推奨アクション</h2>
+<p>即時に行うべき次のステップを箇条書き3-5点。</p>
+<p>【重要】</p>
+<ul>
+<li>地の文中心、箇条書きは補助的に</li>
+<li>法人の数値・実績を本文に組み込む</li>
+<li>1,500-2,500字</li>
+<li>出力の最後に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_中国電力技術研究財団 国際会議等開催助成.md」と1行で報告</li>
+</ul>
+<p>【ファイル保存】 最終Markdownを完成させたら、以下のパスに保存してください（書き込み権限がない場合はログ末尾に保存対象を明記してください）: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_中国電力技術研究財団 国際会議等開催助成.md</p>
+<p>codex 指定パスは現在の書き込み許可範囲の外にある可能性があります。まず保存先ディレクトリの状態を確認し、可能ならそのまま作成します。 exec /bin/bash -lc 'pwd && ls -ld /Users/nishimura+/work/miratuku-grants-2026 /Users/nishimura+/work/miratuku-grants-2026/drafts_v2 2>/dev/null || true' in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms: /Users/nishimura+/work/miratuku-grants-2026/site drwxr-xr-x  26 nishimura+  staff   832  5月 10 10:58 /Users/nishimura+/work/miratuku-grants-2026 drwxr-xr-x  40 nishimura+  staff  1280  5月 10 10:57 /Users/nishimura+/work/miratuku-grants-2026/drafts_v2</p>
+<p>exec /bin/bash -lc 'git status --short' in /Users/nishimura+/work/miratuku-grants-2026/site  succeeded in 0ms: codex ドラフト本文を作成して、指定の <code>drafts_v2</code> パスへ直接保存します。内容は提供情報に基づき、要件部分は過度に断定せず「国際会議等開催助成」として自然に整理します。 2026-05-10T02:10:01.622879Z ERROR codex_core::tools::router: error=patch rejected: writing outside of the project; rejected by user approval settings codex 指定パスへの直接書き込みはサンドボックスで拒否されました。内容はワークスペース内の書き込み可能な場所に保存し、最終報告で本来の保存対象パスも明記します。 apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/site/drafts_v2/NE_中国電力技術研究財団 国際会議等開催助成.md diff --git a/drafts_v2/NE_中国電力技術研究財団 国際会議等開催助成.md b/drafts_v2/NE_中国電力技術研究財団 国際会議等開催助成.md new file mode 100644 index 0000000000000000000000000000000000000000..f5c77303544b05df4eff4f2d0565b41ee64f15f5 --- /dev/null +++ b/drafts_v2/NE_中国電力技術研究財団 国際会議等開催助成.md @@ -0,0 +1,51 @@ +# 中国電力技術研究財団 国際会議等開催助成 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-06-10 | <strong>上限</strong>: — + +## 1. 申請者情報（300字） +esse-senseは、研究者の知を社会に届けることを主要事業とする株式会社であり、学術知見を一般社会、産業界、行政、次世代人材へ翻訳・流通させるメディア事業を展開している。現在、専門性の高いarticles 154件、幅広い読者に向けたgeneral_articles 34件を蓄積し、研究テーマ、研究者、社会課題、産学連携ニーズを横断的に接続できる知見データベースを形成してきた。AI、データ活用、大規模解析、テキスト解析を強みとし、大学発スタートアップ支援、大学・学術機関DX、産学連携支援にも実績を有する。国際展開ではesse-sense Future Forumを通じて海外研究者・実務家との対話基盤を育てており、ミラツクとの共同応募実績を活かして、公益性と事業実装力を両立した国際シンポジウムを企画できる点が本助成と適合する。 + +## 2. 助成金概要・応募要件（200字） +中国電力技術研究財団の国際会議等開催助成は、学術的・技術的意義を有する国際会議、シンポジウム等の開催を支援し、研究交流の促進と知見の社会的還元を後押しする制度と位置づけられる。本件では「D シンポジウム」として、単なる発表会ではなく、研究者、企業、大学、NPO、地域の実践者が参加し、国際的な知見をもとに社会実装へつなげる設計が重要となる。評価上は、開催目的の明確性、国際性、学術・社会的波及効果、運営体制、成果公開の具体性を示すことが求められる。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 研究知の社会実装を加速する国際シンポジウム「AI時代の学際知データベースと産学連携」 + +要旨: esse-senseが蓄積するarticles 154件、general_articles 34件の知見DBを基盤に、AI・テキスト解析を用いた研究知の可視化、産学連携、大学発スタートアップ支援の国際的可能性を議論する。国内外の研究者、大学関係者、企業、NPOが参加し、研究成果を社会に届ける新しいメディア・連携モデルを検討する。 + +<strong>案B（代替）</strong>: 大学・学術機関DXと地域イノベーションをつなぐ国際対話フォーラム + +要旨: 大学・学術機関DXを起点に、研究データ、広報、産学連携、地域課題解決を統合する国際シンポジウムを開催する。esse-senseのメディア運営とミラツクとの共同実績を活かし、海外事例と国内実践を比較しながら、研究機関が社会との接点を拡張するための実務的指針を整理する。 + +## 4. 事業/研究計画書本文（推奨案A） +### 背景・目的（300-400字） +研究成果は社会課題解決や新産業創出の源泉である一方、専門領域ごとに分断され、一般社会や企業、地域の実践者に届きにくいという課題がある。特にAI、環境、医療、教育、地域政策など複合的な課題では、単一分野の知見だけでなく、学際的な知の編集、翻訳、接続が不可欠である。esse-senseは、研究者の知を社会に届けるメディアとして、articles 154件、general_articles 34件を蓄積し、研究テーマと社会課題を結ぶデータ基盤を形成してきた。本シンポジウムでは、この知見DBとAI・大規模テキスト解析の活用を軸に、国内外の研究者、大学関係者、企業、NPOが対話し、研究知の社会実装と産学連携を加速する方法論を共有することを目的とする。 + +### 研究/事業の方法（300-400字） +事業は三段階で実施する。第一段階では、既存の記事DBを対象に研究領域、社会課題、連携可能な産業分野を整理し、シンポジウムの論点を設計する。AIとテキスト解析を用いて、複数領域にまたがるテーマ、注目研究者、社会実装上の課題を抽出し、登壇候補者と討議テーマを選定する。第二段階では、esse-sense Future Forumの国際展開の経験を活かし、海外研究者、大学関係者、産学連携支援者を招聘またはオンライン参加で接続し、基調講演、パネルディスカッション、実務セッションを行う。第三段階では、議論内容を記事、レポート、公開アーカイブとして編集し、ミラツクとの連携によりNPO、地域、大学発スタートアップ支援の現場へ展開する。 + +### 期待される成果（200-300字） +定量面では、国際シンポジウム1回の開催、国内外登壇者5-8名、参加者80-120名、開催後レポート1本、関連記事3本以上の公開を目標とする。既存のarticles 154件、general_articles 34件を活用することで、単発イベントにとどまらず、知見DBの再編集と継続的な発信につなげる。定性面では、研究者と企業・大学・NPOの間に新たな対話接点を生み、AI時代における研究知の翻訳、可視化、社会実装の実践モデルを提示する。将来的には大学発スタートアップ支援や学術機関DXの協働案件創出も期待される。 + +## 5. スケジュールと予算 +2026年6月の採択準備後、7-8月に企画設計、登壇者調整、記事DB分析を行う。9-10月に国内外登壇者との事前打合せ、広報、参加者募集を進め、11月を目途に国際シンポジウムを開催する。12月には記録編集、成果記事、報告書、アーカイブ公開を完了する。総事業費は概算1,500,000円、補助申請額は1,000,000円を想定する。内訳は、登壇者謝金・旅費500,000円、会場・配信費300,000円、通訳・翻訳費250,000円、記事DB分析・企画編集費250,000円、広報・記録制作費200,000円とする。助成上限が未公表または個別確認事項であるため、最終申請額は募集要項確認後に調整する。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> 申請書様式 +- <input type="checkbox" disabled> 事業計画書・開催趣旨書 +- <input type="checkbox" disabled> 収支予算書 +- <input type="checkbox" disabled> 登壇予定者・招聘者一覧 +- <input type="checkbox" disabled> 法人概要資料 +- <input type="checkbox" disabled> esse-senseの実績資料、記事DB件数、既存記事例 +- <input type="checkbox" disabled> ミラツクとの連携実績説明資料 +- <input type="checkbox" disabled> 国際性を示す資料、esse-sense Future Forum関連資料 +- <input type="checkbox" disabled> 成果公開計画、広報計画 + +## 7. 推奨アクション +- 募集要項で助成対象経費、申請上限、対象地域・分野、営利法人の申請可否を確認する。 +- 案Aを基軸に、登壇候補者5-8名と海外参加者候補を早急に整理する。 +- articles 154件、general_articles 34件からシンポジウムに接続する代表記事を10件程度抽出する。 +- ミラツクとの共同応募・共同実施実績を、公益性と運営体制の補強資料として整理する。 +- 予算額は募集要項確認後、助成対象外経費を除いて再積算する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_中国電力技術研究財団 国際会議等開催助成.md</p>
+<p>diff --git a/drafts_v2/NE_中国電力技術研究財団 国際会議等開催助成.md b/drafts_v2/NE_中国電力技術研究財団 国際会議等開催助成.md new file mode 100644 index 0000000000000000000000000000000000000000..f5c77303544b05df4eff4f2d0565b41ee64f15f5 --- /dev/null +++ b/drafts_v2/NE_中国電力技術研究財団 国際会議等開催助成.md @@ -0,0 +1,51 @@ +# 中国電力技術研究財団 国際会議等開催助成 申請書ドラフト（esse-sense向け） + +<strong>締切</strong>: 2026-06-10 | <strong>上限</strong>: — + +## 1. 申請者情報（300字） +esse-senseは、研究者の知を社会に届けることを主要事業とする株式会社であり、学術知見を一般社会、産業界、行政、次世代人材へ翻訳・流通させるメディア事業を展開している。現在、専門性の高いarticles 154件、幅広い読者に向けたgeneral_articles 34件を蓄積し、研究テーマ、研究者、社会課題、産学連携ニーズを横断的に接続できる知見データベースを形成してきた。AI、データ活用、大規模解析、テキスト解析を強みとし、大学発スタートアップ支援、大学・学術機関DX、産学連携支援にも実績を有する。国際展開ではesse-sense Future Forumを通じて海外研究者・実務家との対話基盤を育てており、ミラツクとの共同応募実績を活かして、公益性と事業実装力を両立した国際シンポジウムを企画できる点が本助成と適合する。 + +## 2. 助成金概要・応募要件（200字） +中国電力技術研究財団の国際会議等開催助成は、学術的・技術的意義を有する国際会議、シンポジウム等の開催を支援し、研究交流の促進と知見の社会的還元を後押しする制度と位置づけられる。本件では「D シンポジウム」として、単なる発表会ではなく、研究者、企業、大学、NPO、地域の実践者が参加し、国際的な知見をもとに社会実装へつなげる設計が重要となる。評価上は、開催目的の明確性、国際性、学術・社会的波及効果、運営体制、成果公開の具体性を示すことが求められる。 + +## 3. 申請テーマ案 +<strong>案A（推奨）</strong>: 研究知の社会実装を加速する国際シンポジウム「AI時代の学際知データベースと産学連携」 + +要旨: esse-senseが蓄積するarticles 154件、general_articles 34件の知見DBを基盤に、AI・テキスト解析を用いた研究知の可視化、産学連携、大学発スタートアップ支援の国際的可能性を議論する。国内外の研究者、大学関係者、企業、NPOが参加し、研究成果を社会に届ける新しいメディア・連携モデルを検討する。 + +<strong>案B（代替）</strong>: 大学・学術機関DXと地域イノベーションをつなぐ国際対話フォーラム + +要旨: 大学・学術機関DXを起点に、研究データ、広報、産学連携、地域課題解決を統合する国際シンポジウムを開催する。esse-senseのメディア運営とミラツクとの共同実績を活かし、海外事例と国内実践を比較しながら、研究機関が社会との接点を拡張するための実務的指針を整理する。 + +## 4. 事業/研究計画書本文（推奨案A） +### 背景・目的（300-400字） +研究成果は社会課題解決や新産業創出の源泉である一方、専門領域ごとに分断され、一般社会や企業、地域の実践者に届きにくいという課題がある。特にAI、環境、医療、教育、地域政策など複合的な課題では、単一分野の知見だけでなく、学際的な知の編集、翻訳、接続が不可欠である。esse-senseは、研究者の知を社会に届けるメディアとして、articles 154件、general_articles 34件を蓄積し、研究テーマと社会課題を結ぶデータ基盤を形成してきた。本シンポジウムでは、この知見DBとAI・大規模テキスト解析の活用を軸に、国内外の研究者、大学関係者、企業、NPOが対話し、研究知の社会実装と産学連携を加速する方法論を共有することを目的とする。 + +### 研究/事業の方法（300-400字） +事業は三段階で実施する。第一段階では、既存の記事DBを対象に研究領域、社会課題、連携可能な産業分野を整理し、シンポジウムの論点を設計する。AIとテキスト解析を用いて、複数領域にまたがるテーマ、注目研究者、社会実装上の課題を抽出し、登壇候補者と討議テーマを選定する。第二段階では、esse-sense Future Forumの国際展開の経験を活かし、海外研究者、大学関係者、産学連携支援者を招聘またはオンライン参加で接続し、基調講演、パネルディスカッション、実務セッションを行う。第三段階では、議論内容を記事、レポート、公開アーカイブとして編集し、ミラツクとの連携によりNPO、地域、大学発スタートアップ支援の現場へ展開する。 + +### 期待される成果（200-300字） +定量面では、国際シンポジウム1回の開催、国内外登壇者5-8名、参加者80-120名、開催後レポート1本、関連記事3本以上の公開を目標とする。既存のarticles 154件、general_articles 34件を活用することで、単発イベントにとどまらず、知見DBの再編集と継続的な発信につなげる。定性面では、研究者と企業・大学・NPOの間に新たな対話接点を生み、AI時代における研究知の翻訳、可視化、社会実装の実践モデルを提示する。将来的には大学発スタートアップ支援や学術機関DXの協働案件創出も期待される。 + +## 5. スケジュールと予算 +2026年6月の採択準備後、7-8月に企画設計、登壇者調整、記事DB分析を行う。9-10月に国内外登壇者との事前打合せ、広報、参加者募集を進め、11月を目途に国際シンポジウムを開催する。12月には記録編集、成果記事、報告書、アーカイブ公開を完了する。総事業費は概算1,500,000円、補助申請額は1,000,000円を想定する。内訳は、登壇者謝金・旅費500,000円、会場・配信費300,000円、通訳・翻訳費250,000円、記事DB分析・企画編集費250,000円、広報・記録制作費200,000円とする。助成上限が未公表または個別確認事項であるため、最終申請額は募集要項確認後に調整する。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> 申請書様式 +- <input type="checkbox" disabled> 事業計画書・開催趣旨書 +- <input type="checkbox" disabled> 収支予算書 +- <input type="checkbox" disabled> 登壇予定者・招聘者一覧 +- <input type="checkbox" disabled> 法人概要資料 +- <input type="checkbox" disabled> esse-senseの実績資料、記事DB件数、既存記事例 +- <input type="checkbox" disabled> ミラツクとの連携実績説明資料 +- <input type="checkbox" disabled> 国際性を示す資料、esse-sense Future Forum関連資料 +- <input type="checkbox" disabled> 成果公開計画、広報計画 + +## 7. 推奨アクション +- 募集要項で助成対象経費、申請上限、対象地域・分野、営利法人の申請可否を確認する。 +- 案Aを基軸に、登壇候補者5-8名と海外参加者候補を早急に整理する。 +- articles 154件、general_articles 34件からシンポジウムに接続する代表記事を10件程度抽出する。 +- ミラツクとの共同応募・共同実施実績を、公益性と運営体制の補強資料として整理する。 +- 予算額は募集要項確認後、助成対象外経費を除いて再積算する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/NE_中国電力技術研究財団 国際会議等開催助成.md</p>
+<p>exec /bin/bash -lc "test -e 'drafts_v2/B5_M_興和生命科学振興財団 国際交流助成・研究会等援助.md'; echo "'$?' in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms: 1</p>
+<p>codex 新規ファイルとして作成します。助成上限が未記載なので、予算は「要項確認後に調整」としつつ、国際招聘・通訳・会場配信・記録公開に寄せた現実的な案にします。 apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B5_M_興和生命科学振興財団 国際交流助成・研究会等援助.md diff --git a/miratuku-grants-2026/drafts_v2/B5_M_興和生命科学振興財団 国際交流助成・研究会等援助.md b/miratuku-grants-2026/drafts_v2/B5_M_興和生命科学振興財団 国際交流助成・研究会等援助.md new file mode 100644 index 0000000000000000000000000000000000000000..f03d467121d7a12f8f489b6ec45e0ddd283a1cfd --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B5_M_興和生命科学振興財団 国際交流助成・研究会等援助.md @@ -0,0 +1,50 @@ +# 興和生命科学振興財団 国際交流助成・研究会等援助 申請書ドラフト（ミラツク向け） + +<strong>締切</strong>: 2026-09-01 | <strong>上限</strong>: — + +## 1. 申請者情報（300字・数値組込） +特定非営利活動法人ミラツクは、2010年設立、第14期を迎える京都府・東京都拠点のNPOである。専従25名の体制で、2024年度営業収益87.4M円を基盤に、企業協働20社、コミュニティ参加者350名をつなぐ実践的な知の社会接続事業を展開している。学術知識30,288概念を含む26のSQLite知識データベースを整備し、「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載を通じて、研究・産業・生活実践を横断する知見を蓄積してきた。学際DB、セクター協働、データ活用、大規模解析、海外招聘を組み合わせ、生命科学と社会課題を結ぶ国際的な研究交流の場を設計できる点に強みがある。 + +## 2. 助成金概要・応募要件（200字・地の文） +興和生命科学振興財団の国際交流助成・研究会等援助は、生命科学を中心とする学術研究の発展に資する国際交流、研究会、シンポジウム等を支援する制度として位置づけられる。本申請では「D シンポジウム」として、海外研究者の招聘を含む公開性の高い研究交流を企画し、学術的議論を社会実装や市民的理解へ接続することが重要である。申請時には開催目的、国際性、招聘者の妥当性、参加者層、成果公開、運営体制、予算の合理性を明確に示す必要がある。 + +## 3. 申請テーマ案（A推奨/B代替・各150字） +<strong>案A（推奨）</strong>: 生命科学と社会実装を結ぶ国際シンポジウム「健康・暮らし・地域をつなぐ知の翻訳」 + +海外の生命科学研究者、国内研究者、企業、NPO、地域実践者を招聘・接続し、研究成果が生活者の健康、地域ケア、予防、ウェルビーイングに届くまでの課題を議論する。ミラツクの26DBと300話の知見を用い、学術知を社会へ翻訳する方法論を整理する。 + +<strong>案B（代替）</strong>: 学際知識データベースを活用した生命科学国際研究会 + +学術知識30,288概念を含むミラツクの知識基盤を活用し、生命科学、情報科学、社会科学、実践現場の接点を可視化する国際研究会を開催する。海外招聘者との討議を通じて、研究課題の探索、共同研究の種、社会実装テーマを抽出する。 + +## 4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字） +### 背景・目的 +生命科学は、医療、予防、食、環境、加齢、地域ケアなど、暮らしに直結する領域で急速に発展している。一方で、専門的な研究成果は論文や学会内に閉じやすく、企業、自治体、NPO、生活者が活用できる形に翻訳されるまでには距離がある。複合的な健康課題に向き合うには、生命科学の先端知と、地域・産業・市民社会の実践知を結び直す国際的な対話の場が必要である。ミラツクは、26のSQLite知識データベース、学術知識30,288概念、企業協働20社、350名のコミュニティを有し、研究知を社会課題へ接続してきた。本シンポジウムでは、海外研究者を招聘し、生命科学研究を暮らしと社会実装へつなぐ知の翻訳モデルを検討する。 + +### 方法 +事業は三段階で実施する。第一段階では、ミラツクが保有する学際DBと300話の連載知見をもとに、生命科学と生活者課題が交差する論点を整理する。健康、予防、地域ケア、データ活用、研究成果の社会実装を軸に、招聘候補者、国内登壇者、企業・NPO・自治体参加者を選定する。第二段階では、海外招聘者による基調講演、国内研究者との対話、企業・NPO・地域実践者を交えたパネル討議を組み合わせた半日から1日の国際シンポジウムを開催する。第三段階では、講演・討議内容を記録し、要点を日本語記事、英語要旨、公開レポートとして編集する。知識DBにも論点を追加し、単発イベントではなく継続的な研究交流と協働形成につなげる。 + +### 成果 +成果として、国際シンポジウム1回、海外招聘者1-2名、国内登壇者4-6名、参加者80-120名、公開レポート1本、関連記事2-3本の作成を目標とする。定性的には、生命科学研究を社会に届ける翻訳手法、海外研究者と国内実践者の接点、企業協働20社や350名コミュニティを活かした実装可能性を明確化する。将来的には共同研究、研究会継続、海外招聘を伴う次年度企画へ発展させる。 + +## 5. スケジュールと予算（年次別） +2026年度は、9月の申請後、10月に採択結果を想定した詳細設計、11月に招聘者・登壇者確定、12月から2027年1月に広報と参加者募集、2月に国際シンポジウム開催、3月に記録編集と成果公開を行う。予算は助成上限が未記載のため、総事業費1,800,000円を仮置きする。内訳は、海外招聘旅費・滞在費650,000円、登壇謝金350,000円、通訳・翻訳費300,000円、会場・配信費250,000円、記録編集・レポート制作費200,000円、広報・事務費50,000円とする。募集要項確認後、助成対象経費に合わせて申請額を調整する。 + +## 6. 提出物チェックリスト（チェックボックス） +- <input type="checkbox" disabled> 申請書様式 +- <input type="checkbox" disabled> シンポジウム開催趣旨書 +- <input type="checkbox" disabled> 収支予算書 +- <input type="checkbox" disabled> 海外招聘者候補の略歴・招聘理由 +- <input type="checkbox" disabled> 登壇者・協力機関一覧 +- <input type="checkbox" disabled> ミラツク法人概要、2024年度営業収益87.4M円等の実績資料 +- <input type="checkbox" disabled> 26のSQLite知識DB、学術知識30,288概念、連載300話の説明資料 +- <input type="checkbox" disabled> 成果公開計画、広報計画、記録作成方針 + +## 7. 推奨アクション（3-5点） +- 募集要項で助成対象分野、対象経費、上限額、海外招聘費の扱いを確認する。 +- 案Aを軸に、生命科学領域の海外招聘候補者1-2名を早期に選定する。 +- 26DBと連載300話から、健康・暮らし・地域ケアに関わる代表論点を抽出する。 +- 企業協働20社と350名コミュニティから参加・登壇候補を整理する。 +- 公開レポートと英語要旨の仕様を先に決め、国際交流助成としての波及効果を明確化する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B5_M_興和生命科学振興財団 国際交流助成・研究会等援助.md</p>
+<p>diff --git a/miratuku-grants-2026/drafts_v2/B5_M_興和生命科学振興財団 国際交流助成・研究会等援助.md b/miratuku-grants-2026/drafts_v2/B5_M_興和生命科学振興財団 国際交流助成・研究会等援助.md new file mode 100644 index 0000000000000000000000000000000000000000..f03d467121d7a12f8f489b6ec45e0ddd283a1cfd --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B5_M_興和生命科学振興財団 国際交流助成・研究会等援助.md @@ -0,0 +1,50 @@ +# 興和生命科学振興財団 国際交流助成・研究会等援助 申請書ドラフト（ミラツク向け） + +<strong>締切</strong>: 2026-09-01 | <strong>上限</strong>: — + +## 1. 申請者情報（300字・数値組込） +特定非営利活動法人ミラツクは、2010年設立、第14期を迎える京都府・東京都拠点のNPOである。専従25名の体制で、2024年度営業収益87.4M円を基盤に、企業協働20社、コミュニティ参加者350名をつなぐ実践的な知の社会接続事業を展開している。学術知識30,288概念を含む26のSQLite知識データベースを整備し、「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載を通じて、研究・産業・生活実践を横断する知見を蓄積してきた。学際DB、セクター協働、データ活用、大規模解析、海外招聘を組み合わせ、生命科学と社会課題を結ぶ国際的な研究交流の場を設計できる点に強みがある。 + +## 2. 助成金概要・応募要件（200字・地の文） +興和生命科学振興財団の国際交流助成・研究会等援助は、生命科学を中心とする学術研究の発展に資する国際交流、研究会、シンポジウム等を支援する制度として位置づけられる。本申請では「D シンポジウム」として、海外研究者の招聘を含む公開性の高い研究交流を企画し、学術的議論を社会実装や市民的理解へ接続することが重要である。申請時には開催目的、国際性、招聘者の妥当性、参加者層、成果公開、運営体制、予算の合理性を明確に示す必要がある。 + +## 3. 申請テーマ案（A推奨/B代替・各150字） +<strong>案A（推奨）</strong>: 生命科学と社会実装を結ぶ国際シンポジウム「健康・暮らし・地域をつなぐ知の翻訳」 + +海外の生命科学研究者、国内研究者、企業、NPO、地域実践者を招聘・接続し、研究成果が生活者の健康、地域ケア、予防、ウェルビーイングに届くまでの課題を議論する。ミラツクの26DBと300話の知見を用い、学術知を社会へ翻訳する方法論を整理する。 + +<strong>案B（代替）</strong>: 学際知識データベースを活用した生命科学国際研究会 + +学術知識30,288概念を含むミラツクの知識基盤を活用し、生命科学、情報科学、社会科学、実践現場の接点を可視化する国際研究会を開催する。海外招聘者との討議を通じて、研究課題の探索、共同研究の種、社会実装テーマを抽出する。 + +## 4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字） +### 背景・目的 +生命科学は、医療、予防、食、環境、加齢、地域ケアなど、暮らしに直結する領域で急速に発展している。一方で、専門的な研究成果は論文や学会内に閉じやすく、企業、自治体、NPO、生活者が活用できる形に翻訳されるまでには距離がある。複合的な健康課題に向き合うには、生命科学の先端知と、地域・産業・市民社会の実践知を結び直す国際的な対話の場が必要である。ミラツクは、26のSQLite知識データベース、学術知識30,288概念、企業協働20社、350名のコミュニティを有し、研究知を社会課題へ接続してきた。本シンポジウムでは、海外研究者を招聘し、生命科学研究を暮らしと社会実装へつなぐ知の翻訳モデルを検討する。 + +### 方法 +事業は三段階で実施する。第一段階では、ミラツクが保有する学際DBと300話の連載知見をもとに、生命科学と生活者課題が交差する論点を整理する。健康、予防、地域ケア、データ活用、研究成果の社会実装を軸に、招聘候補者、国内登壇者、企業・NPO・自治体参加者を選定する。第二段階では、海外招聘者による基調講演、国内研究者との対話、企業・NPO・地域実践者を交えたパネル討議を組み合わせた半日から1日の国際シンポジウムを開催する。第三段階では、講演・討議内容を記録し、要点を日本語記事、英語要旨、公開レポートとして編集する。知識DBにも論点を追加し、単発イベントではなく継続的な研究交流と協働形成につなげる。 + +### 成果 +成果として、国際シンポジウム1回、海外招聘者1-2名、国内登壇者4-6名、参加者80-120名、公開レポート1本、関連記事2-3本の作成を目標とする。定性的には、生命科学研究を社会に届ける翻訳手法、海外研究者と国内実践者の接点、企業協働20社や350名コミュニティを活かした実装可能性を明確化する。将来的には共同研究、研究会継続、海外招聘を伴う次年度企画へ発展させる。 + +## 5. スケジュールと予算（年次別） +2026年度は、9月の申請後、10月に採択結果を想定した詳細設計、11月に招聘者・登壇者確定、12月から2027年1月に広報と参加者募集、2月に国際シンポジウム開催、3月に記録編集と成果公開を行う。予算は助成上限が未記載のため、総事業費1,800,000円を仮置きする。内訳は、海外招聘旅費・滞在費650,000円、登壇謝金350,000円、通訳・翻訳費300,000円、会場・配信費250,000円、記録編集・レポート制作費200,000円、広報・事務費50,000円とする。募集要項確認後、助成対象経費に合わせて申請額を調整する。 + +## 6. 提出物チェックリスト（チェックボックス） +- <input type="checkbox" disabled> 申請書様式 +- <input type="checkbox" disabled> シンポジウム開催趣旨書 +- <input type="checkbox" disabled> 収支予算書 +- <input type="checkbox" disabled> 海外招聘者候補の略歴・招聘理由 +- <input type="checkbox" disabled> 登壇者・協力機関一覧 +- <input type="checkbox" disabled> ミラツク法人概要、2024年度営業収益87.4M円等の実績資料 +- <input type="checkbox" disabled> 26のSQLite知識DB、学術知識30,288概念、連載300話の説明資料 +- <input type="checkbox" disabled> 成果公開計画、広報計画、記録作成方針 + +## 7. 推奨アクション（3-5点） +- 募集要項で助成対象分野、対象経費、上限額、海外招聘費の扱いを確認する。 +- 案Aを軸に、生命科学領域の海外招聘候補者1-2名を早期に選定する。 +- 26DBと連載300話から、健康・暮らし・地域ケアに関わる代表論点を抽出する。 +- 企業協働20社と350名コミュニティから参加・登壇候補を整理する。 +- 公開レポートと英語要旨の仕様を先に決め、国際交流助成としての波及効果を明確化する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B5_M_興和生命科学振興財団 国際交流助成・研究会等援助.md</p>
+<p>exec /bin/bash -lc "wc -m 'drafts_v2/B5_M_興和生命科学振興財団 国際交流助成・研究会等援助.md' && sed -n '1,220p' 'drafts_v2/B5_M_興和生命科学振興財団 国際交流助成・研究会等援助.md'" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms:     2680 drafts_v2/B5_M_興和生命科学振興財団 国際交流助成・研究会等援助.md</p>
+<h1>興和生命科学振興財団 国際交流助成・研究会等援助 申請書ドラフト（ミラツク向け）</h1>
+<p><strong>締切</strong>: 2026-09-01 | <strong>上限</strong>: —</p>
+<h2>1. 申請者情報（300字・数値組込）</h2>
+<p>特定非営利活動法人ミラツクは、2010年設立、第14期を迎える京都府・東京都拠点のNPOである。専従25名の体制で、2024年度営業収益87.4M円を基盤に、企業協働20社、コミュニティ参加者350名をつなぐ実践的な知の社会接続事業を展開している。学術知識30,288概念を含む26のSQLite知識データベースを整備し、「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載を通じて、研究・産業・生活実践を横断する知見を蓄積してきた。学際DB、セクター協働、データ活用、大規模解析、海外招聘を組み合わせ、生命科学と社会課題を結ぶ国際的な研究交流の場を設計できる点に強みがある。</p>
+<h2>2. 助成金概要・応募要件（200字・地の文）</h2>
+<p>興和生命科学振興財団の国際交流助成・研究会等援助は、生命科学を中心とする学術研究の発展に資する国際交流、研究会、シンポジウム等を支援する制度として位置づけられる。本申請では「D シンポジウム」として、海外研究者の招聘を含む公開性の高い研究交流を企画し、学術的議論を社会実装や市民的理解へ接続することが重要である。申請時には開催目的、国際性、招聘者の妥当性、参加者層、成果公開、運営体制、予算の合理性を明確に示す必要がある。</p>
+<h2>3. 申請テーマ案（A推奨/B代替・各150字）</h2>
+<p><strong>案A（推奨）</strong>: 生命科学と社会実装を結ぶ国際シンポジウム「健康・暮らし・地域をつなぐ知の翻訳」</p>
+<p>海外の生命科学研究者、国内研究者、企業、NPO、地域実践者を招聘・接続し、研究成果が生活者の健康、地域ケア、予防、ウェルビーイングに届くまでの課題を議論する。ミラツクの26DBと300話の知見を用い、学術知を社会へ翻訳する方法論を整理する。</p>
+<p><strong>案B（代替）</strong>: 学際知識データベースを活用した生命科学国際研究会</p>
+<p>学術知識30,288概念を含むミラツクの知識基盤を活用し、生命科学、情報科学、社会科学、実践現場の接点を可視化する国際研究会を開催する。海外招聘者との討議を通じて、研究課題の探索、共同研究の種、社会実装テーマを抽出する。</p>
+<h2>4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字）</h2>
+<h3>背景・目的</h3>
+<p>生命科学は、医療、予防、食、環境、加齢、地域ケアなど、暮らしに直結する領域で急速に発展している。一方で、専門的な研究成果は論文や学会内に閉じやすく、企業、自治体、NPO、生活者が活用できる形に翻訳されるまでには距離がある。複合的な健康課題に向き合うには、生命科学の先端知と、地域・産業・市民社会の実践知を結び直す国際的な対話の場が必要である。ミラツクは、26のSQLite知識データベース、学術知識30,288概念、企業協働20社、350名のコミュニティを有し、研究知を社会課題へ接続してきた。本シンポジウムでは、海外研究者を招聘し、生命科学研究を暮らしと社会実装へつなぐ知の翻訳モデルを検討する。</p>
+<h3>方法</h3>
+<p>事業は三段階で実施する。第一段階では、ミラツクが保有する学際DBと300話の連載知見をもとに、生命科学と生活者課題が交差する論点を整理する。健康、予防、地域ケア、データ活用、研究成果の社会実装を軸に、招聘候補者、国内登壇者、企業・NPO・自治体参加者を選定する。第二段階では、海外招聘者による基調講演、国内研究者との対話、企業・NPO・地域実践者を交えたパネル討議を組み合わせた半日から1日の国際シンポジウムを開催する。第三段階では、講演・討議内容を記録し、要点を日本語記事、英語要旨、公開レポートとして編集する。知識DBにも論点を追加し、単発イベントではなく継続的な研究交流と協働形成につなげる。</p>
+<h3>成果</h3>
+<p>成果として、国際シンポジウム1回、海外招聘者1-2名、国内登壇者4-6名、参加者80-120名、公開レポート1本、関連記事2-3本の作成を目標とする。定性的には、生命科学研究を社会に届ける翻訳手法、海外研究者と国内実践者の接点、企業協働20社や350名コミュニティを活かした実装可能性を明確化する。将来的には共同研究、研究会継続、海外招聘を伴う次年度企画へ発展させる。</p>
+<h2>5. スケジュールと予算（年次別）</h2>
+<p>2026年度は、9月の申請後、10月に採択結果を想定した詳細設計、11月に招聘者・登壇者確定、12月から2027年1月に広報と参加者募集、2月に国際シンポジウム開催、3月に記録編集と成果公開を行う。予算は助成上限が未記載のため、総事業費1,800,000円を仮置きする。内訳は、海外招聘旅費・滞在費650,000円、登壇謝金350,000円、通訳・翻訳費300,000円、会場・配信費250,000円、記録編集・レポート制作費200,000円、広報・事務費50,000円とする。募集要項確認後、助成対象経費に合わせて申請額を調整する。</p>
+<h2>6. 提出物チェックリスト（チェックボックス）</h2>
+<ul>
+<li><input type="checkbox" disabled> 申請書様式</li>
+<li><input type="checkbox" disabled> シンポジウム開催趣旨書</li>
+<li><input type="checkbox" disabled> 収支予算書</li>
+<li><input type="checkbox" disabled> 海外招聘者候補の略歴・招聘理由</li>
+<li><input type="checkbox" disabled> 登壇者・協力機関一覧</li>
+<li><input type="checkbox" disabled> ミラツク法人概要、2024年度営業収益87.4M円等の実績資料</li>
+<li><input type="checkbox" disabled> 26のSQLite知識DB、学術知識30,288概念、連載300話の説明資料</li>
+<li><input type="checkbox" disabled> 成果公開計画、広報計画、記録作成方針</li>
+</ul>
+<h2>7. 推奨アクション（3-5点）</h2>
+<ul>
+<li>募集要項で助成対象分野、対象経費、上限額、海外招聘費の扱いを確認する。</li>
+<li>案Aを軸に、生命科学領域の海外招聘候補者1-2名を早期に選定する。</li>
+<li>26DBと連載300話から、健康・暮らし・地域ケアに関わる代表論点を抽出する。</li>
+<li>企業協働20社と350名コミュニティから参加・登壇候補を整理する。</li>
+<li>公開レポートと英語要旨の仕様を先に決め、国際交流助成としての波及効果を明確化する。</li>
+</ul>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

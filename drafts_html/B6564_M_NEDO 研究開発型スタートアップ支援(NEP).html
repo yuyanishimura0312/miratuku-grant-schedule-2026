@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>NEDO 研究開発型スタートアップ支援(NEP)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<style>
+:root{
+  --accent:#CC1400;
+  --accent-soft:#B01200;
+  --accent-muted:rgba(204,20,0,0.08);
+  --text:#121212;
+  --text-secondary:#444444;
+  --border:#D9D9D9;
+  --border-light:#EEEEEE;
+  --bg:#FFFFFF;
+  --surface:#F7F7F5;
+  --paper-shadow:0 0 12px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Serif JP","Hiragino Mincho ProN",Georgia,serif;background:#E5E5E5;color:var(--text);line-height:1.85;letter-spacing:0.025em;font-feature-settings:"palt"}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1A1A1A;color:#FFFFFF;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;height:50px;font-family:"Noto Sans JP",sans-serif;font-size:13px}
+.toolbar-left{display:flex;align-items:center;gap:14px}
+.toolbar-right{display:flex;gap:6px;align-items:center}
+.brand{font-weight:700;color:var(--accent);font-size:13px}
+.btn{cursor:pointer;background:transparent;border:1px solid #555;color:#FFF;padding:6px 12px;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;border-radius:3px}
+.btn:hover{background:#333}
+.btn-primary{background:var(--accent);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-soft)}
+.btn-active{background:#FFB000;border-color:#FFB000;color:#1A1A1A;font-weight:700}
+.status{font-size:11px;color:#999}
+.paper-container{max-width:210mm;margin:70px auto 40px;padding:0 20px}
+.paper{background:var(--bg);box-shadow:var(--paper-shadow);min-height:297mm;padding:25mm 22mm;font-size:11pt}
+.paper.editing{outline:2px solid #FFB000}
+.paper h1{font-family:"Noto Serif JP",serif;font-size:18pt;font-weight:700;margin-bottom:6mm;padding-bottom:3mm;border-bottom:2px solid var(--accent);letter-spacing:0.02em;line-height:1.5}
+.paper h2{font-family:"Noto Serif JP",serif;font-size:14pt;font-weight:700;margin:7mm 0 3mm;color:var(--accent);padding-left:6pt;border-left:4px solid var(--accent);letter-spacing:0.02em}
+.paper h3{font-size:12pt;font-weight:700;margin:5mm 0 2mm;color:var(--text);letter-spacing:0.02em}
+.paper h4{font-size:11pt;font-weight:700;margin:3mm 0 2mm;color:var(--text-secondary)}
+.paper p{margin:0 0 2.5mm;text-align:justify;text-indent:1em}
+.paper p:first-of-type,.paper h1+p,.paper h2+p,.paper h3+p,.paper h4+p,.paper li p{text-indent:0}
+.paper ul,.paper ol{margin:2mm 0 3mm 5mm;padding-left:5mm}
+.paper li{margin-bottom:1mm;line-height:1.7}
+.paper strong{font-weight:700;color:var(--text)}
+.paper em{font-style:italic;color:var(--accent)}
+.paper a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.paper code{background:var(--surface);padding:1px 4px;border-radius:2px;font-family:"SF Mono",Consolas,monospace;font-size:9pt;color:var(--accent)}
+.paper hr{border:0;border-top:1px solid var(--border-light);margin:5mm 0}
+.paper blockquote{border-left:3px solid var(--accent);padding:1mm 0 1mm 5mm;margin:3mm 0;color:var(--text-secondary);font-style:italic}
+.paper table{border-collapse:collapse;margin:3mm 0;font-size:10pt;width:100%}
+.paper th{background:var(--accent-muted);color:var(--accent);padding:2mm 3mm;border:1px solid var(--border);text-align:left;font-weight:700}
+.paper td{padding:2mm 3mm;border:1px solid var(--border-light);vertical-align:top}
+.paper input[type="checkbox"]{margin-right:4pt;transform:scale(1.1)}
+.metadata{font-size:9pt;color:var(--text-secondary);margin-bottom:5mm;padding:3mm 4mm;background:var(--surface);border-left:3px solid var(--accent);border-radius:2px}
+.metadata strong{color:var(--accent);margin-right:4pt}
+.footer-mark{margin-top:8mm;padding-top:3mm;border-top:1px solid var(--border-light);font-size:8.5pt;color:var(--text-secondary);text-align:right}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center}
+.modal-bg.active{display:flex}
+.modal{background:#FFF;max-width:560px;width:90%;padding:24px;border-radius:4px}
+.modal h3{font-family:"Noto Sans JP",sans-serif;color:var(--accent);margin-bottom:14px;font-size:16px}
+.modal p{font-family:"Noto Sans JP",sans-serif;font-size:13px;margin-bottom:10px;line-height:1.7;text-indent:0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+@media print{
+  body{background:#FFF}
+  .toolbar,.modal-bg{display:none !important}
+  .paper-container{margin:0;padding:0;max-width:none}
+  .paper{box-shadow:none;padding:18mm 18mm;min-height:auto;page-break-after:always}
+  .paper h2{page-break-after:avoid}
+  .paper h3{page-break-after:avoid}
+  @page{size:A4;margin:0}
+}
+@media (max-width:780px){
+  .paper-container{margin-top:60px;padding:0 10px}
+  .paper{padding:15mm 12mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="brand">GRANT DRAFT — ?</span>
+    <span class="status" id="saveStatus">—</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn" id="editBtn" onclick="toggleEdit()">編集モード</button>
+    <button class="btn" onclick="resetDoc()">リセット</button>
+    <button class="btn" onclick="downloadHTML()">HTMLダウンロード</button>
+    <button class="btn" onclick="downloadMD()">Markdownダウンロード</button>
+    <button class="btn btn-primary" onclick="window.print()">印刷／PDF</button>
+    <a class="btn" href="index.html">一覧に戻る</a>
+  </div>
+</div>
+
+<div class="paper-container">
+  <div class="paper" id="paper">
+<h1>NEDO 研究開発型スタートアップ支援(NEP) 申請書ドラフト（ミラツク向け）</h1>
+<p><strong>締切</strong>: 通年 | <strong>上限</strong>: 500-3,000万円</p>
+<h2>1. 申請者情報（300字・数値組込）</h2>
+<h2>2. 助成金概要・応募要件（200字・地の文）</h2>
+<h2>3. 申請テーマ案（A推奨/B代替・各150字）</h2>
+<h2>4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字）</h2>
+<h2>5. スケジュールと予算（年次別）</h2>
+<h2>6. 提出物チェックリスト</h2>
+<h2>7. 推奨アクション（3-5点）</h2>
+<p>末尾に「保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_M_NEDO 研究開発型スタートアップ支援(NEP).md」記載。地の文中心、法人数値組込必須。 codex NEDOの制度情報は変更され得るため、まず公式情報で現行のNEP概要を確認し、いただいた条件に沿ってドラフト化します。 web search: web search: site:nedo.go.jp NEP 研究開発型スタートアップ支援 通年 500万円 3000万円 NEDO codex 公式ページでは、NEPは「開拓」「躍進」に分かれ、躍進500・3000は法人も対象、助成率1/1、事業化可能性調査・研究開発・実証が対象と確認できました。この前提で、ミラツクの「知の社会接続」と「実装」を前面に出します。 exec /bin/bash -lc "pwd && ls -la && find drafts_v2 -maxdepth 1 -type f | sed 's#"'^#/#'"' | head -50" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms: /Users/nishimura+/work/miratuku-grants-2026 total 632 drwxr-xr-x   26 nishimura+  staff    832  5月 10 10:58 . drwxr-xr-x   66 nishimura+  staff   2112  5月 10 10:21 .. -rw-r--r--@   1 nishimura+  staff   6148  5月  9 21:12 .DS_Store -rw-r--r--    1 nishimura+  staff   3745  5月  9 18:57 00_summary.md -rw-r--r--@   1 nishimura+  staff   7550  5月  9 19:08 01_松下幸之助記念志財団_研究助成.md -rw-r--r--@   1 nishimura+  staff   9082  5月  9 19:09 02_野村グループ基金_みらい助成.md -rw-r--r--@   1 nishimura+  staff   9601  5月  9 19:09 03_ものづくり補助金_19次.md -rw-r--r--    1 nishimura+  staff   8283  5月  9 19:10 04_企業メセナ協議会_助成認定.md -rw-r--r--    1 nishimura+  staff   8973  5月  9 19:11 05_JSPS_人文社会研究.md -rw-r--r--    1 nishimura+  staff   7034  5月  9 19:12 06_お金をまわそう基金.md -rw-r--r--    1 nishimura+  staff   4394  5月  9 19:12 07_esse-sense_補助金候補.md -rw-r--r--    1 nishimura+  staff   7702  5月  9 19:13 08_統合実行計画.md -rw-r--r--    1 nishimura+  staff  18962  5月  9 19:29 09_提出スケジュール_5月-9月.md -rw-r--r--    1 nishimura+  staff  16109  5月  9 19:55 09a_提出スケジュール_ミラツク.md -rw-r--r--    1 nishimura+  staff  16481  5月  9 19:55 09b_提出スケジュール_esse-sense.md -rw-r--r--    1 nishimura+  staff  12301  5月  9 19:38 10_沖縄県特有助成金.md -rw-r--r--    1 nishimura+  staff  17202  5月  9 19:40 11_京都府特有助成金.md -rw-r--r--    1 nishimura+  staff  21360  5月  9 19:55 12_国・NEDO・総務省系助成金.md -rw-r--r--    1 nishimura+  staff  17707  5月  9 21:12 build_schedule_csv.py -rw-r--r--    1 nishimura+  staff  22382  5月  9 21:07 build_schedule_xlsx.py drwxr-xr-x    8 nishimura+  staff    256  5月  9 21:12 csv drwxr-xr-x   74 nishimura+  staff   2368  5月 10 11:20 drafts_html drwxr-xr-x  144 nishimura+  staff   4608  5月 10 11:33 drafts_v2 drwxr-xr-x   14 nishimura+  staff    448  5月 10 11:11 site -rw-r--r--@   1 nishimura+  staff  27367  5月  9 21:07 提出スケジュール_2026年5-9月.xlsx -rw-r--r--@   1 nishimura+  staff  33191  5月  9 21:18 提出スケジュール.html /drafts_v2/B5412_M_観光庁 ICTサービス利活用促進事業.md /drafts_v2/B3201_E_立石科学技術振興財団 国際交流助成.md /drafts_v2/N130_E_中国電力技術研究財団 国際会議等開催助成.md /drafts_v2/B5_M_住友財団 アジア諸国における日本関連研究助成.md /drafts_v2/004_E_NEDO ディープテック・スタートアップ支援(DTSU)第10回.md /drafts_v2/B5405_E_興和生命科学振興財団 国際交流助成・研究会等援助.md /drafts_v2/B5406_M_電気通信普及財団 研究調査助成.md /drafts_v2/N104_M_サステナブルツーリズム推進事業（沖縄）.md /drafts_v2/B3204_M_清水基金 文化芸術活動特別助成事業.md /drafts_v2/B3210_M_三井住友海上福祉財団 研究助成.md /drafts_v2/015_E_経済安全保障重要技術育成プログラム（K Program）.md /drafts_v2/N119_E_京都市デジタル化推進プロジェクト.md /drafts_v2/023_M_トヨタ財団 国際助成プログラム.md /drafts_v2/B3211_E_三井住友海上福祉財団 研究助成.md /drafts_v2/N118_M_住友電工グループ社会貢献基金 学術研究助成.md /drafts_v2/B5_E_JST A-STEP 産学共同（秋募集・推定）.md /drafts_v2/N102_M_JST 創発的研究支援事業.md /drafts_v2/N112_M_京都産学公の森推進事業.md /drafts_v2/B4_M_日本食品化学研究振興財団 シンポジウム開催助成.md /drafts_v2/B5_M_立石科学技術振興財団 研究助成(S).md /drafts_v2/003_M_JST CREST 戦略的創造研究推進事業.md /drafts_v2/016_E_ムーンショット型研究開発事業.md /drafts_v2/N124_E_DX推進補助事業（沖縄DX促進）.md /drafts_v2/N122_E_観光庁 オーバーツーリズム対策面的整備（令和8年度）.md /drafts_v2/B5413_E_観光庁 ICTサービス利活用促進事業.md /drafts_v2/B4304_E_セコム科学技術振興財団 学術集会助成.md /drafts_v2/017_E_内閣府 SIP第3期（戦略的イノベーション創造）.md /drafts_v2/001_E_観光庁オーバーツーリズム対策.md /drafts_v2/B5408_M_立石科学技術振興財団 研究助成(S).md /drafts_v2/B3206_M_京都市芸術文化協会 伝統芸能文化復元.md /drafts_v2/B5415_M_JSPS 二国間交流事業.md /drafts_v2/N120_E_事業承継・M&A補助金.md /drafts_v2/B5_M_観光庁 ICTサービス利活用促進事業.md /drafts_v2/B4306_M_稲盛研究助成「たかめる」.md /drafts_v2/B5403_E_住友財団 アジア諸国における日本関連研究助成.md /drafts_v2/B5_E_興和生命科学振興財団 国際交流助成・研究会等援助.md /drafts_v2/007_M_JST RISTEX「SDGs達成に向けた共創的研究開発」.md /drafts_v2/020_E_JST スタートアップ・エコシステム共創（地域拠点）.md /drafts_v2/010_E_総務省 地域社会DX推進パッケージ事業（二次公募）.md /drafts_v2/B5407_M_放送文化基金 放送文化関連研究開発助成.md /drafts_v2/B3205_M_JFE21世紀財団 アジア歴史研究助成.md /drafts_v2/B3209_M_丸紅基金 第52回社会福祉助成金.md /drafts_v2/B4311_M_パナソニック NPO_NGOサポートファンド for SDGs.md /drafts_v2/B5402_M_住友財団 アジア諸国における日本関連研究助成.md /drafts_v2/012_M_JST ASPIRE 2026 国際共同研究.md /drafts_v2/017_M_内閣府 SIP第3期（戦略的イノベーション創造）.md /drafts_v2/013_M_JSPS 研究成果公開促進費 データベース部門.md /drafts_v2/B4_M_テルモ生命科学振興財団 国際交流助成.md /drafts_v2/012_E_JST ASPIRE 2026 国際共同研究.md /drafts_v2/B5417_M_JSPS 学術図書出版補助金.md</p>
+<p>exec /bin/bash -lc "test -e 'drafts_v2/B6_M_NEDO 研究開発型スタートアップ支援(NEP).md'; echo "'$?' in /Users/nishimura+/work/miratuku-grants-2026 exec /bin/bash -lc "sed -n '1,220p' 'drafts_v2/004_E_NEDO ディープテック・スタートアップ支援(DTSU)第10回.md'" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms: 1</p>
+<p>succeeded in 0ms:</p>
+<h1>NEDO ディープテック・スタートアップ支援(DTSU)第10回 申請書ドラフト（esse-sense向け）</h1>
+<p><strong>締切</strong>: 2026-06以降 | <strong>上限</strong>: 3-5億円</p>
+<h2>1. 申請者情報（300字）</h2>
+<p>法人プロフィールを基に、当該助成金との適合性を強調する自然な文章。営業収益・コミュニティ規模・DB数・連載数等の具体的な数値を本文に組み込む。</p>
+<h2>2. 助成金概要・応募要件（200字）</h2>
+<p>助成金の目的・要件・評価ポイントを地の文で整理。</p>
+<h2>3. 申請テーマ案</h2>
+<p><strong>案A（推奨）</strong>: 法人の強み（④⑤）に最も合致するテーマと150字の要旨 <strong>案B（代替）</strong>: 別角度からのアプローチ</p>
+<h2>4. 事業/研究計画書本文（推奨案A）</h2>
+<h3>背景・目的（300-400字）</h3>
+<p>社会的・学術的意義を地の文で記述、法人の実績と数値を引用。</p>
+<h3>研究/事業の方法（300-400字）</h3>
+<p>具体的アプローチ、段階的実施計画。</p>
+<h3>期待される成果（200-300字）</h3>
+<p>定量・定性両面で成果物を明示。</p>
+<h2>5. スケジュールと予算</h2>
+<p>年次別の予算内訳と実施計画。総事業費・補助申請額を明示。</p>
+<h2>6. 提出物チェックリスト</h2>
+<p>申請書類のチェックボックスリスト。</p>
+<h2>7. 推奨アクション</h2>
+<p>即時行動項目を箇条書き3-5点。</p>
+<p>【絶対遵守】</p>
+<ol>
+<li>必ず/Users/nishimura+/work/miratuku-grants-2026/drafts_v2/004_E_NEDO ディープテック・スタートアップ支援(DTSU)第10回.mdにファイルを保存</li>
+<li>法人の数値・実績を本文に組み込む</li>
+<li>地の文中心、箇条書きは補助的に</li>
+<li>1,500-2,500字</li>
+<li>保存後、<code>保存完了: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/004_E_NEDO ディープテック・スタートアップ支援(DTSU)第10回.md</code> の1行のみ報告</li>
+</ol>
+<p>codex 保存できませんでした: sandbox制限により指定パスへの書き込みが拒否されました。 codex 既存ファイルは未作成でした。これから指定パスに、申請書としてそのまま加工しやすいMarkdown本文を新規作成します。 apply patch patch: completed /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_M_NEDO 研究開発型スタートアップ支援(NEP).md diff --git a/miratuku-grants-2026/drafts_v2/B6_M_NEDO 研究開発型スタートアップ支援(NEP).md b/miratuku-grants-2026/drafts_v2/B6_M_NEDO 研究開発型スタートアップ支援(NEP).md new file mode 100644 index 0000000000000000000000000000000000000000..578977a9ae4f8a29f48fb737382d5aecc3737395 --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B6_M_NEDO 研究開発型スタートアップ支援(NEP).md @@ -0,0 +1,43 @@ +# NEDO 研究開発型スタートアップ支援(NEP) 申請書ドラフト（ミラツク向け） +<strong>締切</strong>: 通年 | <strong>上限</strong>: 500-3,000万円 + +## 1. 申請者情報（300字・数値組込） +特定非営利活動法人ミラツクは、2010年設立、京都府・東京都を拠点に活動する第14期の非営利法人である。専従25名体制により、2024年度営業収益87.4M円の事業基盤を持ち、企業協働20社、コミュニティ参加者350名との協働を通じて、研究知と社会実装の接続に取り組んできた。独自の知識基盤として、学術知識30,288概念を含む26のSQLite知識データベースを整備し、「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載により、複雑な知見を事業・生活・社会変化の文脈へ翻訳している。 + +## 2. 助成金概要・応募要件（200字・地の文） +NEDO Entrepreneurs Program（NEP）は、ディープテック分野の技術シーズを有する、または技術シーズの活用アイデアを持つ起業家候補人材や研究開発型スタートアップを、事業化支援人材の伴走のもとで育成する制度である。躍進500・3000では、具体的な技術シーズを活用したビジネスモデルを持つ法人を対象に、事業化可能性調査、研究開発、実証、市場調査、試作品設計等を支援する。ミラツクはM+E体制で、社会実装可能な知識処理技術の事業化を狙う。 + +## 3. 申請テーマ案（A推奨/B代替・各150字） +<strong>案A（推奨）</strong>: 学際知識DBを用いた研究開発型スタートアップ向け事業化仮説生成エンジンの開発。26のSQLite知識DBと300話の社会接続コンテンツを基盤に、技術シーズの用途探索、顧客課題仮説、実証設計を半自動化し、研究成果の市場導入を加速する。 + +<strong>案B（代替）</strong>: 企業協働20社と350名コミュニティを活用したディープテック事業化支援プラットフォームの実証。研究者・企業・行政・生活者の対話データを構造化し、技術シーズの社会受容性、導入障壁、初期市場を可視化する。 + +## 4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字） +### 背景・目的 +日本の研究開発型スタートアップでは、優れた技術シーズが存在しても、用途探索、顧客課題の特定、実証パートナー形成、事業仮説の言語化に時間を要し、研究成果が社会実装へ至らない例が多い。NEPが重視する起業家候補人材の育成と事業化促進においては、技術そのものの完成度に加え、技術が解くべき社会課題を多面的に把握し、検証可能な事業計画へ変換する仕組みが必要である。ミラツクは、学術知識30,288概念を含む26の知識DB、20社との企業協働、350名のコミュニティ、300話の知の社会接続コンテンツを有する。本事業では、これらを統合し、研究開発型スタートアップが技術シーズから市場仮説・実証計画を生成するプロトタイプを開発する。 + +### 方法 +初年度は、既存の26データベースから技術、社会課題、産業領域、生活文脈、導入障壁に関する概念群を抽出し、検索・推薦・仮説生成に適したメタデータを整備する。次に、企業協働先とコミュニティ参加者を対象に、技術シーズ3件程度を用いたユースケース検証を行い、用途候補、顧客セグメント、初期実証先、評価指標を出力するワークフローを設計する。M+E体制では、Mが知識基盤、仮説生成ロジック、協働設計を担い、Eがプロトタイプ実装、データ処理、UI、ログ解析を担う。NEDOの伴走支援を受けながら、躍進500では検証可能なMVP、躍進3000では複数領域への適用と有償PoC設計までを進める。 + +### 期待される成果 +成果は、研究開発型スタートアップ向けの事業化仮説生成MVP、技術シーズ別の市場仮説レポート、企業・研究者・支援者が共通利用できる実証設計テンプレートである。定量面では、3件以上の技術シーズで用途候補を各20件以上生成し、協働先5社以上から妥当性評価を得る。定性面では、ミラツクの強みである知の社会接続と実装力を、NEDO採択後の事業化支援サービスへ転換する。 + +## 5. スケジュールと予算（年次別） +12カ月計画とし、1-3カ月目は対象技術シーズ選定、知識DB棚卸し、NEP向け事業仮説設計を行う。4-6カ月目はプロトタイプ開発、データ整備、試験利用環境を構築する。7-9カ月目は企業協働先・コミュニティでの実証、出力精度と利用価値の検証を行う。10-12カ月目は事業モデル、価格、継続運用体制、次段階資金調達計画を整理する。予算は躍進500の場合、開発・データ整備250万円、実証・謝金100万円、PM・調査100万円、管理費50万円を想定する。躍進3000の場合は、開発1,200万円、データ整備500万円、実証700万円、外部専門家・知財300万円、管理費300万円とする。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> NEP公募要領の最新版確認 +- <input type="checkbox" disabled> 申請法人情報、登記事項、決算・収益資料 +- <input type="checkbox" disabled> 技術シーズ説明資料と事業化仮説 +- <input type="checkbox" disabled> 研究開発計画書、実証計画、予算積算根拠 +- <input type="checkbox" disabled> M+Eの役割分担、外部協力者、知財・データ管理方針 +- <input type="checkbox" disabled> 伴走支援者との面談準備資料 + +## 7. 推奨アクション（3-5点） +- 案Aを主軸に、対象とする技術シーズを1-3件に絞り、NEPの「ディープテック性」を明確化する。 +- 26のSQLite知識DBのうち、申請時に提示できる代表DB、概念数、活用実績を整理する。 +- 企業協働20社から、実証協力またはヒアリング協力の意思表示を2-5社分取得する。 +- 躍進500と躍進3000のどちらで出すかを、MVP範囲と外注開発費から決定する。 +- NEDO伴走支援者に説明するため、1枚の技術・事業化仮説マップを作成する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_M_NEDO 研究開発型スタートアップ支援(NEP).md</p>
+<p>diff --git a/miratuku-grants-2026/drafts_v2/B6_M_NEDO 研究開発型スタートアップ支援(NEP).md b/miratuku-grants-2026/drafts_v2/B6_M_NEDO 研究開発型スタートアップ支援(NEP).md new file mode 100644 index 0000000000000000000000000000000000000000..578977a9ae4f8a29f48fb737382d5aecc3737395 --- /dev/null +++ b/miratuku-grants-2026/drafts_v2/B6_M_NEDO 研究開発型スタートアップ支援(NEP).md @@ -0,0 +1,43 @@ +# NEDO 研究開発型スタートアップ支援(NEP) 申請書ドラフト（ミラツク向け） +<strong>締切</strong>: 通年 | <strong>上限</strong>: 500-3,000万円 + +## 1. 申請者情報（300字・数値組込） +特定非営利活動法人ミラツクは、2010年設立、京都府・東京都を拠点に活動する第14期の非営利法人である。専従25名体制により、2024年度営業収益87.4M円の事業基盤を持ち、企業協働20社、コミュニティ参加者350名との協働を通じて、研究知と社会実装の接続に取り組んできた。独自の知識基盤として、学術知識30,288概念を含む26のSQLite知識データベースを整備し、「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載により、複雑な知見を事業・生活・社会変化の文脈へ翻訳している。 + +## 2. 助成金概要・応募要件（200字・地の文） +NEDO Entrepreneurs Program（NEP）は、ディープテック分野の技術シーズを有する、または技術シーズの活用アイデアを持つ起業家候補人材や研究開発型スタートアップを、事業化支援人材の伴走のもとで育成する制度である。躍進500・3000では、具体的な技術シーズを活用したビジネスモデルを持つ法人を対象に、事業化可能性調査、研究開発、実証、市場調査、試作品設計等を支援する。ミラツクはM+E体制で、社会実装可能な知識処理技術の事業化を狙う。 + +## 3. 申請テーマ案（A推奨/B代替・各150字） +<strong>案A（推奨）</strong>: 学際知識DBを用いた研究開発型スタートアップ向け事業化仮説生成エンジンの開発。26のSQLite知識DBと300話の社会接続コンテンツを基盤に、技術シーズの用途探索、顧客課題仮説、実証設計を半自動化し、研究成果の市場導入を加速する。 + +<strong>案B（代替）</strong>: 企業協働20社と350名コミュニティを活用したディープテック事業化支援プラットフォームの実証。研究者・企業・行政・生活者の対話データを構造化し、技術シーズの社会受容性、導入障壁、初期市場を可視化する。 + +## 4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字） +### 背景・目的 +日本の研究開発型スタートアップでは、優れた技術シーズが存在しても、用途探索、顧客課題の特定、実証パートナー形成、事業仮説の言語化に時間を要し、研究成果が社会実装へ至らない例が多い。NEPが重視する起業家候補人材の育成と事業化促進においては、技術そのものの完成度に加え、技術が解くべき社会課題を多面的に把握し、検証可能な事業計画へ変換する仕組みが必要である。ミラツクは、学術知識30,288概念を含む26の知識DB、20社との企業協働、350名のコミュニティ、300話の知の社会接続コンテンツを有する。本事業では、これらを統合し、研究開発型スタートアップが技術シーズから市場仮説・実証計画を生成するプロトタイプを開発する。 + +### 方法 +初年度は、既存の26データベースから技術、社会課題、産業領域、生活文脈、導入障壁に関する概念群を抽出し、検索・推薦・仮説生成に適したメタデータを整備する。次に、企業協働先とコミュニティ参加者を対象に、技術シーズ3件程度を用いたユースケース検証を行い、用途候補、顧客セグメント、初期実証先、評価指標を出力するワークフローを設計する。M+E体制では、Mが知識基盤、仮説生成ロジック、協働設計を担い、Eがプロトタイプ実装、データ処理、UI、ログ解析を担う。NEDOの伴走支援を受けながら、躍進500では検証可能なMVP、躍進3000では複数領域への適用と有償PoC設計までを進める。 + +### 期待される成果 +成果は、研究開発型スタートアップ向けの事業化仮説生成MVP、技術シーズ別の市場仮説レポート、企業・研究者・支援者が共通利用できる実証設計テンプレートである。定量面では、3件以上の技術シーズで用途候補を各20件以上生成し、協働先5社以上から妥当性評価を得る。定性面では、ミラツクの強みである知の社会接続と実装力を、NEDO採択後の事業化支援サービスへ転換する。 + +## 5. スケジュールと予算（年次別） +12カ月計画とし、1-3カ月目は対象技術シーズ選定、知識DB棚卸し、NEP向け事業仮説設計を行う。4-6カ月目はプロトタイプ開発、データ整備、試験利用環境を構築する。7-9カ月目は企業協働先・コミュニティでの実証、出力精度と利用価値の検証を行う。10-12カ月目は事業モデル、価格、継続運用体制、次段階資金調達計画を整理する。予算は躍進500の場合、開発・データ整備250万円、実証・謝金100万円、PM・調査100万円、管理費50万円を想定する。躍進3000の場合は、開発1,200万円、データ整備500万円、実証700万円、外部専門家・知財300万円、管理費300万円とする。 + +## 6. 提出物チェックリスト +- <input type="checkbox" disabled> NEP公募要領の最新版確認 +- <input type="checkbox" disabled> 申請法人情報、登記事項、決算・収益資料 +- <input type="checkbox" disabled> 技術シーズ説明資料と事業化仮説 +- <input type="checkbox" disabled> 研究開発計画書、実証計画、予算積算根拠 +- <input type="checkbox" disabled> M+Eの役割分担、外部協力者、知財・データ管理方針 +- <input type="checkbox" disabled> 伴走支援者との面談準備資料 + +## 7. 推奨アクション（3-5点） +- 案Aを主軸に、対象とする技術シーズを1-3件に絞り、NEPの「ディープテック性」を明確化する。 +- 26のSQLite知識DBのうち、申請時に提示できる代表DB、概念数、活用実績を整理する。 +- 企業協働20社から、実証協力またはヒアリング協力の意思表示を2-5社分取得する。 +- 躍進500と躍進3000のどちらで出すかを、MVP範囲と外注開発費から決定する。 +- NEDO伴走支援者に説明するため、1枚の技術・事業化仮説マップを作成する。 + +保存対象パス: /Users/nishimura+/work/miratuku-grants-2026/drafts_v2/B6_M_NEDO 研究開発型スタートアップ支援(NEP).md</p>
+<p>exec /bin/bash -lc "wc -m 'drafts_v2/B6_M_NEDO 研究開発型スタートアップ支援(NEP).md' && sed -n '1,220p' 'drafts_v2/B6_M_NEDO 研究開発型スタートアップ支援(NEP).md'" in /Users/nishimura+/work/miratuku-grants-2026  succeeded in 0ms:     2570 drafts_v2/B6_M_NEDO 研究開発型スタートアップ支援(NEP).md</p>
+<h1>NEDO 研究開発型スタートアップ支援(NEP) 申請書ドラフト（ミラツク向け）</h1>
+<p><strong>締切</strong>: 通年 | <strong>上限</strong>: 500-3,000万円</p>
+<h2>1. 申請者情報（300字・数値組込）</h2>
+<p>特定非営利活動法人ミラツクは、2010年設立、京都府・東京都を拠点に活動する第14期の非営利法人である。専従25名体制により、2024年度営業収益87.4M円の事業基盤を持ち、企業協働20社、コミュニティ参加者350名との協働を通じて、研究知と社会実装の接続に取り組んできた。独自の知識基盤として、学術知識30,288概念を含む26のSQLite知識データベースを整備し、「事業のかたち」「暮らしのかたち」「変化のかたち」各100話、合計300話の連載により、複雑な知見を事業・生活・社会変化の文脈へ翻訳している。</p>
+<h2>2. 助成金概要・応募要件（200字・地の文）</h2>
+<p>NEDO Entrepreneurs Program（NEP）は、ディープテック分野の技術シーズを有する、または技術シーズの活用アイデアを持つ起業家候補人材や研究開発型スタートアップを、事業化支援人材の伴走のもとで育成する制度である。躍進500・3000では、具体的な技術シーズを活用したビジネスモデルを持つ法人を対象に、事業化可能性調査、研究開発、実証、市場調査、試作品設計等を支援する。ミラツクはM+E体制で、社会実装可能な知識処理技術の事業化を狙う。</p>
+<h2>3. 申請テーマ案（A推奨/B代替・各150字）</h2>
+<p><strong>案A（推奨）</strong>: 学際知識DBを用いた研究開発型スタートアップ向け事業化仮説生成エンジンの開発。26のSQLite知識DBと300話の社会接続コンテンツを基盤に、技術シーズの用途探索、顧客課題仮説、実証設計を半自動化し、研究成果の市場導入を加速する。</p>
+<p><strong>案B（代替）</strong>: 企業協働20社と350名コミュニティを活用したディープテック事業化支援プラットフォームの実証。研究者・企業・行政・生活者の対話データを構造化し、技術シーズの社会受容性、導入障壁、初期市場を可視化する。</p>
+<h2>4. 事業/研究計画書本文（背景目的300-400字、方法300-400字、成果200-300字）</h2>
+<h3>背景・目的</h3>
+<p>日本の研究開発型スタートアップでは、優れた技術シーズが存在しても、用途探索、顧客課題の特定、実証パートナー形成、事業仮説の言語化に時間を要し、研究成果が社会実装へ至らない例が多い。NEPが重視する起業家候補人材の育成と事業化促進においては、技術そのものの完成度に加え、技術が解くべき社会課題を多面的に把握し、検証可能な事業計画へ変換する仕組みが必要である。ミラツクは、学術知識30,288概念を含む26の知識DB、20社との企業協働、350名のコミュニティ、300話の知の社会接続コンテンツを有する。本事業では、これらを統合し、研究開発型スタートアップが技術シーズから市場仮説・実証計画を生成するプロトタイプを開発する。</p>
+<h3>方法</h3>
+<p>初年度は、既存の26データベースから技術、社会課題、産業領域、生活文脈、導入障壁に関する概念群を抽出し、検索・推薦・仮説生成に適したメタデータを整備する。次に、企業協働先とコミュニティ参加者を対象に、技術シーズ3件程度を用いたユースケース検証を行い、用途候補、顧客セグメント、初期実証先、評価指標を出力するワークフローを設計する。M+E体制では、Mが知識基盤、仮説生成ロジック、協働設計を担い、Eがプロトタイプ実装、データ処理、UI、ログ解析を担う。NEDOの伴走支援を受けながら、躍進500では検証可能なMVP、躍進3000では複数領域への適用と有償PoC設計までを進める。</p>
+<h3>期待される成果</h3>
+<p>成果は、研究開発型スタートアップ向けの事業化仮説生成MVP、技術シーズ別の市場仮説レポート、企業・研究者・支援者が共通利用できる実証設計テンプレートである。定量面では、3件以上の技術シーズで用途候補を各20件以上生成し、協働先5社以上から妥当性評価を得る。定性面では、ミラツクの強みである知の社会接続と実装力を、NEDO採択後の事業化支援サービスへ転換する。</p>
+<h2>5. スケジュールと予算（年次別）</h2>
+<p>12カ月計画とし、1-3カ月目は対象技術シーズ選定、知識DB棚卸し、NEP向け事業仮説設計を行う。4-6カ月目はプロトタイプ開発、データ整備、試験利用環境を構築する。7-9カ月目は企業協働先・コミュニティでの実証、出力精度と利用価値の検証を行う。10-12カ月目は事業モデル、価格、継続運用体制、次段階資金調達計画を整理する。予算は躍進500の場合、開発・データ整備250万円、実証・謝金100万円、PM・調査100万円、管理費50万円を想定する。躍進3000の場合は、開発1,200万円、データ整備500万円、実証700万円、外部専門家・知財300万円、管理費300万円とする。</p>
+<h2>6. 提出物チェックリスト</h2>
+<ul>
+<li><input type="checkbox" disabled> NEP公募要領の最新版確認</li>
+<li><input type="checkbox" disabled> 申請法人情報、登記事項、決算・収益資料</li>
+<li><input type="checkbox" disabled> 技術シーズ説明資料と事業化仮説</li>
+<li><input type="checkbox" disabled> 研究開発計画書、実証計画、予算積算根拠</li>
+<li><input type="checkbox" disabled> M+Eの役割分担、外部協力者、知財・データ管理方針</li>
+<li><input type="checkbox" disabled> 伴走支援者との面談準備資料</li>
+</ul>
+<h2>7. 推奨アクション（3-5点）</h2>
+<ul>
+<li>案Aを主軸に、対象とする技術シーズを1-3件に絞り、NEPの「ディープテック性」を明確化する。</li>
+<li>26のSQLite知識DBのうち、申請時に提示できる代表DB、概念数、活用実績を整理する。</li>
+<li>企業協働20社から、実証協力またはヒアリング協力の意思表示を2-5社分取得する。</li>
+<li>躍進500と躍進3000のどちらで出すかを、MVP範囲と外注開発費から決定する。</li>
+<li>NEDO伴走支援者に説明するため、1枚の技術・事業化仮説マップを作成する。</li>
+</ul>
+<div class="footer-mark">ミラツク／esse-sense Grant Schedule 2026 — ?向けドラフト · 自動生成 · 提出前に内容を要確認</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="resetModal">
+  <div class="modal">
+    <h3>編集内容をリセット</h3>
+    <p>このドキュメントの編集内容を初期状態に戻します。元の文書（テンプレート）に復元され、現在の編集内容は失われます。</p>
+    <p>よろしいですか？</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeReset()">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmReset()">リセット実行</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'grant-draft-' + location.pathname.split('/').pop();
+const ORIGINAL_HTML = document.getElementById('paper').innerHTML;
+let editing = false;
+
+// 起動時に保存済み内容を復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    document.getElementById('paper').innerHTML = saved;
+    setStatus('保存済の編集を復元しました');
+  } else {
+    setStatus('—');
+  }
+});
+
+function setStatus(msg) {
+  document.getElementById('saveStatus').textContent = msg;
+}
+
+function toggleEdit() {
+  editing = !editing;
+  const paper = document.getElementById('paper');
+  const btn = document.getElementById('editBtn');
+  paper.contentEditable = editing;
+  paper.classList.toggle('editing', editing);
+  btn.textContent = editing ? '編集を終了' : '編集モード';
+  btn.classList.toggle('btn-active', editing);
+  if (editing) {
+    paper.focus();
+    setStatus('編集モード（自動保存）');
+    paper.addEventListener('input', autoSave);
+  } else {
+    setStatus(localStorage.getItem(STORAGE_KEY) ? '✓ 保存済' : '—');
+    paper.removeEventListener('input', autoSave);
+  }
+}
+
+let saveTimer = null;
+function autoSave() {
+  setStatus('入力中…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const html = document.getElementById('paper').innerHTML;
+    localStorage.setItem(STORAGE_KEY, html);
+    setStatus('✓ 自動保存 ' + new Date().toLocaleTimeString('ja-JP'));
+  }, 500);
+}
+
+function resetDoc() {
+  document.getElementById('resetModal').classList.add('active');
+}
+function closeReset() {
+  document.getElementById('resetModal').classList.remove('active');
+}
+function confirmReset() {
+  document.getElementById('paper').innerHTML = ORIGINAL_HTML;
+  localStorage.removeItem(STORAGE_KEY);
+  setStatus('リセット完了');
+  closeReset();
+}
+
+function downloadHTML() {
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.html';
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadMD() {
+  // HTMLからシンプルMD化
+  let html = document.getElementById('paper').innerHTML;
+  let md = html
+    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+    .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+    .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+    .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+    .replace(/<\/(ul|ol)>/gi, '\n')
+    .replace(/<(ul|ol)[^>]*>/gi, '')
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<hr[^>]*>/gi, '\n---\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const filename = (document.title.replace(/[\\/:*?"<>|]/g, '_') || 'draft') + '.md';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
